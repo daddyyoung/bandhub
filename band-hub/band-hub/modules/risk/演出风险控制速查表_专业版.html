@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>演出全流程风险控制速查表 v1.0</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --card: #181b24;
+  --card2: #1e2230;
+  --border: #2a2f3d;
+  --text: #e4e7ef;
+  --text2: #9ba3b4;
+  --accent: #4f9eff;
+  --accent2: #7c5cff;
+  --green: #34d399;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --orange: #fb923c;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+.page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+/* Header */
+.header {
+  text-align: center;
+  padding: 32px 0 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.header h1 {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.header .subtitle {
+  color: var(--text2);
+  font-size: 13px;
+  margin-top: 8px;
+}
+.header .meta {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.meta-item {
+  font-size: 12px;
+  color: var(--text2);
+}
+.meta-item span { color: var(--accent); font-weight: 600; }
+/* Section */
+.section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.section-title .icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.section-title .weight {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text2);
+  font-weight: 400;
+}
+.section-title .weight b { color: var(--accent); }
+/* Info Row */
+.info-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.info-field {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.info-field label {
+  font-size: 11px;
+  color: var(--text2);
+  display: block;
+  margin-bottom: 4px;
+}
+.info-field .blank {
+  border-bottom: 1px dashed var(--border);
+  min-height: 18px;
+}
+/* Checklist Table */
+.checklist {
+  width: 100%;
+  border-collapse: collapse;
+}
+.checklist th {
+  text-align: left;
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 500;
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.checklist td {
+  padding: 9px 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  vertical-align: top;
+}
+.checklist tr:last-child td { border-bottom: none; }
+.checklist .col-id { width: 36px; color: var(--text2); font-size: 11px; font-family: monospace; }
+.checklist .col-check { width: 50px; text-align: center; }
+.checklist .col-type { width: 70px; }
+.checklist .col-item { }
+.checklist .col-note { width: 200px; color: var(--text2); font-size: 12px; }
+.checkbox {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  vertical-align: middle;
+}
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.tag-feed { background: rgba(79,158,255,0.15); color: var(--accent); }
+.tag-couple { background: rgba(124,92,255,0.15); color: var(--accent2); }
+.tag-law { background: rgba(251,191,36,0.15); color: var(--yellow); }
+.tag-fin { background: rgba(251,146,60,0.15); color: var(--orange); }
+.redline {
+  color: var(--red);
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+/* Score */
+.score-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.score-card {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+.score-card .label {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 8px;
+}
+.score-card .formula {
+  font-size: 11px;
+  color: var(--text2);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+.score-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.score-input .box {
+  width: 48px; height: 32px;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+.score-input .slash { color: var(--text2); font-size: 14px; }
+.score-input .max { color: var(--text2); font-size: 13px; }
+.total-score {
+  background: linear-gradient(135deg, rgba(79,158,255,0.1), rgba(124,92,255,0.1));
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.total-score .label {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 8px;
+}
+.total-score .value {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--accent);
+}
+.total-score .formula {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 4px;
+}
+.decision-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.decision-table td {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  font-size: 13px;
+}
+.decision-table .range { font-weight: 700; font-size: 14px; }
+.decision-table .go { color: var(--green); }
+.decision-table .warn { color: var(--yellow); }
+.decision-table .no { color: var(--red); }
+/* Timeline */
+.timeline {
+  display: flex;
+  gap: 0;
+  margin-top: 16px;
+  overflow-x: auto;
+}
+.timeline-node {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  padding: 0 4px;
+}
+.timeline-node .dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--card2);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.timeline-node .time {
+  font-size: 11px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+.timeline-node .desc {
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.4;
+}
+.timeline-node:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 18px; left: 50%;
+  width: 100%; height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.timeline-node .dot { position: relative; z-index: 1; }
+/* AAR */
+.aar-question {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.aar-question .q {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.aar-question .lines {
+  border-bottom: 1px dashed var(--border);
+  height: 22px;
+}
+.aar-question .lines:nth-child(n+3) { margin-top: 0; }
+/* Deviation Table */
+.deviation-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.deviation-table th {
+  text-align: left;
+  font-size: 10px;
+  color: var(--text2);
+  padding: 6px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+}
+.deviation-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  height: 32px;
+}
+.deviation-table .col-desc { width: 22%; }
+.deviation-table .col-impact { width: 8%; text-align: center; }
+.deviation-table .col-root { width: 15%; }
+.deviation-table .col-dim { width: 8%; text-align: center; }
+.deviation-table .col-fix { width: 25%; }
+.deviation-table .col-new { width: 22%; }
+/* Principles */
+.principles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.principle {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.principle .num {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.principle .title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.principle .body {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 32px;
+  color: var(--text2);
+  font-size: 12px;
+}
+.footer .version {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+/* Print */
+@media print {
+  body { background: white; color: black; }
+  .page { max-width: 100%; padding: 20px; }
+  .section { background: white; border: 1px solid #ccc; page-break-inside: avoid; }
+  .card2, .info-field, .score-card, .principle { background: #f9f9f9; }
+  .header h1 { -webkit-text-fill-color: #333; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ========== HEADER ========== -->
+<div class="header">
+  <h1>演出全流程风险控制速查表</h1>
+  <div class="subtitle">Performance Risk Control Checklist & Go/No-Go Decision System</div>
+  <div class="meta">
+    <div class="meta-item">版本 <span>v1.0</span></div>
+    <div class="meta-item">日期 <span>____ / ____ / ____</span></div>
+    <div class="meta-item">演出名称 <span>_______________</span></div>
+    <div class="meta-item">负责人 <span>___________</span></div>
+  </div>
+</div>
+
+<!-- ========== 设计原则 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(79,158,255,0.15);">🎯</div>
+    设计原则 — 第一性原理
+  </div>
+  <div class="principles">
+    <div class="principle">
+      <div class="num">原则 1</div>
+      <div class="title">不可重演 → 前馈优先</div>
+      <div class="body">演出是一次性交付，无法事后补救。风险控制必须前移：预测 > 预防 > 应急。前馈成本最低，效果最好。</div>
+    </div>
+    <div class="principle">
+      <div class="num">原则 2</div>
+      <div class="title">耦合放大 → 隔离预案</div>
+      <div class="body">设备没到→无法试音→演出降级→口碑损失。任一环节失效会级联放大。每个核心环节必须有 Plan B，切断连锁反应。</div>
+    </div>
+    <div class="principle">
+      <div class="num">原则 3</div>
+      <div class="title">阈值触发 → 不靠临场判断</div>
+      <div class="body">设定明确红线（风速>30km/h停高空、定金未到不出发），超阈值即触发预案，避免现场情绪化决策。</div>
+    </div>
+    <div class="principle">
+      <div class="num">原则 4</div>
+      <div class="title">闭环迭代 → 越用越聪明</div>
+      <div class="body">每次演出后复盘，将新问题转化为新检查项加入速查表。速查表是活的系统，不是固定清单。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 演出基本信息 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(79,158,255,0.15);">📋</div>
+    演出基本信息
+  </div>
+  <div class="info-row">
+    <div class="info-field"><label>演出名称</label><div class="blank"></div></div>
+    <div class="info-field"><label>日期 / 时间</label><div class="blank"></div></div>
+    <div class="info-field"><label>场地名称</label><div class="blank"></div></div>
+    <div class="info-field"><label>室内 / 户外</label><div class="blank"></div></div>
+    <div class="info-field"><label>预计观众人数</label><div class="blank"></div></div>
+    <div class="info-field"><label>演出时长</label><div class="blank"></div></div>
+    <div class="info-field"><label>报酬金额</label><div class="blank"></div></div>
+    <div class="info-field"><label>预估成本</label><div class="blank"></div></div>
+  </div>
+</div>
+
+<!-- ========== 维度A: 场地与环境 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(79,158,255,0.15);">🏛</div>
+    A · 场地与环境
+    <div class="weight">权重 <b>20%</b></div>
+  </div>
+  <table class="checklist">
+    <thead>
+      <tr><th class="col-id">ID</th><th class="col-check">✓</th><th class="col-item">检查项</th><th class="col-type">类型</th><th class="col-note">备注</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-id">A1</td><td class="col-check"><span class="checkbox"></span></td><td>户外演出已查 72h 天气预报，设天气红线（风速&gt;30km/h停高空，雷暴清场）<span class="redline">🔴红线</span></td><td><span class="tag tag-feed">前馈</span></td><td></td></tr>
+      <tr><td class="col-id">A2</td><td class="col-check"><span class="checkbox"></span></td><td>备用室内场地已确认（户外演出必须）<span class="redline">🔴红线</span></td><td><span class="tag tag-feed">前馈</span></td><td>Plan B 场地</td></tr>
+      <tr><td class="col-id">A3</td><td class="col-check"><span class="checkbox"></span></td><td>停车点与演出点距离已实测（&lt;100m 为优）</td><td><span class="tag tag-feed">前馈</span></td><td>减少搬运距离</td></tr>
+      <tr><td class="col-id">A4</td><td class="col-check"><span class="checkbox"></span></td><td>装卸通道宽度/限高/限重已确认</td><td><span class="tag tag-feed">前馈</span></td><td>设备能否进去</td></tr>
+      <tr><td class="col-id">A5</td><td class="col-check"><span class="checkbox"></span></td><td>舞台尺寸/承重/电源接口已确认</td><td><span class="tag tag-feed">前馈</span></td><td>技术走台依据</td></tr>
+      <tr><td class="col-id">A6</td><td class="col-check"><span class="checkbox"></span></td><td>场地座椅/站位适合演出类型</td><td><span class="tag tag-feed">前馈</span></td><td>上次：部分椅子不合适</td></tr>
+      <tr><td class="col-id">A7</td><td class="col-check"><span class="checkbox"></span></td><td>退票/改期条款已在合同中约定</td><td><span class="tag tag-law">法律</span></td><td>天气取消兜底</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 维度B: 设备与技术 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(124,92,255,0.15);">🔌</div>
+    B · 设备与技术
+    <div class="weight">权重 <b>20%</b></div>
+  </div>
+  <table class="checklist">
+    <thead>
+      <tr><th class="col-id">ID</th><th class="col-check">✓</th><th class="col-item">检查项</th><th class="col-type">类型</th><th class="col-note">备注</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-id">B1</td><td class="col-check"><span class="checkbox"></span></td><td>每个核心设备有 Plan B（备用麦克风/线材/电源）<span class="redline">🔴红线</span></td><td><span class="tag tag-couple">耦合隔离</span></td><td>上次：设备损坏无预案</td></tr>
+      <tr><td class="col-id">B2</td><td class="col-check"><span class="checkbox"></span></td><td>设备清单已打包并逐件核对（出发前+装车后两次）</td><td><span class="tag tag-feed">前馈</span></td><td>防遗漏</td></tr>
+      <tr><td class="col-id">B3</td><td class="col-check"><span class="checkbox"></span></td><td>电源冗余方案（UPS/备用发电机/长插线板）</td><td><span class="tag tag-feed">前馈</span></td><td>断电=致命</td></tr>
+      <tr><td class="col-id">B4</td><td class="col-check"><span class="checkbox"></span></td><td>所有线材/接头已测试通断</td><td><span class="tag tag-feed">前馈</span></td><td>现场不测=赌博</td></tr>
+      <tr><td class="col-id">B5</td><td class="col-check"><span class="checkbox"></span></td><td>搬运工具已准备（小推车/航空箱/防震包装）</td><td><span class="tag tag-feed">前馈</span></td><td>上次：搬运费力影响状态</td></tr>
+      <tr><td class="col-id">B6</td><td class="col-check"><span class="checkbox"></span></td><td>设备保险值已估算（损坏/丢失最大损失）</td><td><span class="tag tag-fin">财务</span></td><td>决定是否买保险</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 维度C: 交通与物流 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(52,211,153,0.15);">🚚</div>
+    C · 交通与物流
+    <div class="weight">权重 <b>15%</b></div>
+  </div>
+  <table class="checklist">
+    <thead>
+      <tr><th class="col-id">ID</th><th class="col-check">✓</th><th class="col-item">检查项</th><th class="col-type">类型</th><th class="col-note">备注</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-id">C1</td><td class="col-check"><span class="checkbox"></span></td><td>运输车辆已报备（进场证/通行证）<span class="redline">🔴红线</span></td><td><span class="tag tag-feed">前馈</span></td><td>上次：车辆要提前报备</td></tr>
+      <tr><td class="col-id">C2</td><td class="col-check"><span class="checkbox"></span></td><td>路线规划完成，含备选路线（堵车预案）</td><td><span class="tag tag-feed">前馈</span></td><td></td></tr>
+      <tr><td class="col-id">C3</td><td class="col-check"><span class="checkbox"></span></td><td>到场时间 = 演出时间 - 3h（最低），含缓冲</td><td><span class="tag tag-feed">前馈</span></td><td>试音+调试+休息</td></tr>
+      <tr><td class="col-id">C4</td><td class="col-check"><span class="checkbox"></span></td><td>装卸人员分工已确定（谁搬什么）</td><td><span class="tag tag-feed">前馈</span></td><td>非艺人搬设备</td></tr>
+      <tr><td class="col-id">C5</td><td class="col-check"><span class="checkbox"></span></td><td>搬运途中设备固定方案已确认</td><td><span class="tag tag-feed">前馈</span></td><td>防运输损坏</td></tr>
+      <tr><td class="col-id">C6</td><td class="col-check"><span class="checkbox"></span></td><td>演出结束后撤场路线与时间窗已确认</td><td><span class="tag tag-feed">前馈</span></td><td>避免超时罚款</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 维度D: 人员与健康 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(251,191,36,0.15);">👥</div>
+    D · 人员与健康
+    <div class="weight">权重 <b>15%</b></div>
+  </div>
+  <table class="checklist">
+    <thead>
+      <tr><th class="col-id">ID</th><th class="col-check">✓</th><th class="col-item">检查项</th><th class="col-type">类型</th><th class="col-note">备注</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-id">D1</td><td class="col-check"><span class="checkbox"></span></td><td>每位成员演出状态确认（嗓音/体力/情绪）</td><td><span class="tag tag-feed">前馈</span></td><td></td></tr>
+      <tr><td class="col-id">D2</td><td class="col-check"><span class="checkbox"></span></td><td>饮用水/食物/能量补给已准备</td><td><span class="tag tag-feed">前馈</span></td><td>上次：未带水</td></tr>
+      <tr><td class="col-id">D3</td><td class="col-check"><span class="checkbox"></span></td><td>个人物品清单（相机/手机/充电宝/乐谱/歌词）</td><td><span class="tag tag-feed">前馈</span></td><td>上次：未带相机</td></tr>
+      <tr><td class="col-id">D4</td><td class="col-check"><span class="checkbox"></span></td><td>应急联系人/医疗信息已共享全员</td><td><span class="tag tag-feed">前馈</span></td><td></td></tr>
+      <tr><td class="col-id">D5</td><td class="col-check"><span class="checkbox"></span></td><td>演出前睡眠/饮食要求已通知全员</td><td><span class="tag tag-feed">前馈</span></td><td></td></tr>
+      <tr><td class="col-id">D6</td><td class="col-check"><span class="checkbox"></span></td><td>非演出体力劳动最小化（搬运转嫁给专人/工具）</td><td><span class="tag tag-couple">耦合隔离</span></td><td>保护演出状态</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 维度E: 宣传与商业 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(251,146,60,0.15);">📣</div>
+    E · 宣传与商业
+    <div class="weight">权重 <b>10%</b></div>
+  </div>
+  <table class="checklist">
+    <thead>
+      <tr><th class="col-id">ID</th><th class="col-check">✓</th><th class="col-item">检查项</th><th class="col-type">类型</th><th class="col-note">备注</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-id">E1</td><td class="col-check"><span class="checkbox"></span></td><td>乐队账号/二维码已准备（宣传物料）</td><td><span class="tag tag-feed">前馈</span></td><td>上次：考虑建设乐队账号</td></tr>
+      <tr><td class="col-id">E2</td><td class="col-check"><span class="checkbox"></span></td><td>演出合同/协议已签署，款项节点明确</td><td><span class="tag tag-law">法律</span></td><td>定金到账才出发</td></tr>
+      <tr><td class="col-id">E3</td><td class="col-check"><span class="checkbox"></span></td><td>票务/入场方案已确认</td><td><span class="tag tag-feed">前馈</span></td><td></td></tr>
+      <tr><td class="col-id">E4</td><td class="col-check"><span class="checkbox"></span></td><td>周边 merchandise 销售方案（如有）</td><td><span class="tag tag-feed">前馈</span></td><td></td></tr>
+      <tr><td class="col-id">E5</td><td class="col-check"><span class="checkbox"></span></td><td>演出录像/摄影安排已确认</td><td><span class="tag tag-feed">前馈</span></td><td>上次：未带相机</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 维度F: 法律与保险 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(248,113,113,0.15);">⚖</div>
+    F · 法律与保险
+    <div class="weight">权重 <b>10%</b></div>
+  </div>
+  <table class="checklist">
+    <thead>
+      <tr><th class="col-id">ID</th><th class="col-check">✓</th><th class="col-item">检查项</th><th class="col-type">类型</th><th class="col-note">备注</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-id">F1</td><td class="col-check"><span class="checkbox"></span></td><td>演出许可/报批已完成<span class="redline">🔴红线</span></td><td><span class="tag tag-law">法律</span></td><td>无证演出违法</td></tr>
+      <tr><td class="col-id">F2</td><td class="col-check"><span class="checkbox"></span></td><td>曲目版权/授权已确认</td><td><span class="tag tag-law">法律</span></td><td></td></tr>
+      <tr><td class="col-id">F3</td><td class="col-check"><span class="checkbox"></span></td><td>公众责任险已评估（是否购买）</td><td><span class="tag tag-fin">财务</span></td><td></td></tr>
+      <tr><td class="col-id">F4</td><td class="col-check"><span class="checkbox"></span></td><td>设备险已评估</td><td><span class="tag tag-fin">财务</span></td><td></td></tr>
+      <tr><td class="col-id">F5</td><td class="col-check"><span class="checkbox"></span></td><td>场地合同中责任划分清晰（设备损坏谁赔）</td><td><span class="tag tag-law">法律</span></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 维度G: 预案与应急 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(124,92,255,0.15);">🛡</div>
+    G · 预案与应急
+    <div class="weight">权重 <b>10%</b></div>
+  </div>
+  <table class="checklist">
+    <thead>
+      <tr><th class="col-id">ID</th><th class="col-check">✓</th><th class="col-item">检查项</th><th class="col-type">类型</th><th class="col-note">备注</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-id">G1</td><td class="col-check"><span class="checkbox"></span></td><td>每个核心环节有 Plan B，关键环节有 Plan C<span class="redline">🔴红线</span></td><td><span class="tag tag-couple">耦合隔离</span></td><td>上次：设备损坏无预案</td></tr>
+      <tr><td class="col-id">G2</td><td class="col-check"><span class="checkbox"></span></td><td>极端天气预案（停演标准+疏散路线）</td><td><span class="tag tag-feed">前馈</span></td><td></td></tr>
+      <tr><td class="col-id">G3</td><td class="col-check"><span class="checkbox"></span></td><td>设备故障预案（降级演出方案，如不插电版）</td><td><span class="tag tag-couple">耦合隔离</span></td><td></td></tr>
+      <tr><td class="col-id">G4</td><td class="col-check"><span class="checkbox"></span></td><td>人员缺席预案（关键成员无法到场）</td><td><span class="tag tag-couple">耦合隔离</span></td><td></td></tr>
+      <tr><td class="col-id">G5</td><td class="col-check"><span class="checkbox"></span></td><td>应急物资包（急救/工具/胶带/备用电池）</td><td><span class="tag tag-feed">前馈</span></td><td></td></tr>
+      <tr><td class="col-id">G6</td><td class="col-check"><span class="checkbox"></span></td><td>现场通讯方案（对讲机/微信群）+ 指定现场总指挥</td><td><span class="tag tag-feed">前馈</span></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 时间节点检查 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(79,158,255,0.15);">⏰</div>
+    时间节点检查机制
+  </div>
+  <div class="timeline">
+    <div class="timeline-node">
+      <div class="dot">T-7d</div>
+      <div class="time">前7天</div>
+      <div class="desc">合同/许可/场地确认<br>红线项全部✅</div>
+    </div>
+    <div class="timeline-node">
+      <div class="dot">T-72h</div>
+      <div class="time">前72小时</div>
+      <div class="desc">天气预报/设备清单<br>人员状态确认</div>
+    </div>
+    <div class="timeline-node">
+      <div class="dot">T-24h</div>
+      <div class="time">前24小时</div>
+      <div class="desc">路线确认/物料打包<br>Plan B 确认<br>检查项≥80%完成</div>
+    </div>
+    <div class="timeline-node">
+      <div class="dot">T-2h</div>
+      <div class="time">到场时</div>
+      <div class="desc">现场环境实测<br>设备测试<br>现场与预期一致</div>
+    </div>
+    <div class="timeline-node">
+      <div class="dot">T-0</div>
+      <div class="time">演出中</div>
+      <div class="desc">实时问题记录<br>记录所有偏差</div>
+    </div>
+    <div class="timeline-node">
+      <div class="dot">T+48h</div>
+      <div class="time">演出后48h</div>
+      <div class="desc">AAR 复盘<br>产出改进项<br>新增检查项</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 性价比评分系统 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(52,211,153,0.15);">📊</div>
+    性价比评分系统 — Go / No-Go 决策
+  </div>
+
+  <div class="score-grid">
+    <div class="score-card">
+      <div class="label">风险控制得分（权重 50%）</div>
+      <div class="score-input">
+        <div class="box"></div>
+        <span class="slash">/</span>
+        <span class="max">100</span>
+      </div>
+      <div class="formula">7维度检查项完成率 × 权重<br>红线项为0 → 直接降至50以下</div>
+    </div>
+    <div class="score-card">
+      <div class="label">商业价值得分（权重 30%）</div>
+      <div class="score-input">
+        <div class="box"></div>
+        <span class="slash">/</span>
+        <span class="max">100</span>
+      </div>
+      <div class="formula">ROI 40% + 收入绝对值 20%<br>成本可控 20% + 现金流 20%</div>
+    </div>
+    <div class="score-card">
+      <div class="label">战略价值得分（权重 20%）</div>
+      <div class="score-input">
+        <div class="box"></div>
+        <span class="slash">/</span>
+        <span class="max">100</span>
+      </div>
+      <div class="formula">曝光 30% + 品牌 30%<br>人脉 20% + 成长 20%</div>
+    </div>
+  </div>
+
+  <div class="total-score">
+    <div class="label">演出综合得分</div>
+    <div class="value">______ 分</div>
+    <div class="formula">= 风险控制 × 0.5 + 商业价值 × 0.3 + 战略价值 × 0.2</div>
+  </div>
+
+  <table class="decision-table">
+    <tr>
+      <td class="range go">≥ 80 分</td>
+      <td class="go">✅ 接单</td>
+      <td>风险可控，价值明确，正常推进</td>
+    </tr>
+    <tr>
+      <td class="range warn">60 - 79 分</td>
+      <td class="warn">⚠️ 有条件接单</td>
+      <td>补齐红线项后可接，或重新谈判条件（价格/场地/时间）</td>
+    </tr>
+    <tr>
+      <td class="range no">&lt; 60 分</td>
+      <td class="no">❌ 不接单</td>
+      <td>风险过高或价值不足，拒绝或改期</td>
+    </tr>
+  </table>
+
+  <div style="margin-top:16px; padding:12px; background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.2); border-radius:8px; font-size:12px; color:var(--yellow);">
+    <b>⚠️ 对抗式审查提醒：</b>评分系统有"乐观偏差"风险——人倾向于给"想接的单"打高分。建议邀请非利益相关方复评；战略价值需给出具体证据（如"某媒体确认报道"而非"可能有曝光"）。<b>Goodhart 定律：</b>当指标成为目标，它就不再是好指标——综合得分只是参考，最终决策需人工复核"故事"。
+  </div>
+</div>
+
+<!-- ========== AAR 事后复盘 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(124,92,255,0.15);">🔄</div>
+    AAR 事后复盘（演出后 48h 内完成）
+  </div>
+  <div style="font-size:12px; color:var(--text2); margin-bottom:16px;">
+    After Action Review — 美军 1970s 首创，华为系广泛使用。四问法，聚焦根因，不追个人责任。
+  </div>
+
+  <div class="aar-question">
+    <div class="q">Q1 · 预期发生了什么？</div>
+    <div class="lines"></div>
+    <div class="lines"></div>
+    <div class="lines"></div>
+  </div>
+  <div class="aar-question">
+    <div class="q">Q2 · 实际发生了什么？（记录所有偏差）</div>
+    <div class="lines"></div>
+    <div class="lines"></div>
+    <div class="lines"></div>
+  </div>
+  <div class="aar-question">
+    <div class="q">Q3 · 为什么有差距？（追根因，不追责）</div>
+    <div class="lines"></div>
+    <div class="lines"></div>
+    <div class="lines"></div>
+  </div>
+  <div class="aar-question">
+    <div class="q">Q4 · 下次如何改进？（落到具体检查项）</div>
+    <div class="lines"></div>
+    <div class="lines"></div>
+    <div class="lines"></div>
+  </div>
+</div>
+
+<!-- ========== 偏差归因分析表 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(248,113,113,0.15);">📋</div>
+    偏差归因分析表
+  </div>
+  <div style="font-size:12px; color:var(--text2); margin-bottom:12px;">
+    对每个"实际≠预期"的偏差逐条记录。根因分类：①前馈缺失 ②预案缺失 ③执行失误 ④不可抗力 ⑤信息缺失
+  </div>
+  <table class="deviation-table">
+    <thead>
+      <tr>
+        <th class="col-desc">偏差描述</th>
+        <th class="col-impact">影响<br>1-5</th>
+        <th class="col-root">根因分类</th>
+        <th class="col-dim">维度</th>
+        <th class="col-fix">改进措施</th>
+        <th class="col-new">新增检查项？</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-desc"></td><td class="col-impact"></td><td class="col-root"></td><td class="col-dim"></td><td class="col-fix"></td><td class="col-new"></td></tr>
+      <tr><td class="col-desc"></td><td class="col-impact"></td><td class="col-root"></td><td class="col-dim"></td><td class="col-fix"></td><td class="col-new"></td></tr>
+      <tr><td class="col-desc"></td><td class="col-impact"></td><td class="col-root"></td><td class="col-dim"></td><td class="col-fix"></td><td class="col-new"></td></tr>
+      <tr><td class="col-desc"></td><td class="col-impact"></td><td class="col-root"></td><td class="col-dim"></td><td class="col-fix"></td><td class="col-new"></td></tr>
+      <tr><td class="col-desc"></td><td class="col-impact"></td><td class="col-root"></td><td class="col-dim"></td><td class="col-fix"></td><td class="col-new"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 对抗式审查 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(248,113,113,0.15);">⚔</div>
+    对抗式审查 — 本速查表的已知盲区
+  </div>
+  <div class="principles">
+    <div class="principle">
+      <div class="num">盲区 1</div>
+      <div class="title">检查项膨胀</div>
+      <div class="body">越加越多→执行疲劳→走形式。对策：硬上限 80 项，新增必须淘汰旧的。</div>
+    </div>
+    <div class="principle">
+      <div class="num">盲区 2</div>
+      <div class="title">未知未知（Unknown Unknowns）</div>
+      <div class="body">速查表只覆盖"已知未知"。对策：保留 10% 弹性预算 + 指定一人有临场拍板权。</div>
+    </div>
+    <div class="principle">
+      <div class="num">盲区 3</div>
+      <div class="title">耦合不可见</div>
+      <div class="body">跨维度耦合（天气→交通→设备→人员）难在表中体现。对策：增加"耦合预演"——演练"如果 X 失效，Y 和 Z 怎么办"。</div>
+    </div>
+    <div class="principle">
+      <div class="num">盲区 4</div>
+      <div class="title">权重固化</div>
+      <div class="body">权重不应一成不变。对策：每 5 场演出后用实际偏差数据重新校准权重。</div>
+    </div>
+    <div class="principle">
+      <div class="num">盲区 5</div>
+      <div class="title">评分乐观偏差</div>
+      <div class="body">人倾向给"想接的单"打高分。对策：非利益相关方复评；记录预测分 vs 实际分。</div>
+    </div>
+    <div class="principle">
+      <div class="num">盲区 6</div>
+      <div class="title">红线失效</div>
+      <div class="body">红线太多=没红线。对策：红线项不超过 7 个（7±2 法则）。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 上次问题对照 ========== -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(251,146,60,0.15);">📌</div>
+    上次演出问题 → 本次检查对照
+  </div>
+  <table class="checklist">
+    <thead>
+      <tr><th class="col-id" style="width:40px;">#</th><th style="width:35%;">上次问题</th><th style="width:12%;">对应维度</th><th style="width:12%;">对应检查项</th><th>本次已解决？</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-id">1</td><td>未带相机</td><td>D 人员</td><td>D3</td><td><span class="checkbox"></span></td></tr>
+      <tr><td class="col-id">2</td><td>未带水</td><td>D 人员</td><td>D2</td><td><span class="checkbox"></span></td></tr>
+      <tr><td class="col-id">3</td><td>现场部分椅子不合适</td><td>A 场地</td><td>A6</td><td><span class="checkbox"></span></td></tr>
+      <tr><td class="col-id">4</td><td>演出前后搬运费力，影响演出状态</td><td>B 设备 / D 人员</td><td>B5 / D6</td><td><span class="checkbox"></span></td></tr>
+      <tr><td class="col-id">5</td><td>搬运过程中设备安全问题</td><td>B 设备 / C 物流</td><td>B5 / C5</td><td><span class="checkbox"></span></td></tr>
+      <tr><td class="col-id">6</td><td>现场设备损坏在计划外，无 Plan B</td><td>B 设备 / G 预案</td><td>B1 / G1</td><td><span class="checkbox"></span></td></tr>
+      <tr><td class="col-id">7</td><td>未建设乐队账号/二维码</td><td>E 宣传</td><td>E1</td><td><span class="checkbox"></span></td></tr>
+      <tr><td class="col-id">8</td><td>户外场地天气问题需格外注意</td><td>A 场地 / G 预案</td><td>A1 / G2</td><td><span class="checkbox"></span></td></tr>
+      <tr><td class="col-id">9</td><td>停车点和演出点距离未提前确认</td><td>A 场地</td><td>A3</td><td><span class="checkbox"></span></td></tr>
+      <tr><td class="col-id">10</td><td>场地运输车辆未提前报备</td><td>C 物流</td><td>C1</td><td><span class="checkbox"></span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== Footer ========== -->
+<div class="footer">
+  <div class="version">演出风险控制速查表 v1.0</div>
+  <div>基于控制论 · 第一性原理 · AAR 复盘方法论 · 对抗式审查</div>
+  <div style="margin-top:8px;">每次演出后复盘 → 新增检查项 → 版本号 +0.1 → 越用越聪明</div>
+</div>
+
+</div>
+</body>
+</html>
