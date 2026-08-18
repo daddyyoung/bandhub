@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="演出风控与准备速查表">
+<title>演出风控速查</title>
+<style>
+  :root{
+    --bg:#faf9f6; --panel:#ffffff; --line:#e7e3d8;
+    --text:#26241f; --muted:#7a766c;
+    --gold:#b8860b; --gold-soft:#f7efd9;
+    --danger:#b3423a; --danger-soft:#f9e9e7;
+    --ok:#3f7d53; --ok-soft:#e9f4ec;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.7;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px 60px}
+
+  header{padding:44px 0 26px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px}
+  h1{font-size:24px;font-weight:700;letter-spacing:.03em}
+  .sub{color:var(--muted);font-size:13px;margin-top:6px}
+  .reset{
+    border:1px solid var(--line);background:var(--panel);color:var(--muted);
+    font-size:12.5px;padding:7px 14px;border-radius:8px;cursor:pointer;
+  }
+  .reset:hover{border-color:var(--danger);color:var(--danger)}
+
+  .phase{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:16px;overflow:hidden}
+  .ph-head{display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line)}
+  .t-badge{
+    font-size:12px;font-weight:700;color:#fff;background:var(--gold);
+    border-radius:7px;padding:2px 9px;letter-spacing:.03em;white-space:nowrap;
+  }
+  .ph-head .name{font-weight:700;font-size:15.5px;flex:1}
+  .ph-head .prog{font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .ph-head .prog.done{color:var(--ok);font-weight:700}
+  ul.cl{list-style:none;padding:8px 6px}
+  ul.cl li{display:flex;gap:11px;align-items:flex-start;padding:9px 12px;border-radius:9px}
+  ul.cl li:hover{background:#f6f3ec}
+  input[type=checkbox]{
+    width:18px;height:18px;margin-top:4px;accent-color:var(--gold);
+    cursor:pointer;flex-shrink:0;
+  }
+  ul.cl label{cursor:pointer;font-size:14.5px}
+  li.checked label{color:var(--muted);text-decoration:line-through}
+
+  .ref{padding:12px 18px 18px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{background:var(--danger-soft);color:#7c2d27;text-align:left;padding:8px 12px;font-size:12.5px;letter-spacing:.04em}
+  td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+  td.sit{font-weight:600;white-space:nowrap}
+  .tip{color:var(--muted);font-size:12px;margin:10px 2px 0}
+
+  .edit-block{background:var(--panel);border:1px dashed #cfc8b4;border-radius:12px;padding:18px;margin-bottom:16px}
+  .edit-block h3{font-size:14px;color:var(--gold);margin-bottom:10px;letter-spacing:.05em}
+  .edit-block table th{background:var(--gold-soft);color:#6b5410}
+
+  .loop{
+    background:var(--ok-soft);border:1px solid #cfe3d5;border-radius:14px;
+    padding:16px 18px;font-size:13.5px;color:#2c4a37;margin-top:4px;
+  }
+  .loop b{color:var(--ok)}
+  .loop a{color:var(--ok);font-weight:700}
+
+  @media (max-width:560px){
+    header{padding:32px 0 20px}
+    .td-wrap{display:block}
+    td,th{padding:8px 9px;font-size:12.5px}
+    .sit{white-space:normal}
+  }
+  @media print{
+    .reset{display:none}
+    body{background:#fff}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>演出风控速查</h1>
+      <p class="sub">演出全周期：T-7 天 → 演出结束 · 勾选状态自动保存在本机 · <b>每场演出前完整过一遍</b></p>
+    </div>
+    <button class="reset" onclick="resetAll()">重置全部勾选</button>
+  </header>
+
+  <!-- ✏️ 可编辑区开始：清单条目按你们乐队的实际配置增删，改文字即可，样式不用动 -->
+
+  <div class="phase">
+    <div class="ph-head"><span class="t-badge">T-7 天</span><span class="name">确认层 · 锁定一切约定</span><span class="prog" data-prog="p1"></span></div>
+    <ul class="cl" data-phase="p1">
+      <li><input type="checkbox" id="p1-1"><label for="p1-1">曲目单锁定：数量、顺序、总时长估算</label></li>
+      <li><input type="checkbox" id="p1-2"><label for="p1-2">与场地方对接：流程、时长、报酬与结算方式书面确认</label></li>
+      <li><input type="checkbox" id="p1-3"><label for="p1-3">设备清单落实到人：谁带什么，一对一确认</label></li>
+      <li><input type="checkbox" id="p1-4"><label for="p1-4">全员档期二次确认（群里接龙，非口头）</label></li>
+      <li><input type="checkbox" id="p1-5"><label for="p1-5">特殊需求确认：服装、曲目版本、嘉宾环节</label></li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="ph-head"><span class="t-badge">T-1 天</span><span class="name">准备层 · 明天只留执行</span><span class="prog" data-prog="p2"></span></div>
+    <ul class="cl" data-phase="p2">
+      <li><input type="checkbox" id="p2-1"><label for="p2-1">装车清单核对：设备、线材、谱架、备件逐项打勾</label></li>
+      <li><input type="checkbox" id="p2-2"><label for="p2-2">设备检查：琴弦、鼓皮、电池、转接头、延长线</label></li>
+      <li><input type="checkbox" id="p2-3"><label for="p2-3">备份就位：备用弦、备用拾音/麦、谱与歌词纸质版</label></li>
+      <li><input type="checkbox" id="p2-4"><label for="p2-4">通告再发一遍：时间、地点、到场时间，单独@全员</label></li>
+      <li><input type="checkbox" id="p2-5"><label for="p2-5">交通方案：谁开车、设备谁运、集合点</label></li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="ph-head"><span class="t-badge">到场</span><span class="name">布置层 · 先通电源再谈音乐</span><span class="prog" data-prog="p3"></span></div>
+    <ul class="cl" data-phase="p3">
+      <li><input type="checkbox" id="p3-1"><label for="p3-1">电源测试：接口位置、电压、是否接地</label></li>
+      <li><input type="checkbox" id="p3-2"><label for="p3-2">按顺序接线试音：鼓 → 贝斯 → 吉他 → 键盘 → 人声</label></li>
+      <li><input type="checkbox" id="p3-3"><label for="p3-3">线材走位固定（胶带），避开人流动线</label></li>
+      <li><input type="checkbox" id="p3-4"><label for="p3-4">返听逐人确认：每个乐手都听得见自己</label></li>
+      <li><input type="checkbox" id="p3-5"><label for="p3-5">备用线放在触手可及的位置</label></li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="ph-head"><span class="t-badge">演前 30'</span><span class="name">候场层 · 最后一次对齐</span><span class="prog" data-prog="p4"></span></div>
+    <ul class="cl" data-phase="p4">
+      <li><input type="checkbox" id="p4-1"><label for="p4-1">全员到位点名，手机静音</label></li>
+      <li><input type="checkbox" id="p4-2"><label for="p4-2">舞台站位与出场顺序最后确认</label></li>
+      <li><input type="checkbox" id="p4-3"><label for="p4-3">应急信号约定：出错时看谁、怎么示意重来</label></li>
+      <li><input type="checkbox" id="p4-4"><label for="p4-4">饮水、毛巾、备用拨片/鼓棒就位</label></li>
+      <li><input type="checkbox" id="p4-5"><label for="p4-5">第一首歌关键过门默排一遍</label></li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="ph-head"><span class="t-badge" style="background:var(--danger)">演出中</span><span class="name">应对层 · 突发状况速查</span></div>
+    <div class="ref">
+      <table>
+        <tr><th style="width:20%">状况</th><th style="width:40%">第一反应</th><th>备用方案</th></tr>
+        <tr><td class="sit">断弦/设备哑火</td><td>立即切备用琴或备用通道，其他人用律动撑住场面</td><td>主唱口播互动 30–60 秒，覆盖换琴时间</td></tr>
+        <tr><td class="sit">忘词</td><td>哼唱旋律或转观众合唱，绝不中断</td><td>歌词卡贴在监听音箱/谱架</td></tr>
+        <tr><td class="sit">节奏崩了</td><td>全队看向鼓手，回到副歌大拍重新进</td><td>约定救场手势：抬手 = 回主歌</td></tr>
+        <tr><td class="sit">超时</td><td>砍掉最后一首，提前预告结束曲</td><td>曲目单标注「可砍曲目」</td></tr>
+        <tr><td class="sit">观众冷场</td><td>换强律动曲目，主唱下台互动</td><td>常备一首万能气氛曲</td></tr>
+        <tr><td class="sit">成员身体不适</td><td>降调/简化编曲，缩短当首歌曲</td><td>不插电模式或候补人顶场</td></tr>
+      </table>
+      <p class="tip">此表为通用兜底，每场复盘后把本场真实踩坑补进对应行——这张表的价值靠一场场喂出来。</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="ph-head"><span class="t-badge" style="background:var(--ok)">演出后</span><span class="name">收尾层 · 清点与触发复盘</span><span class="prog" data-prog="p5"></span></div>
+    <ul class="cl" data-phase="p5">
+      <li><input type="checkbox" id="p5-1"><label for="p5-1">设备清点：对照装车清单逐项打勾</label></li>
+      <li><input type="checkbox" id="p5-2"><label for="p5-2">线材缠绕归位，借还登记清零</label></li>
+      <li><input type="checkbox" id="p5-3"><label for="p5-3">与场地方结算与致谢，留下下次合作意向</label></li>
+      <li><input type="checkbox" id="p5-4"><label for="p5-4">现场照片/视频汇总给指定负责人</label></li>
+      <li><input type="checkbox" id="p5-5"><label for="p5-5">触发复盘：现场 10 分钟口头快盘 + 48 小时内填表归档</label></li>
+    </ul>
+  </div>
+
+  <div class="edit-block">
+    <h3>✏️ 设备清单（按你们实际配置填写）</h3>
+    <table>
+      <tr><th style="width:22%">类别</th><th style="width:38%">物品</th><th style="width:20%">负责人</th><th>状态</th></tr>
+      <tr><td>音源</td><td>【吉他×2 / 贝斯 / 键盘 / 鼓 …】</td><td>【　】</td><td>【待购/已有】</td></tr>
+      <tr><td>扩声</td><td>【音箱 / 调音台 / 麦克风 / DI 盒】</td><td>【　】</td><td>【　】</td></tr>
+      <tr><td>线材备件</td><td>【导线×4 / 延长线 / 备用弦 / 电池 / 胶带】</td><td>【　】</td><td>【　】</td></tr>
+      <tr><td>文档物料</td><td>【曲单 / 歌词卡 / 装车清单纸质版】</td><td>【　】</td><td>【　】</td></tr>
+    </table>
+  </div>
+
+  <div class="edit-block">
+    <h3>✏️ 紧急联系人</h3>
+    <table>
+      <tr><th style="width:30%">角色</th><th style="width:35%">姓名</th><th>电话</th></tr>
+      <tr><td>场地对接</td><td>【　】</td><td>【　】</td></tr>
+      <tr><td>设备支援</td><td>【　】</td><td>【　】</td></tr>
+      <tr><td>紧急医疗</td><td>【　】</td><td>【120 / 就近医院　】</td></tr>
+    </table>
+  </div>
+  <!-- ✏️ 可编辑区结束 -->
+
+  <div class="loop">
+    <b>回路闭环：</b>本场踩的坑 → 当场记入复盘表 → 48 小时内更新到本页应对表或清单 → 下一场自动免疫。<a href="../review/index.html">去复盘归档 →</a>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var KEY='bandhub_risk_v1';
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  var boxes=document.querySelectorAll('input[type=checkbox]');
+  boxes.forEach(function(b){
+    if(saved[b.id])b.checked=true;
+    b.addEventListener('change',function(){
+      saved[b.id]=b.checked;
+      localStorage.setItem(KEY,JSON.stringify(saved));
+      refresh();
+    });
+  });
+  function refresh(){
+    ['p1','p2','p3','p4','p5'].forEach(function(p){
+      var list=document.querySelector('ul[data-phase='+p+']');
+      var items=list.querySelectorAll('input');
+      var done=0;
+      items.forEach(function(i){if(i.checked)done++; li=i.closest('li'); i.checked?li.classList.add('checked'):li.classList.remove('checked');});
+      var prog=document.querySelector('[data-prog='+p+']');
+      prog.textContent=done+'/'+items.length+(done===items.length?' ✓ 全部就绪':'');
+      prog.className='prog'+(done===items.length?' done':'');
+    });
+  }
+  window.resetAll=function(){
+    if(!confirm('重置全部勾选状态？'))return;
+    saved={};localStorage.setItem(KEY,'{}');
+    boxes.forEach(function(b){b.checked=false});
+    refresh();
+  };
+  refresh();
+})();
+</script>
+</body>
+</html>

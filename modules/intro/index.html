@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="吾也乐队介绍">
+<title>吾也乐队</title>
+<style>
+  :root{
+    --bg:#faf9f6; --panel:#ffffff; --line:#e7e3d8;
+    --text:#26241f; --muted:#7a766c;
+    --gold:#b8860b; --gold-soft:#f7efd9;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.7;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:0 22px}
+
+  header.hero{
+    background:linear-gradient(180deg,#1c1a15,#2b2820);
+    color:#f5f1e6;padding:64px 0 56px;text-align:center;
+  }
+  .hero .kicker{font-size:12px;letter-spacing:.4em;color:#c9a84c;margin-bottom:16px}
+  .hero h1{font-size:34px;letter-spacing:.08em;font-weight:700}
+  .hero .slogan{margin-top:12px;color:#b5b0a2;font-size:15px}
+  .chips{margin-top:22px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .chip{font-size:12px;color:#e8d9a8;border:1px solid rgba(200,168,76,.5);padding:3px 12px;border-radius:20px}
+
+  section{padding:42px 0 8px}
+  h2{font-size:19px;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:18px}
+  h2::before{content:"";width:18px;height:3px;background:var(--gold);border-radius:2px}
+  .lead{color:var(--muted);font-size:15px}
+
+  .members{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+  .m-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 16px}
+  .m-card .name{font-weight:700;font-size:15px}
+  .m-card .role{color:var(--gold);font-size:12.5px;margin:4px 0 8px;letter-spacing:.05em}
+  .m-card .note{color:var(--muted);font-size:12.5px;line-height:1.6}
+
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+  th{background:var(--gold-soft);color:#6b5410;text-align:left;padding:10px 14px;font-size:13px;letter-spacing:.04em}
+  td{padding:10px 14px;border-top:1px solid var(--line);color:#3c3931}
+  tr:last-child td{border-bottom:none}
+
+  .contact{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:56px}
+  .contact .row{display:flex;gap:14px;padding:8px 0;font-size:14.5px;flex-wrap:wrap}
+  .contact .k{color:var(--muted);min-width:74px}
+  .contact .v{font-weight:600}
+
+  footer{border-top:1px solid var(--line);padding:20px 0 44px;color:var(--muted);font-size:12px;text-align:center}
+
+  @media (max-width:560px){
+    .hero h1{font-size:26px}
+    section{padding:34px 0 6px}
+    td,th{padding:9px 10px;font-size:13px}
+  }
+  @media print{
+    header.hero{background:#fff;color:#000;padding:36px 0}
+    .hero .kicker,.chip{color:#6b5410}
+    .hero .slogan{color:#555}
+    .card,.contact,table{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">BAND&nbsp;PROFILE</div>
+  <h1>吾也乐队</h1>
+  <p class="slogan">吾心向野，乐赴山海</p>
+  <div class="chips">
+    <span class="chip">流行</span>
+    <span class="chip">摇滚</span>
+    <span class="chip">民谣改编</span>
+    <span class="chip">商演 / 驻场 / 专场</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>我们是谁</h2>
+    <p class="lead">吾也乐队是一支以流行摇滚为主轴、兼容民谣与 Funk 改编的现场乐队。成员来自厦门，常驻百脑汇及环岛路音乐广场一带，承接商演、品牌活动、专场演出与酒馆驻场。编曲注重器乐层次与现场互动，擅长把经典曲目玩出属于自己的味道。</p>
+  </section>
+
+  <section>
+    <h2>成员</h2>
+    <div class="members">
+      <div class="m-card">
+        <div class="name">陈姝言</div>
+        <div class="role">女声主唱</div>
+        <div class="note">音色清亮，擅长抒情与律动曲风</div>
+      </div>
+      <div class="m-card">
+        <div class="name">青宝</div>
+        <div class="role">男声主唱</div>
+        <div class="note">音域跨度大，摇滚与流行双线</div>
+      </div>
+      <div class="m-card">
+        <div class="name">蔡惠成</div>
+        <div class="role">歌手 / 吉他</div>
+        <div class="note">兼顾人声与吉他，现场调度担当</div>
+      </div>
+      <div class="m-card">
+        <div class="name">张超（超子）</div>
+        <div class="role">吉他 / 和声</div>
+        <div class="note">编曲与和声设计，器乐Solo主力</div>
+      </div>
+      <div class="m-card">
+        <div class="name">游舒米</div>
+        <div class="role">鼓 / 打击</div>
+        <div class="note">节奏稳定，Funk与摇滚节奏型兼备</div>
+      </div>
+      <div class="m-card">
+        <div class="name">梓渊</div>
+        <div class="role">贝斯</div>
+        <div class="note">低音线条扎实，律动与和声衔接</div>
+      </div>
+      <div class="m-card">
+        <div class="name">张铭哲</div>
+        <div class="role">键盘</div>
+        <div class="note">和声色彩与铺底，兼顾Solo与氛围</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>代表曲目</h2>
+    <table>
+      <tr><th style="width:34%">曲目</th><th style="width:26%">原唱</th><th>风格 / 备注</th></tr>
+      <tr><td>夜的第七章</td><td>周杰伦</td><td>暗色流行，戏剧张力强</td></tr>
+      <tr><td>危险派对</td><td>王以太</td><td>律动流行，暖场首选</td></tr>
+      <tr><td>Viva La Vida</td><td>Coldplay</td><td>现场互动型，观众合唱</td></tr>
+      <tr><td>画</td><td>赵雷</td><td>民谣改编，驻场气氛曲</td></tr>
+      <tr><td>王妃</td><td>萧敬腾</td><td>Funk 改编，高能炸场</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>演出经历</h2>
+    <table>
+      <tr><th style="width:20%">时间</th><th style="width:30%">场合</th><th>内容</th></tr>
+      <tr><td>2026-08-15</td><td>环岛路音乐广场</td><td>茅台商演首场，16 首，户外</td></tr>
+      <tr><td>2026-08-16</td><td>甜蜜经济活动</td><td>商演第二场，驻场歌单</td></tr>
+      <tr><td>2026-08-29</td><td>百脑汇</td><td>邓紫棋专场演出，1.5h</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>合作联系</h2>
+    <div class="contact">
+      <div class="row"><span class="k">商务对接</span><span class="v">蔡惠成</span></div>
+      <div class="row"><span class="k">微信</span><span class="v">【请填写微信号】</span></div>
+      <div class="row"><span class="k">电话</span><span class="v">【请填写联系电话】</span></div>
+      <div class="row"><span class="k">可接类型</span><span class="v">商演 / 品牌活动 / 专场 / 酒馆驻场 / 婚礼宴会</span></div>
+    </div>
+  </section>
+
+</div>
+<footer>吾也乐队 · 吾心向野，乐赴山海 · 本页可直接分享给合作方</footer>
+</body>
+</html>
