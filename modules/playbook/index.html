@@ -54,12 +54,24 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
   background:var(--gold-soft);color:#6b5410;border:1px solid var(--gold-soft);
   border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:700;text-decoration:none;
 }
+h2{scroll-margin-top:16px}
+.role-nav{
+  display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px;
+  padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+}
+.role-nav .rn-label{font-size:12.5px;color:var(--muted);align-self:center;font-weight:600}
+.role-nav a{
+  font-size:12.5px;font-weight:700;color:var(--gold);text-decoration:none;
+  background:var(--gold-soft);border-radius:20px;padding:5px 13px;transition:all .15s;
+}
+.role-nav a:hover{background:var(--gold);color:#fff}
 @media (max-width:560px){
   td,th{padding:8px 9px;font-size:12.5px}
   h2{font-size:15.5px}
 }
 @media print{
   body{background:#fff}
+  .role-nav{display:none}
 }
 </style>
 </head>
@@ -69,6 +81,16 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
   <h1>演出实操手册 + 串词模板</h1>
   <p class="sub">每场演出前翻一遍 · 鼓手是时间锚，主唱是情绪锚，乐队跟鼓走 · 弹错不停，副歌有动作，串词说完就进歌</p>
 </header>
+
+<nav class="role-nav">
+  <span class="rn-label">按角色直达：</span>
+  <a href="#role-vocal">主唱</a>
+  <a href="#role-drum">鼓手</a>
+  <a href="#role-player">吉他/键盘/贝斯</a>
+  <a href="#checklist">演出前后清单</a>
+  <a href="#emergency">万一出意外</a>
+  <a href="#scripts">串词模板</a>
+</nav>
 
 <div class="section-tag">PART 1 · 演出实操手册（演出前3天填）</div>
 <h2>三个最重要的规矩（所有人）</h2>
@@ -172,7 +194,7 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 <p><strong>开始3步</strong>：①鼓手心里数4拍（不出声），点一下头或抬鼓棒 ②其他人看到信号再进 ③键盘/吉他先弹前奏的，弹完鼓手还是要点头示意"一起进"</p>
 <p><strong>乱了怎么办</strong>：鼓手重重敲2下军鼓，大家跟鼓走。其他人跟鼓不跟主唱。谁错了都不停。</p>
 <p><strong>结束</strong>：大家一起收，鼓手最后一下重音，同时停。安静1秒，主唱低头1秒→抬头→笑→说话。最后一首结束整队鞠躬。</p>
-<h2>主唱：每首歌做什么（填空）</h2>
+<h2 id="role-vocal">主唱：每首歌做什么（填空）</h2>
 <table>
 <thead>
 <tr>
@@ -200,7 +222,7 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 <p><strong>主唱4件事</strong>：说话太快→每句说完数"1、2"再接｜自说自话→问完等3秒｜站桩→每首副歌走到台边｜紧张→上台前锁1个台下具体的人</p>
 <p><strong>3秒规矩</strong>：超过3秒没对观众有动作（指/笑/看/走）就必须补一个。</p>
 <p><strong>物理接近（比串词重要10倍）</strong>：副歌走到台沿蹲下平视｜小朋友多时蹲下和1个小朋友对视唱一句｜想合唱把话筒伸出去｜solo时退后做"请"手势</p>
-<h2>鼓手：每首歌做什么（填空）</h2>
+<h2 id="role-drum">鼓手：每首歌做什么（填空）</h2>
 <table>
 <thead>
 <tr>
@@ -226,7 +248,7 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 </tbody>
 </table>
 <p><strong>鼓手3个特殊任务</strong>：①每首开头数4拍点头 ②乱了敲2下军鼓拉回 ③快了踩镲轻一点降速、慢了军鼓加重音拉回。不要喊，用鼓说话。</p>
-<h2>吉他/键盘/贝斯：每首歌做什么（填空）</h2>
+<h2 id="role-player">吉他/键盘/贝斯：每首歌做什么（填空）</h2>
 <table>
 <thead>
 <tr>
@@ -255,7 +277,7 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 </tbody>
 </table>
 <p><strong>乐手3个规矩</strong>：①乱了看鼓手不跟主唱 ②solo时往前走两步（主唱会让位） ③弹错了不停继续走</p>
-<h2>演出前后清单</h2>
+<h2 id="checklist">演出前后清单</h2>
 <p><strong>前一天晚上</strong>：
 - 不用节拍器按顺序完整跑1遍（崩了也跑完）
 - 单独练切分同步的歌×3遍
@@ -274,7 +296,7 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 - 提前3分钟主唱找台下1个具体的人</p>
 <p><strong>演出中</strong>：鼓手数4拍点头才进｜副歌主唱有动作｜3秒规矩｜串词≤40秒说完就进｜问完等3秒｜弹错不停｜笑</p>
 <p><strong>演出后</strong>：整队鞠躬｜留1人对接主办方｜当天填复盘系统</p>
-<h2>万一出意外</h2>
+<h2 id="emergency">万一出意外</h2>
 <table>
 <thead>
 <tr>
@@ -323,8 +345,7 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 
 <hr>
 
-<div class="section-tag">PART 2 · 通用串词模板（演出前1天填）</div>
-<markdown.core.Markdown object at 0x7fa81e0570d0>
+<div class="section-tag" id="scripts">PART 2 · 通用串词模板（演出前1天填）</div>
 <blockquote>
 <p>串词不是"报幕"，是"跟观众聊天"。要让观众觉得"台上这个人在跟我说话"，不是在背台词。</p>
 </blockquote>
