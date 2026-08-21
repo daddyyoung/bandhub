@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="theme-color" content="#1a6dff">
+<title>演出速查表 · 团队版</title>
+<style>
+:root {
+  --blue: #1a6dff;
+  --blue-light: #e8f1ff;
+  --green: #16a34a;
+  --green-light: #e8f7ee;
+  --red: #dc2626;
+  --red-light: #fdeaea;
+  --orange: #d97706;
+  --orange-light: #fdf3e3;
+  --ink: #1f2430;
+  --ink-2: #5b6472;
+  --ink-3: #9aa3b0;
+  --line: #e5e9f0;
+  --bg: #f4f6fa;
+  --card: #ffffff;
+  --radius: 14px;
+  --shadow: 0 1px 3px rgba(31,36,48,.06), 0 4px 14px rgba(31,36,48,.05);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { font-size:16px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  padding-bottom: 84px;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 14px; }
+
+/* ===== 顶部 ===== */
+.top {
+  background: linear-gradient(135deg, #1a6dff, #4f7cff);
+  color: #fff;
+  padding: 22px 0 54px;
+  margin-bottom: -38px;
+}
+.top h1 { font-size: 21px; font-weight: 800; letter-spacing:.5px; display:flex; align-items:center; gap:8px; }
+.top .sub { font-size: 12.5px; opacity:.85; margin-top:4px; }
+.top-btns { display:flex; gap:8px; margin-top:12px; }
+.top-btns button {
+  border:none; border-radius:8px; padding:7px 13px; font-size:12.5px;
+  background: rgba(255,255,255,.18); color:#fff; cursor:pointer; font-weight:600;
+}
+.top-btns button:active { transform: scale(.96); }
+
+/* ===== 卡片 ===== */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 16px;
+  margin-bottom: 14px;
+}
+.card-title {
+  font-size: 16px; font-weight: 800; margin-bottom: 4px;
+  display:flex; align-items:center; gap:8px;
+}
+.card-desc { font-size: 12.5px; color: var(--ink-2); margin-bottom: 14px; }
+
+/* 演出信息 */
+.info-grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+.info-grid .full { grid-column: 1 / -1; }
+.info-grid label { font-size:12px; color:var(--ink-2); display:block; margin-bottom:3px; }
+.info-grid input {
+  width:100%; border:1.5px solid var(--line); border-radius:9px;
+  padding:8px 10px; font-size:14px; background:#fbfcfe; color:var(--ink);
+}
+.info-grid input:focus { outline:none; border-color: var(--blue); }
+
+/* ===== 红线区 ===== */
+.redline-box { border: 2px solid var(--red); border-radius: var(--radius); background:#fff; margin-bottom:14px; overflow:hidden; }
+.redline-head {
+  background: var(--red); color:#fff; padding: 10px 16px;
+  font-weight: 800; font-size: 15px; display:flex; align-items:center; gap:8px;
+}
+.redline-head .cnt { margin-left:auto; font-size:13px; font-weight:700; opacity:.95; }
+.redline-box .card-desc { margin: 10px 16px 8px; }
+
+/* ===== 维度 ===== */
+.dim { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 12px; overflow:hidden; }
+.dim-head {
+  display:flex; align-items:center; gap:10px; padding: 15px 16px; cursor:pointer; user-select:none;
+}
+.dim-head:active { background:#fafbfd; }
+.dim-head .dicon {
+  width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-size:17px; flex-shrink:0;
+}
+.dim-head .dname { font-size:15.5px; font-weight:800; }
+.dim-head .dsub { font-size:11.5px; color: var(--ink-3); }
+.dim-head .arrow { margin-left:auto; color: var(--ink-3); font-size:13px; transition: transform .25s; }
+.dim.open .arrow { transform: rotate(90deg); }
+.dim-progress {
+  margin-left:auto; font-size:12px; font-weight:700; color: var(--ink-3);
+  background:#f0f3f8; padding:3px 10px; border-radius: 20px; display:flex; align-items:center; gap:6px;
+}
+.dim.done .dim-progress { background: var(--green-light); color: var(--green); }
+.dim-body { display:none; padding: 2px 12px 12px; border-top:1px dashed var(--line); }
+.dim.open .dim-body { display:block; }
+.dim-tip-row { font-size:12.5px; color:var(--ink-2); padding:10px 6px 4px; }
+
+/* 检查项 */
+.item {
+  display:flex; gap:10px; padding: 11px 8px; border-radius: 10px; cursor:pointer; align-items:flex-start;
+  transition: background .15s;
+}
+.item:active { background:#f4f7fc; }
+.item .cb {
+  width:24px; height:24px; border-radius:7px; border:2px solid #c9d2df; flex-shrink:0; margin-top:1px;
+  position:relative; transition: all .18s; background:#fff;
+}
+.item.checked .cb { background: var(--green); border-color: var(--green); }
+.item.checked .cb::after {
+  content:'✓'; color:#fff; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:15px; font-weight:900;
+}
+.item .itext { flex:1; }
+.item .iname { font-size:14.5px; font-weight:600; }
+.item.checked .iname { color: var(--ink-3); text-decoration: line-through; }
+.item .itip { font-size:12.5px; color: var(--ink-2); margin-top:2px; }
+.item.red-item .cb { border-color: var(--red); }
+.item.red-item .iname::before {
+  content:'★ '; color: var(--red);
+}
+.item .del {
+  border:none; background:none; color:var(--ink-3); font-size:15px; cursor:pointer; padding:2px 4px;
+}
+.add-item {
+  display:block; width:100%; border:1.5px dashed #c9d2df; background:none; border-radius:10px;
+  padding:9px; color:var(--ink-2); font-size:13px; cursor:pointer; margin-top:4px;
+}
+.add-item:active { background:#f4f7fc; }
+
+/* ===== 进度总览条 ===== */
+.overall-bar {
+  position: sticky; top:0; z-index: 40;
+  background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  padding: 9px 14px; margin: 0 -14px 14px;
+  display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--ink-2);
+}
+.overall-bar .track { flex:1; height:8px; background:#e8ecf3; border-radius:99px; overflow:hidden; }
+.overall-bar .fill { height:100%; background: linear-gradient(90deg,#1a6dff,#16a34a); border-radius:99px; transition: width .4s; }
+.overall-bar b { color: var(--ink); }
+
+/* ===== 评分选择题 ===== */
+.q-group { margin-bottom: 6px; }
+.q-title { font-size:14.5px; font-weight:700; margin: 14px 0 8px; display:flex; gap:6px; }
+.q-title .qtag {
+  background: var(--blue-light); color: var(--blue); font-size:11px; font-weight:800;
+  padding:2px 8px; border-radius:6px; flex-shrink:0; margin-top:2px;
+}
+.opts { display:flex; flex-direction:column; gap:7px; }
+.opt {
+  border:1.5px solid var(--line); border-radius:10px; padding:10px 12px; font-size:13.5px;
+  cursor:pointer; display:flex; align-items:center; gap:8px; background:#fff; transition: all .15s;
+}
+.opt .radio { width:18px; height:18px; border-radius:50%; border:2px solid #c9d2df; flex-shrink:0; position:relative; }
+.opt.sel { border-color: var(--blue); background: var(--blue-light); font-weight:600; }
+.opt.sel .radio { border-color: var(--blue); }
+.opt.sel .radio::after {
+  content:''; position:absolute; inset:3px; border-radius:50%; background: var(--blue);
+}
+
+/* ===== 结果卡 ===== */
+.result-card {
+  border-radius: var(--radius); padding: 22px 16px; text-align:center; margin-bottom:14px;
+  border: 2px solid var(--line); background:#fff; box-shadow: var(--shadow);
+}
+.result-card .r-label { font-size:13px; color: var(--ink-2); }
+.result-card .r-score { font-size: 52px; font-weight: 900; line-height:1.15; }
+.result-card .r-verdict { font-size: 18px; font-weight: 800; padding: 6px 18px; border-radius: 99px; display:inline-block; margin-top:6px; }
+.result-card .r-why { font-size: 12.5px; color: var(--ink-2); margin-top:10px; }
+.v-go { background: var(--green-light); color: var(--green); border-color: var(--green); }
+.v-warn { background: var(--orange-light); color: var(--orange); border-color: var(--orange); }
+.v-no { background: var(--red-light); color: var(--red); border-color: var(--red); }
+.s-go { color: var(--green); } .s-warn { color: var(--orange); } .s-no { color: var(--red); }
+
+.dim-bars { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+.dim-bar-row { display:flex; align-items:center; gap:8px; font-size:12.5px; }
+.dim-bar-row .db-name { width: 88px; color: var(--ink-2); flex-shrink:0; }
+.dim-bar-row .db-track { flex:1; height:7px; background:#edf0f5; border-radius:99px; overflow:hidden; }
+.dim-bar-row .db-fill { height:100%; border-radius:99px; background: var(--blue); }
+.dim-bar-row .db-cnt { width:44px; text-align:right; color: var(--ink-3); font-size:11.5px; }
+
+/* ===== 复盘 ===== */
+textarea.qa {
+  width:100%; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px;
+  font-size:13.5px; font-family:inherit; background:#fbfcfe; color:var(--ink); resize:vertical; min-height:64px;
+}
+textarea.qa:focus { outline:none; border-color: var(--blue); }
+.prob-card { border:1.5px solid var(--line); border-radius:12px; padding:13px; margin-bottom:10px; background:#fbfcfe; }
+.prob-row { display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+.prob-row input, .prob-row select {
+  border:1.5px solid var(--line); border-radius:8px; padding:7px 9px; font-size:13px; background:#fff; color:var(--ink); font-family:inherit;
+}
+.prob-row input:focus, .prob-row select:focus { outline:none; border-color: var(--blue); }
+.p-what { flex:1 1 100%; }
+.p-why { flex:1 1 100%; }
+.p-next { flex:1 1 100%; }
+.p-impact { width: 100%; }
+.stars { display:flex; gap:2px; margin-left:6px; }
+.star { font-size:22px; cursor:pointer; color:#d5dbe5; user-select:none; }
+.star.on { color:#f5b301; }
+.add-to-list {
+  border:none; background: var(--blue); color:#fff; border-radius:8px;
+  padding:7px 13px; font-size:12.5px; cursor:pointer; font-weight:700;
+}
+.add-to-list.added { background: var(--green); }
+.hint-added { font-size:12px; color: var(--green); font-weight:600; margin-left:8px; }
+
+/* ===== 按钮 ===== */
+.big-btn {
+  display:block; width:100%; border:none; border-radius:12px; padding:14px;
+  font-size:15px; font-weight:800; cursor:pointer; margin-top:4px;
+}
+.big-btn:active { transform: scale(.985); }
+.btn-blue { background: linear-gradient(135deg,#1a6dff,#4f7cff); color:#fff; }
+.btn-line { background:#fff; color:var(--ink); border:1.5px solid var(--line); margin-top:10px; }
+.btn-red { background:#fff; color:var(--red); border:1.5px solid #f3c1c1; margin-top:10px; font-weight:600; font-size:13px; padding:10px; }
+
+/* ===== 底部导航 ===== */
+.tabbar {
+  position:fixed; bottom:0; left:0; right:0; z-index:50;
+  background:#fff; border-top:1px solid var(--line);
+  display:flex; padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+}
+.tabbar .tab {
+  flex:1; text-align:center; padding:5px 0; cursor:pointer; border-radius:10px; color: var(--ink-3);
+}
+.tab .t-icon { font-size:20px; line-height:1.2; }
+.tab .t-name { font-size:11px; font-weight:700; }
+.tab.on { color: var(--blue); background: var(--blue-light); }
+.tab-page { display:none; }
+.tab-page.on { display:block; }
+
+/* ===== 弹层 & Toast ===== */
+.toast {
+  position:fixed; top:14px; left:50%; transform:translateX(-50%) translateY(-80px);
+  background:#1f2430; color:#fff; padding:9px 18px; border-radius:99px;
+  font-size:13.5px; font-weight:600; z-index:99; transition: transform .3s; box-shadow:0 6px 20px rgba(0,0,0,.25);
+  max-width: 88vw; text-align:center;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+.modal-mask {
+  position:fixed; inset:0; background:rgba(15,18,26,.45); z-index:80; display:none;
+  align-items:center; justify-content:center; padding:20px;
+}
+.modal-mask.show { display:flex; }
+.modal {
+  background:#fff; border-radius:16px; padding:20px; width:100%; max-width:420px;
+}
+.modal h3 { font-size:16px; margin-bottom:8px; }
+.modal p { font-size:13.5px; color:var(--ink-2); margin-bottom:14px; }
+.modal input { width:100%; border:1.5px solid var(--line); border-radius:9px; padding:9px 11px; font-size:14px; }
+.modal .m-btns { display:flex; gap:10px; margin-top:6px; }
+.modal .m-btns button { flex:1; border:none; border-radius:10px; padding:11px; font-size:14px; font-weight:700; cursor:pointer; }
+.m-cancel { background:#f0f3f8; color:var(--ink); }
+.m-ok { background: var(--blue); color:#fff; }
+
+/* 使用说明折叠 */
+.guide summary {
+  cursor:pointer; font-size:13.5px; font-weight:700; color:var(--ink-2);
+  padding:4px 0; list-style:none; display:flex; align-items:center; gap:6px;
+}
+.guide summary::before { content:'💡'; }
+.guide ul { margin:10px 0 4px 18px; }
+.guide li { font-size:12.5px; color:var(--ink-2); margin-bottom:5px; }
+.save-note {
+  font-size:11.5px; color:var(--ink-3); text-align:center; padding:8px 0 4px;
+}
+
+/* ===== 打印 ===== */
+@media print {
+  body { background:#fff; padding-bottom:0; }
+  .top { background:#fff !important; color:#000 !important; padding:0 0 10px; margin-bottom:10px; border-bottom:2px solid #000; }
+  .top h1 { color:#000; } .top .sub { color:#444; }
+  .top-btns, .tabbar, .overall-bar, .toast, .no-print, .add-item, .del, .stars, .add-to-list { display:none !important; }
+  .tab-page { display:block !important; }
+  .dim .dim-body { display:block !important; }
+  .card, .dim, .redline-box, .result-card { box-shadow:none; border:1px solid #bbb; page-break-inside:avoid; }
+  .item .cb { border-color:#666; }
+  textarea.qa, .prob-card { border-color:#999; min-height:54px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 顶部 -->
+<div class="top">
+  <div class="wrap">
+    <h1>🎸 演出速查表</h1>
+    <div class="sub">演出前过一遍 · 少出意外 · 团队版 v1.0</div>
+    <div class="top-btns no-print">
+      <button onclick="copySummary()">📋 复制汇总发群里</button>
+      <button onclick="window.print()">🖨️ 打印</button>
+      <button onclick="resetAll()">🗑️ 新演出</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- 总进度条 -->
+<div class="overall-bar no-print">
+  <b id="ob-count">0/0</b>
+  <div class="track"><div class="fill" id="ob-fill" style="width:0%"></div></div>
+  <span id="ob-score">综合分 --</span>
+</div>
+
+<!-- ============ TAB 1: 检查清单 ============ -->
+<div class="tab-page on" id="page-list">
+
+  <div class="card">
+    <div class="card-title">📝 这场演出的基本信息</div>
+    <div class="card-desc">填一下，复制汇总时会自动带上，方便大家对信息。</div>
+    <div class="info-grid">
+      <div class="full"><label>演出名称</label><input id="f-name" placeholder="比如：XX音乐节暖场"></div>
+      <div><label>日期时间</label><input id="f-date" placeholder="8月30日 19:00"></div>
+      <div><label>室内 / 户外</label><input id="f-indoor" placeholder="户外草坪"></div>
+      <div><label>场地</label><input id="f-venue" placeholder="XX公园 / XXLivehouse"></div>
+      <div><label>对方联系人</label><input id="f-contact" placeholder="姓名+电话"></div>
+      <div><label>谈好的报酬</label><input id="f-pay" placeholder="金额 + 结算方式"></div>
+    </div>
+  </div>
+
+  <!-- 红线 -->
+  <div class="redline-box" id="redline-box">
+    <div class="redline-head">⚠️ 必须搞定的 7 件事<span class="cnt" id="red-cnt">0/7</span></div>
+    <div class="card-desc">这 7 件任何一件没搞定，这场演出就有大风险。宁可推了也别硬上。</div>
+    <div id="red-items" style="padding:0 12px 10px"></div>
+  </div>
+
+  <div class="card no-print" style="padding:13px 16px; display:flex; align-items:center; gap:10px;">
+    <div style="flex:1">
+      <div class="card-title" style="margin:0; font-size:14.5px;">📋 下面是 7 大项检查</div>
+      <div class="card-desc" style="margin:2px 0 0;">点一行就打勾，点标题展开收起</div>
+    </div>
+    <button class="big-btn btn-line" style="width:auto; margin:0; padding:9px 14px; font-size:13px;" onclick="toggleAllDims()">全部展开</button>
+  </div>
+
+  <div id="dims"></div>
+
+  <details class="guide card" style="padding:14px 16px;">
+    <summary>这份表怎么用？（30 秒看完）</summary>
+    <ul>
+      <li><b>演出前</b>：谁负责哪块，就把哪块过一遍打勾。全团至少一起过一次「必须搞定的 7 件事」。</li>
+      <li><b>拿不准接不接</b>：切到「这场接不接」，答几道选择题，自动出建议。</li>
+      <li><b>演完之后</b>：切到「演完总结」，花 10 分钟填一下，好用的经验会沉淀进表里。</li>
+      <li>所有内容<b>自动存在手机里</b>，关掉再打开还在。但换手机、清缓存会没——重要场次记得点「复制汇总」发群里备份。</li>
+      <li>发现表里没有的问题？在对应大项里点「+ 加一条」，自己补。</li>
+    </ul>
+  </details>
+</div>
+
+<!-- ============ TAB 2: 接不接 ============ -->
+<div class="tab-page" id="page-go">
+
+  <div class="card">
+    <div class="card-title">✅ 第一部分：准备得怎么样（自动算）</div>
+    <div class="card-desc">根据「检查清单」的打勾情况自动统计，勾得越多分越高。★ 项没勾完，这块分会大打折扣。</div>
+    <div class="dim-bars" id="dim-bars"></div>
+    <div id="risk-red-warn" style="display:none; margin-top:12px; background:var(--red-light); border:1.5px solid #f3c1c1; border-radius:10px; padding:10px 12px; font-size:13px; color:var(--red); font-weight:600;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💰 第二部分：钱划算吗？</div>
+    <div class="card-desc">凭感觉选就行，不用算账，系统帮你算。</div>
+    <div id="money-qs"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🌟 第三部分：值得吗？</div>
+    <div class="card-desc">就算钱不多，有的演出也值得接——出名、涨粉、认识人、练手都算。</div>
+    <div id="value-qs"></div>
+  </div>
+
+  <div class="result-card" id="result-card">
+    <div class="r-label">综合得分（满分 100）</div>
+    <div class="r-score" id="r-score">--</div>
+    <div style="font-size:12px; color:var(--ink-3); margin-top:-4px;">准备 50% + 钱 30% + 值得 20%</div>
+    <div><span class="r-verdict v-warn" id="r-verdict">先去答题</span></div>
+    <div class="r-why" id="r-why">把上面的选择题答完，这里会自动给出建议。</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📌 怎么看这个分数</div>
+    <table style="width:100%; font-size:13px; border-collapse:collapse;">
+      <tr style="border-bottom:1px solid var(--line);">
+        <td style="padding:8px 4px; font-weight:800; color:var(--green); width:72px;">85 分以上</td>
+        <td style="padding:8px 4px;">✅ 放心接，正常准备就行</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--line);">
+        <td style="padding:8px 4px; font-weight:800; color:var(--orange);">60 ~ 84 分</td>
+        <td style="padding:8px 4px;">⚠️ 可以接，但先把没勾的 ★ 项补上，或者跟对方再谈谈条件</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 4px; font-weight:800; color:var(--red);">60 分以下</td>
+        <td style="padding:8px 4px;">❌ 建议不接，或要求改时间/改场地/加钱后再接</td>
+      </tr>
+    </table>
+    <div style="font-size:12px; color:var(--ink-3); margin-top:10px;">
+      温馨提醒：分数只是帮你想清楚，不是替你做决定。有时候特别想去的一场，分数低点也没关系——但 ★ 项必须搞定，这是底线。
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 3: 演完总结 ============ -->
+<div class="tab-page" id="page-review">
+
+  <div class="card">
+    <div class="card-title">🗣️ 演完 10 分钟散场会</div>
+    <div class="card-desc">演出结束 2 天内，全团花 10 分钟聊聊这 4 个问题，找原因但不怪人——目的是下次更好。</div>
+    <div id="qa-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🐞 问题记录</div>
+    <div class="card-desc">这次出了什么状况？大小都记下来。每条想清楚「下次怎么办」，点「加入清单」它就会出现在检查表里，下次自动提醒你。</div>
+    <div id="prob-list"></div>
+    <button class="big-btn btn-line" onclick="addProblem()">＋ 记一个问题</button>
+  </div>
+
+  <button class="big-btn btn-blue no-print" onclick="copySummary()">📋 复制完整汇总（发微信群存档）</button>
+  <div class="save-note no-print">汇总里包含：演出信息、检查进度、得分建议、散场会和问题记录</div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- 底部导航 -->
+<div class="tabbar no-print">
+  <div class="tab on" data-tab="list" onclick="switchTab('list')">
+    <div class="t-icon">📋</div><div class="t-name">检查清单</div>
+  </div>
+  <div class="tab" data-tab="go" onclick="switchTab('go')">
+    <div class="t-icon">⚖️</div><div class="t-name">这场接不接</div>
+  </div>
+  <div class="tab" data-tab="review" onclick="switchTab('review')">
+    <div class="t-icon">🔄</div><div class="t-name">演完总结</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- 通用输入弹窗 -->
+<div class="modal-mask" id="modal-mask">
+  <div class="modal">
+    <h3 id="modal-title">输入</h3>
+    <p id="modal-desc"></p>
+    <input id="modal-input" placeholder="">
+    <div class="m-btns">
+      <button class="m-cancel" onclick="closeModal()">取消</button>
+      <button class="m-ok" onclick="confirmModal()">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= 数据定义 ================= */
+const DATA = [
+  { key:'A', name:'场地和天气', icon:'📍', color:'#e8f1ff',
+    sub:'场地靠不靠谱，提前问清楚，别到了才发现问题',
+    items:[
+      { id:'A1', red:true, name:'看了天气预报，坏天气有安排',
+        tip:'演出前 3 天开始盯天气预报。户外遇到大风、大雨、雷暴、高温，提前决定改期或转室内，不要赌运气。' },
+      { id:'A2', red:true, name:'户外演出：想好了下雨怎么办',
+        tip:'户外必须提前问好备用室内场地或改期方案。「到时候再说」= 赌博。' },
+      { id:'A3', name:'确认了车停哪、离舞台多远',
+        tip:'提前查或问：车能停到离舞台最近的地方吗？太远就要多派人手、多留时间、借小推车。' },
+      { id:'A4', name:'问清楚了门、通道、电梯',
+        tip:'门多宽？有台阶吗？有货梯吗？大音箱、大件能不能推进去？让场地发照片最稳。' },
+      { id:'A5', name:'拿到了舞台和电源的信息',
+        tip:'舞台多大、台上几个插座、电从哪接。拍张现场照片或要个尺寸图，设备怎么摆提前画个草图。' },
+      { id:'A6', name:'观众的座位/站位合适吗',
+        tip:'观众坐哪、站哪，和我们演的形式搭不搭。（上次吃过亏：椅子不合适）' },
+      { id:'A7', name:'说好了万一取消，钱怎么算',
+        tip:'因为天气等原因取消或改期，报酬怎么结算？写进合同，或至少在聊天记录里说清楚。' },
+    ]},
+  { key:'B', name:'设备和器材', icon:'🔌', color:'#f0eaff',
+    sub:'设备是演出的命根子，坏一样都麻烦',
+    items:[
+      { id:'B1', red:true, name:'关键设备都有备用的',
+        tip:'麦克风、主要的线、电源——每样至少有一个替补。最怕「就带了一个，还坏了」。' },
+      { id:'B2', name:'设备清单核对了两遍',
+        tip:'出发前对一遍清单，装车后再数一遍。建议在手机备忘录存一份固定清单，每次照着收。' },
+      { id:'B3', name:'电的问题有保障',
+        tip:'多带几个长插线板；问清现场电从哪来；手机、平板等提前充满电。' },
+      { id:'B4', name:'所有的线和接头都试过',
+        tip:'出发前把每根线、每个接头插上测一遍。到现场才发现是坏的，就来不及了。' },
+      { id:'B5', name:'备好了搬东西的工具',
+        tip:'小推车、推箱、缓冲垫。买一个或租一个都行，一次投入，以后每场都省力。（上次：搬设备累到影响演出状态）' },
+      { id:'B6', name:'心里有数：带的设备一共值多少钱',
+        tip:'算一下总价值。太贵的话考虑买设备保险，或者运输时格外小心、专人看管。' },
+    ]},
+  { key:'C', name:'交通和搬运', icon:'🚚', color:'#e8f7ee',
+    sub:'怎么去、怎么拉设备、怎么撤，提前排好',
+    items:[
+      { id:'C1', red:true, name:'要开进场的车，提前报备了',
+        tip:'车牌号、几点到，提前告诉场地。（上次：车没报备，进不去，白耽误时间）' },
+      { id:'C2', name:'路线查好了，堵车也有备选',
+        tip:'主路线+备用路线都看一眼，演出时段哪里容易堵心里有数。' },
+      { id:'C3', name:'定了最晚到场时间：演出前 3 小时',
+        tip:'装台、试音、每个人缓一缓都要时间。3 小时是底线，能更早更好。' },
+      { id:'C4', name:'谁搬哪件，提前分好工',
+        tip:'谁搬音箱、谁拿线材、谁负责乐器，写清楚。演员尽量不搬重物，省力气用来演出。' },
+      { id:'C5', name:'设备在车上固定好了',
+        tip:'装车后固定住，怕震的垫好、隔开。别让设备在车里滑来滑去撞坏。' },
+      { id:'C6', name:'问清楚了几点必须撤完',
+        tip:'散场后多久必须清空场地？超时要不要加钱？提前问，别被催着乱塞车。' },
+    ]},
+  { key:'D', name:'人和状态', icon:'👥', color:'#fdf3e3',
+    sub:'人是最重要的，状态好比什么都强',
+    items:[
+      { id:'D1', name:'每个人的状态都确认过',
+        tip:'演出前一两天在群里问一圈：嗓子、体力、情绪都 OK 吗？有人不舒服提前安排。' },
+      { id:'D2', name:'水和吃的都备了',
+        tip:'水、食物、能量棒。演出很耗体力，别饿着上台。（上次：没带水）' },
+      { id:'D3', name:'每人核对了个人物品',
+        tip:'相机、手机、充电宝、乐谱、歌词、支架、演出服……每人按自己的清单过一遍。（上次：没带相机）' },
+      { id:'D4', name:'紧急联系方式大家互相知道',
+        tip:'每个人的紧急联系人（家人）电话，团里至少两个人有备份。' },
+      { id:'D5', name:'提醒了大家演出前休息好',
+        tip:'前一天别熬夜、别喝酒，当天别吃太撑。群里提醒一遍。' },
+      { id:'D6', name:'重活有人干，演员省着力气',
+        tip:'搬运、跑腿交给工具和专人。演员最大的任务是演好，别把力气耗在搬箱子上。' },
+    ]},
+  { key:'E', name:'宣传和钱', icon:'📣', color:'#ffeef0',
+    sub:'既要把演出办好，也要让演出「留下点什么」',
+    items:[
+      { id:'E1', name:'乐队账号/二维码准备好了',
+        tip:'每次演出都该有人扫码关注我们。账号还没建的话，尽快建（公众号/视频号都行），二维码打印出来带去现场。（上次：还没建账号）' },
+      { id:'E2', red:true, name:'合同签了、定金到了，才出发',
+        tip:'口头承诺不算数。白纸黑字签好，定金到账，再去。' },
+      { id:'E3', name:'票和入场弄清楚了',
+        tip:'要不要售票/检票？谁负责？怎么验？跟主办方对好。' },
+      { id:'E4', name:'要卖周边的话，准备好了',
+        tip:'T恤、专辑、贴纸……带上收款码和零钱，安排专人守摊。' },
+      { id:'E5', name:'安排了专人拍照录像',
+        tip:'明确谁负责拍、拍什么、设备谁带。没安排就没人拍，好演出白演了。' },
+    ]},
+  { key:'F', name:'手续和责任', icon:'📄', color:'#eef2f6',
+    sub:'丑话说在前面，出了事才不扯皮',
+    items:[
+      { id:'F1', red:true, name:'演出手续/报批确认了',
+        tip:'商业演出可能需要报批或许可。跟主办方白纸黑字确认：手续谁办、办了没有。' },
+      { id:'F2', name:'唱别人的歌，版权没问题',
+        tip:'商演涉及曲目版权，确认主办方或场地已处理，责任不落在我们头上。' },
+      { id:'F3', name:'想过「观众受伤了算谁的」',
+        tip:'观众摔了、被设备砸了谁负责？人多、场面大的活动考虑买公众责任险。' },
+      { id:'F4', name:'设备保险考虑过了',
+        tip:'带的设备贵，可以买一份覆盖运输和演出的财产险，一年也就几十到几百块。' },
+      { id:'F5', name:'合同里写清楚了坏了谁赔',
+        tip:'我们的设备在现场坏了、丢了，谁赔？对方提供的设备坏了，算谁的？合同里写明白。' },
+    ]},
+  { key:'G', name:'万一的准备', icon:'🛟', color:'#f0eaff',
+    sub:'每个关键环节都问一句：它坏了怎么办？',
+    items:[
+      { id:'G1', red:true, name:'关键环节都想好了备用方案',
+        tip:'音响坏了→能不能不插电清唱？主唱嗓子哑了→谁能顶？断电了→等还是退？每个答案提前想好，写下来。（上次：设备坏了完全没预案）' },
+      { id:'G2', name:'什么情况直接取消，全团统一了',
+        tip:'提前定好标准（比如暴雨、大风就取消），大家提前达成一致，别到现场再吵。' },
+      { id:'G3', name:'准备了一版「最低配置」演出',
+        tip:'所有设备全挂时，还能不能演？准备一版清唱+简单伴奏的方案，保底不冷场。' },
+      { id:'G4', name:'有人临时来不了，怎么办想过了',
+        tip:'核心成员缺席哪些歌能唱、哪些砍掉、谁补位，提前心里有数。' },
+      { id:'G5', name:'应急箱备好了',
+        tip:'急救包、工具（螺丝刀、胶带、扎带）、备用电池——固定放一个箱子，每次都带。' },
+      { id:'G6', name:'定了这场的「现场总指挥」',
+        tip:'每场指定一个人，出了事大家听他的，别七嘴八舌。建一个本场专用微信群。' },
+    ]},
+];
+
+const RED_IDS = ['A1','A2','B1','C1','E2','F1','G1'];
+
+const MONEY_QS = [
+  { id:'m1', q:'这场演出给我们的钱，怎么样？', opts:[
+    {t:'没钱，或还要倒贴', s:5},
+    {t:'明显低于平时', s:35},
+    {t:'和平时差不多', s:70},
+    {t:'比平时高', s:100},
+  ]},
+  { id:'m2', q:'我们自己的花费（交通、搬运、吃饭、耗材）大概多少？', opts:[
+    {t:'要垫不少钱', s:10},
+    {t:'有一些花销，能接受', s:55},
+    {t:'基本没有，对方全包', s:100},
+  ]},
+  { id:'m3', q:'钱怎么结？', opts:[
+    {t:'口头说说，没签任何东西', s:0},
+    {t:'演出结束后结', s:45},
+    {t:'先付一部分定金', s:75},
+    {t:'出发前全款到账', s:100},
+  ]},
+];
+
+const VALUE_QS = [
+  { id:'v1', q:'预计观众多吗？', opts:[
+    {t:'没什么人看', s:10},
+    {t:'正常水平', s:60},
+    {t:'人多，或者有重要的观众（媒体/合作方）', s:100},
+  ]},
+  { id:'v2', q:'对乐队出名、涨粉有帮助吗？', opts:[
+    {t:'没什么帮助', s:10},
+    {t:'一般，就是正常演一场', s:50},
+    {t:'有帮助——主办方会大力宣传，或有账号转发', s:100},
+  ]},
+  { id:'v3', q:'能认识到对我们有用的人吗？', opts:[
+    {t:'不能', s:10},
+    {t:'说不好', s:45},
+    {t:'能，已确认谁会来（写清楚是谁）', s:100},
+  ]},
+  { id:'v4', q:'团队整体能力能提升吗？', opts:[
+    {t:'就是个普通活儿', s:20},
+    {t:'有些新挑战', s:60},
+    {t:'很难得的机会（新场地/新形式/新作品）', s:100},
+  ]},
+];
+
+const QA_LIST = [
+  { id:'q1', q:'1️⃣ 本来计划是怎么搞的？', ph:'简单写：我们原本的安排（时间、人员、流程）' },
+  { id:'q2', q:'2️⃣ 实际上发生了什么？和想的哪里不一样？', ph:'大小事都算：迟到了？设备出问题？天气变了？观众反应？' },
+  { id:'q3', q:'3️⃣ 为什么会这样？', ph:'老实找原因，对事不对人。多问几个「为什么」找到根上。' },
+  { id:'q4', q:'4️⃣ 下次怎么改？', ph:'具体到：谁、什么时候、做什么。改法写不清 = 下次还会犯。' },
+];
+
+const DIM_NAMES = {}; DATA.forEach(d => DIM_NAMES[d.key] = d.name);
+
+/* ================= 状态 ================= */
+const STORE_KEY = 'showCheck_v2_team';
+let S = loadState();
+
+function defaultState() {
+  return {
+    info: { name:'', date:'', indoor:'', venue:'', contact:'', pay:'' },
+    checks: {},                       // id -> true
+    custom: [],                       // {id, dim, name, tip, from}
+    money: {}, value: {},             // 题目选择
+    qa: {},                           // q1-q4 文本
+    problems: [],                     // {what, impact, why, next, added, dim}
+  };
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return Object.assign(defaultState(), JSON.parse(raw));
+  } catch(e) {}
+  return defaultState();
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch(e) {}
+}
+
+/* ================= 工具 ================= */
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+let toastTimer = null;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2000);
+}
+function allItems() {
+  const arr = [];
+  DATA.forEach(d => {
+    d.items.forEach(it => arr.push({ dim:d.key, ...it }));
+  });
+  S.custom.forEach(it => arr.push({ dim:it.dim, id:it.id, name:it.name, tip:it.tip||'', custom:true, from:it.from }));
+  return arr;
+}
+
+/* ================= Tab 切换 ================= */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tabbar .tab').forEach(t => t.classList.toggle('on', t.dataset.tab === tab));
+  $('page-' + tab).classList.add('on');
+  window.scrollTo({ top: 0 });
+}
+
+/* ================= 渲染：清单 ================= */
+function renderList() {
+  // 红线区
+  const redBox = $('red-items');
+  redBox.innerHTML = DATA.flatMap(d => d.items).filter(it => it.red).map(it => itemHTML(it)).join('');
+  // 维度
+  const dimsEl = $('dims');
+  dimsEl.innerHTML = DATA.map((d, di) => {
+    const dimItems = [
+      ...d.items.map(it => itemHTML(it)),
+      ...S.custom.filter(c => c.dim === d.key).map(c => itemHTML({ id:c.id, name:c.name, tip:c.tip + (c.from==='review' ? '（来自上次复盘）' : ''), custom:true }, true))
+    ].join('');
+    return `<div class="dim ${di===0?'open':''}" id="dim-${d.key}">
+      <div class="dim-head" onclick="this.parentNode.classList.toggle('open')">
+        <div class="dicon" style="background:${d.color}">${d.icon}</div>
+        <div>
+          <div class="dname">${d.key} · ${d.name}</div>
+          <div class="dsub">${d.sub}</div>
+        </div>
+        <div class="dim-progress" id="dp-${d.key}"></div>
+        <div class="arrow">▶</div>
+      </div>
+      <div class="dim-body">
+        ${dimItems}
+        <button class="add-item" onclick="askAddCustom('${d.key}')">＋ 加一条（自己补充的检查项）</button>
+      </div>
+    </div>`;
+  }).join('');
+  bindChecks();
+  updateProgress();
+}
+
+function itemHTML(it, withDel) {
+  const checked = S.checks[it.id] ? ' checked' : '';
+  const redCls = it.red ? ' red-item' : '';
+  const del = (withDel && it.custom) ? `<button class="del" onclick="event.stopPropagation(); delCustom('${it.id}')">✕</button>` : '';
+  return `<div class="item${checked}${redCls}" data-id="${it.id}">
+    <div class="cb"></div>
+    <div class="itext">
+      <div class="iname">${esc(it.name)}${it.red ? '' : ''}</div>
+      ${it.tip ? `<div class="itip">${esc(it.tip)}</div>` : ''}
+    </div>
+    ${del}
+  </div>`;
+}
+
+function bindChecks() {
+  document.querySelectorAll('.item').forEach(el => {
+    el.onclick = (e) => {
+      if (e.target.closest('.del')) return;
+      toggleCheck(el.dataset.id);
+    };
+  });
+}
+
+function toggleCheck(id) {
+  S.checks[id] = !S.checks[id];
+  if (!S.checks[id]) delete S.checks[id];
+  save();
+  // 同步所有同 id 的行（红线区 + 维度区）
+  document.querySelectorAll(`.item[data-id="${id}"]`).forEach(el => el.classList.toggle('checked', !!S.checks[id]));
+  updateProgress();
+  renderGo();
+  // 维度刚完成时提示
+  if (S.checks[id]) {
+    const it = allItems().find(x => x.id === id);
+    if (it) {
+      const d = DATA.find(dd => dd.key === it.dim);
+      const list = [...d.items, ...S.custom.filter(c => c.dim === d.key)];
+      if (list.every(x => S.checks[x.id])) toast(`${d.icon} ${d.name} 全部搞定 ✅`);
+    }
+  }
+}
+
+function updateProgress() {
+  const items = allItems();
+  const done = items.filter(it => S.checks[it.id]).length;
+  $('ob-count').textContent = done + '/' + items.length;
+  $('ob-fill').style.width = Math.round(done / items.length * 100) + '%';
+  const redDone = RED_IDS.filter(id => S.checks[id]).length;
+  $('red-cnt').textContent = redDone + '/7';
+  DATA.forEach(d => {
+    const list = [...d.items, ...S.custom.filter(c => c.dim === d.key)];
+    const dn = list.filter(x => S.checks[x.id]).length;
+    const el = $('dp-' + d.key);
+    if (el) {
+      el.textContent = dn + '/' + list.length;
+      const dimEl = $('dim-' + d.key);
+      if (dimEl) dimEl.classList.toggle('done', dn === list.length && list.length > 0);
+    }
+  });
+}
+
+/* ================= 自定义项 ================= */
+let modalCtx = null;
+function askAddCustom(dim) {
+  modalCtx = { type:'custom', dim };
+  $('modal-title').textContent = '加一条检查项';
+  $('modal-desc').textContent = '写到「' + DIM_NAMES[dim] + '」里。写具体一点，比如：确认场地有储物间可寄存箱子。';
+  $('modal-input').value = '';
+  $('modal-input').placeholder = '要检查什么？';
+  $('modal-input').style.display = 'block';
+  $('modal-mask').classList.add('show');
+  setTimeout(()=>$('modal-input').focus(), 50);
+}
+function delCustom(id) {
+  S.custom = S.custom.filter(c => c.id !== id);
+  if (S.checks[id]) delete S.checks[id];
+  save(); renderList();
+}
+function confirmModal() {
+  if (modalCtx && modalCtx.type === 'reset') {
+    S = defaultState(); save();
+    $('money-qs').dataset.rendered = ''; // 让选择题重新渲染，清掉旧高亮
+    document.querySelectorAll('textarea.qa').forEach(t => t.value = '');
+    initAll();
+    toast('已重置，开始新的演出 🎬');
+    closeModal();
+    return;
+  }
+  const v = $('modal-input').value.trim();
+  if (!v) { closeModal(); return; }
+  if (modalCtx && modalCtx.type === 'custom') {
+    const nid = modalCtx.dim + '_c' + Date.now();
+    S.custom.push({ id: nid, dim: modalCtx.dim, name: v, tip: '（自己补充的检查项）', from: 'manual' });
+    save();
+    const dimEl = $('dim-' + modalCtx.dim);
+    if (dimEl) dimEl.classList.add('open');
+    renderList();
+    toast('已加入清单 ✅');
+  }
+  closeModal();
+}
+function closeModal(){
+  $('modal-mask').classList.remove('show');
+  $('modal-input').style.display = 'block';
+}
+
+/* ================= 评分渲染 ================= */
+function renderGo() {
+  // 维度条
+  const bars = $('dim-bars');
+  if (bars) bars.innerHTML = DATA.map(d => {
+    const list = [...d.items, ...S.custom.filter(c => c.dim === d.key)];
+    const dn = list.filter(x => S.checks[x.id]).length;
+    const pct = list.length ? Math.round(dn/list.length*100) : 0;
+    return `<div class="dim-bar-row">
+      <span class="db-name">${d.icon} ${d.name}</span>
+      <div class="db-track"><div class="db-fill" style="width:${pct}%"></div></div>
+      <span class="db-cnt">${dn}/${list.length}</span>
+    </div>`;
+  }).join('');
+
+  // 选择题（只渲染一次）
+  if (!$('money-qs').dataset.rendered) {
+    $('money-qs').innerHTML = MONEY_QS.map(q => qHTML(q)).join('');
+    $('value-qs').innerHTML = VALUE_QS.map(q => qHTML(q)).join('');
+    $('money-qs').dataset.rendered = '1';
+    bindOpts();
+    // 回显已选
+    MONEY_QS.concat(VALUE_QS).forEach(q => {
+      if (S.money[q.id] != null) markOpt(q.id, S.money[q.id]);
+      if (S.value[q.id] != null) markOpt(q.id, S.value[q.id]);
+    });
+  }
+  updateScore();
+}
+
+function qHTML(q) {
+  return `<div class="q-group" data-q="${q.id}">
+    <div class="q-title"><span class="qtag">${q.id[0]==='m'?'钱':'值'}</span>${q.q}</div>
+    <div class="opts">${q.opts.map((o,i)=>`<div class="opt" data-q="${q.id}" data-i="${i}">
+      <div class="radio"></div><div>${esc(o.t)}</div>
+    </div>`).join('')}</div>
+  </div>`;
+}
+function bindOpts() {
+  document.querySelectorAll('.opt').forEach(el => {
+    el.onclick = () => {
+      const qid = el.dataset.q, i = +el.dataset.i;
+      if (qid[0] === 'm') S.money[qid] = i; else S.value[qid] = i;
+      save();
+      markOpt(qid, i);
+      updateScore();
+    };
+  });
+}
+function markOpt(qid, i) {
+  document.querySelectorAll(`.opt[data-q="${qid}"]`).forEach(el => el.classList.toggle('sel', +el.dataset.i === i));
+}
+
+function avgScore(sel, qs) {
+  const picked = qs.filter(q => sel[q.id] != null);
+  if (!picked.length) return null;
+  return Math.round(picked.reduce((sum, q) => sum + q.opts[sel[q.id]].s, 0) / picked.length);
+}
+
+function updateScore() {
+  const items = allItems();
+  const riskRaw = items.length ? items.filter(it => S.checks[it.id]).length / items.length : 0;
+  const redDone = RED_IDS.filter(id => S.checks[id]).length;
+  let risk = Math.round(riskRaw * 100);
+  if (redDone < 7) {
+    risk = Math.min(risk, 40); // 红线没齐，风险分封顶 40
+  }
+  const money = avgScore(S.money, MONEY_QS);
+  const value = avgScore(S.value, VALUE_QS);
+
+  const warn = $('risk-red-warn');
+  const missingRed = RED_IDS.filter(id => !S.checks[id]).length;
+  if (missingRed > 0) {
+    warn.style.display = 'block';
+    warn.textContent = `⚠️ 还有 ${missingRed} 件「必须搞定」的事没勾。没搞定之前，不管多少钱都不建议接。`;
+  } else {
+    warn.style.display = 'none';
+  }
+
+  let total = null;
+  if (money != null && value != null) {
+    total = Math.round(risk * 0.5 + money * 0.3 + value * 0.2);
+  }
+
+  // 顶部小分
+  $('ob-score').textContent = '综合分 ' + (total == null ? '--' : total);
+
+  const scoreEl = $('r-score'), vEl = $('r-verdict'), whyEl = $('r-why');
+  if (money == null || value == null) {
+    scoreEl.textContent = risk + '?';
+    scoreEl.className = 'r-score';
+    vEl.textContent = '还有题没答完';
+    vEl.className = 'r-verdict v-warn';
+    const unanswered = (money == null ? '「钱划算吗」' : '') + (money == null && value == null ? '和' : '') + (value == null ? '「值得吗」' : '');
+    whyEl.textContent = '把' + unanswered + '的选择题答完，自动出建议。当前仅凭准备度估算。';
+    return;
+  }
+  scoreEl.textContent = total;
+  scoreEl.className = 'r-score ' + (total >= 85 ? 's-go' : total >= 60 ? 's-warn' : 's-no');
+  let verdict, cls, why;
+  if (redDone < 7) {
+    verdict = '❌ 先别接'; cls = 'v-no';
+    why = `主要问题不是分数，是「必须搞定的 7 件事」还有 ${missingRed} 件没落实。先去清单页补上 ★ 项，再回来看。`;
+  } else if (total >= 85) {
+    verdict = '✅ 放心接'; cls = 'v-go';
+    why = '准备充分、钱和价值都说得过去。按清单执行就好。';
+  } else if (total >= 60) {
+    verdict = '⚠️ 可以接，但要补课'; cls = 'v-warn';
+    const gaps = [];
+    if (risk < 80) gaps.push('准备还没做全（清单里有没勾的）');
+    if (money < 60) gaps.push('钱这块不太划算');
+    if (value < 60) gaps.push('价值一般');
+    why = '问题在：' + gaps.join('；') + '。要么补上，要么拿这些理由跟对方谈条件。';
+  } else {
+    verdict = '❌ 建议不接'; cls = 'v-no';
+    why = '算下来不太值。除非特别想去，否则建议推掉，或要求改期、改场地、加价后再考虑。';
+  }
+  vEl.textContent = verdict; vEl.className = 'r-verdict ' + cls;
+  whyEl.textContent = why;
+}
+
+/* ================= 复盘 ================= */
+function renderReview() {
+  $('qa-list').innerHTML = QA_LIST.map(q => `
+    <div style="margin-bottom:12px;">
+      <div style="font-size:13.5px; font-weight:700; margin-bottom:6px;">${q.q}</div>
+      <textarea class="qa" data-qa="${q.id}" placeholder="${esc(q.ph)}">${esc(S.qa[q.id] || '')}</textarea>
+    </div>`).join('');
+  document.querySelectorAll('textarea.qa').forEach(t => {
+    t.oninput = () => { S.qa[t.dataset.qa] = t.value; save(); };
+  });
+  renderProblems();
+}
+
+function renderProblems() {
+  const el = $('prob-list');
+  if (!S.problems.length) {
+    el.innerHTML = '<div style="font-size:12.5px; color:var(--ink-3); padding:4px 2px 8px;">还没有记录。演出后回来填，或现在先把上次的问题记上试试。</div>';
+    return;
+  }
+  el.innerHTML = S.problems.map((p, i) => `
+    <div class="prob-card">
+      <div class="prob-row">
+        <input class="p-what" placeholder="出了什么事？" value="${esc(p.what)}" oninput="updProb(${i},'what',this.value)">
+      </div>
+      <div class="prob-row p-impact">
+        <span style="font-size:12.5px; color:var(--ink-2);">影响多大：</span>
+        <span class="stars">${[1,2,3,4,5].map(n=>`<span class="star ${p.impact>=n?'on':''}" onclick="setImpact(${i},${n})">★</span>`).join('')}</span>
+      </div>
+      <div class="prob-row">
+        <input class="p-why" placeholder="为什么会这样？（找原因，不怪人）" value="${esc(p.why)}" oninput="updProb(${i},'why',this.value)">
+      </div>
+      <div class="prob-row">
+        <input class="p-next" placeholder="下次怎么办？（谁、什么时候、做什么）" value="${esc(p.next)}" oninput="updProb(${i},'next',this.value)">
+      </div>
+      <div class="prob-row" style="align-items:center;">
+        <select onchange="updProb(${i},'dim',this.value)" style="flex:1;">
+          <option value="">加入哪个检查大项？</option>
+          ${DATA.map(d=>`<option value="${d.key}" ${p.dim===d.key?'selected':''}>${d.icon} ${d.name}</option>`).join('')}
+        </select>
+        ${p.added
+          ? `<span class="hint-added">✓ 已加入清单</span>`
+          : `<button class="add-to-list" onclick="probToList(${i})">加入清单</button>`}
+        <button class="del" onclick="delProb(${i})" title="删除">✕</button>
+      </div>
+    </div>`).join('');
+}
+function addProblem() {
+  S.problems.push({ what:'', impact:3, why:'', next:'', added:false, dim:'' });
+  save(); renderProblems();
+  const cards = document.querySelectorAll('.prob-card');
+  const last = cards[cards.length-1];
+  if (last) { last.scrollIntoView({behavior:'smooth', block:'center'}); last.querySelector('input').focus(); }
+}
+function updProb(i, k, v) { S.problems[i][k] = v; save(); }
+function setImpact(i, n) { S.problems[i].impact = n; save(); renderProblems(); }
+function delProb(i) { S.problems.splice(i,1); save(); renderProblems(); }
+function probToList(i) {
+  const p = S.problems[i];
+  if (!p.next.trim()) { toast('先填「下次怎么办」再加入'); return; }
+  if (!p.dim) { toast('先选加入哪个大项'); return; }
+  const nid = p.dim + '_r' + Date.now();
+  S.custom.push({ id: nid, dim: p.dim, name: p.next.trim(), tip: '来自复盘：' + (p.what || '上次问题'), from: 'review' });
+  p.added = true;
+  save(); renderProblems(); renderList();
+  toast('✅ 已加入「' + DIM_NAMES[p.dim] + '」，下次自动提醒');
+}
+
+/* ================= 信息表单 ================= */
+function bindInfo() {
+  const map = { 'f-name':'name','f-date':'date','f-indoor':'indoor','f-venue':'venue','f-contact':'contact','f-pay':'pay' };
+  Object.entries(map).forEach(([elId, k]) => {
+    const el = $(elId);
+    el.value = S.info[k] || '';
+    el.oninput = () => { S.info[k] = el.value; save(); };
+  });
+}
+
+/* ================= 汇总导出 ================= */
+function copySummary() {
+  const items = allItems();
+  const done = items.filter(it => S.checks[it.id]);
+  const undone = items.filter(it => !S.checks[it.id]);
+  const redDone = RED_IDS.filter(id => S.checks[id]).length;
+  const money = avgScore(S.money, MONEY_QS);
+  const value = avgScore(S.value, VALUE_QS);
+  const riskRaw = items.length ? Math.round(done.length/items.length*100) : 0;
+  const risk = redDone < 7 ? Math.min(riskRaw, 40) : riskRaw;
+  const total = (money != null && value != null) ? Math.round(risk*0.5 + money*0.3 + value*0.2) : null;
+
+  let txt = '';
+  txt += `【演出速查表 · ${S.info.name || '未命名演出'}】\n`;
+  txt += `时间：${S.info.date || '-'}｜场地：${S.info.venue || '-'}（${S.info.indoor || '?'}）\n`;
+  txt += `对方联系人：${S.info.contact || '-'}｜报酬：${S.info.pay || '-'}\n`;
+  txt += `\n—— 检查进度 ——\n完成 ${done.length}/${items.length}，★必办 ${redDone}/7\n`;
+  if (undone.length && undone.length <= 12) {
+    txt += `未完成：\n` + undone.map(it => `  □ ${it.name}${it.red?'（★）':''}`).join('\n') + '\n';
+  }
+  txt += `\n—— 评估 ——\n`;
+  txt += `准备度 ${risk}｜钱 ${money==null?'未评':money}｜价值 ${value==null?'未评':value}\n`;
+  txt += `综合分：${total==null?'未评':total}${total!=null ? (redDone<7 ? '（★项未齐，暂不建议接）' : total>=85 ? ' → 放心接' : total>=60 ? ' → 可接但先补课' : ' → 建议不接') : ''}\n`;
+  if (S.qa.q1 || S.qa.q2 || S.qa.q3 || S.qa.q4) {
+    txt += `\n—— 演后总结 ——\n`;
+    QA_LIST.forEach(q => { if (S.qa[q.id] && S.qa[q.id].trim()) txt += `${q.q}\n${S.qa[q.id].trim()}\n`; });
+  }
+  if (S.problems.length) {
+    const valid = S.problems.filter(p => p.what.trim());
+    if (valid.length) {
+      txt += `\n—— 问题记录 ——\n`;
+      valid.forEach((p, i) => {
+        txt += `${i+1}. ${p.what}（影响 ${p.impact}/5）\n`;
+        if (p.why) txt += `   原因：${p.why}\n`;
+        if (p.next) txt += `   下次：${p.next}${p.added ? '（已加入清单✓）' : ''}\n`;
+      });
+    }
+  }
+  txt += `\n（由演出速查表·团队版生成，数据只存在本机，此消息即备份）`;
+
+  const copy = (t) => {
+    const ta = document.createElement('textarea');
+    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('已复制 ✅ 去微信粘贴发群里吧'); }
+    catch(e) { toast('复制失败，长按下方内容手动复制'); }
+    document.body.removeChild(ta);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(()=>toast('已复制 ✅ 去微信粘贴发群里吧')).catch(()=>copy(txt));
+  } else copy(txt);
+}
+
+/* ================= 重置 ================= */
+function resetAll() {
+  modalCtx = { type:'reset' };
+  $('modal-title').textContent = '开始一场新演出？';
+  $('modal-desc').textContent = '会清空当前的勾选、评分和总结。如果里面有想留的内容，先点「复制汇总」发群里保存。确定清空吗？';
+  $('modal-input').style.display = 'none';
+  $('modal-mask').classList.add('show');
+}
+
+function toggleAllDims() {
+  const dims = document.querySelectorAll('.dim');
+  const anyClosed = [...dims].some(d => !d.classList.contains('open'));
+  dims.forEach(d => d.classList.toggle('open', anyClosed));
+}
+
+/* ================= 初始化 ================= */
+function initAll() {
+  bindInfo();
+  renderList();
+  renderGo();
+  renderReview();
+}
+initAll();
+</script>
+</body>
+</html>

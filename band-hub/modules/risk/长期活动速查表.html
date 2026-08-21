@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="theme-color" content="#6b2fff">
+<title>长期活动速查表 · 团队版</title>
+<style>
+:root {
+  --blue:#6b2fff; --blue-light:#f0eaff;
+  --green:#16a34a; --green-light:#e8f7ee;
+  --red:#dc2626; --red-light:#fdeaea;
+  --orange:#d97706; --orange-light:#fdf3e3;
+  --ink:#1f2430; --ink-2:#5b6472; --ink-3:#9aa3b0;
+  --line:#e5e9f0; --bg:#f4f6fa; --card:#fff;
+  --radius:14px;
+  --shadow:0 1px 3px rgba(31,36,48,.06),0 4px 14px rgba(31,36,48,.05);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;padding-bottom:84px}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px}
+.top{background:linear-gradient(135deg,#6b2fff,#9152ff);color:#fff;padding:22px 0 54px;margin-bottom:-38px}
+.top h1{font-size:21px;font-weight:800;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.top .sub{font-size:12.5px;opacity:.85;margin-top:4px}
+.top-btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.top-btns button{border:none;border-radius:8px;padding:7px 13px;font-size:12.5px;background:rgba(255,255,255,.18);color:#fff;cursor:pointer;font-weight:600}
+.top-btns button:active{transform:scale(.96)}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 16px;margin-bottom:14px}
+.card-title{font-size:16px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card-desc{font-size:12.5px;color:var(--ink-2);margin-bottom:14px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info-grid .full{grid-column:1/-1}
+.info-grid label{font-size:12px;color:var(--ink-2);display:block;margin-bottom:3px}
+.info-grid input,.info-grid select{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:8px 10px;font-size:14px;background:#fbfcfe;color:var(--ink);font-family:inherit}
+.info-grid input:focus,.info-grid select:focus{outline:none;border-color:var(--blue)}
+.redline-box{border:2px solid var(--red);border-radius:var(--radius);background:#fff;margin-bottom:14px;overflow:hidden}
+.redline-head{background:var(--red);color:#fff;padding:10px 16px;font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px}
+.redline-head .cnt{margin-left:auto;font-size:13px;font-weight:700;opacity:.95}
+.redline-box .card-desc{margin:10px 16px 8px}
+.dim{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
+.dim-head{display:flex;align-items:center;gap:10px;padding:15px 16px;cursor:pointer;user-select:none}
+.dim-head:active{background:#fafbfd}
+.dim-head .dicon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.dim-head .dname{font-size:15.5px;font-weight:800}
+.dim-head .dsub{font-size:11.5px;color:var(--ink-3)}
+.dim-head .arrow{margin-left:auto;color:var(--ink-3);font-size:13px;transition:transform .25s}
+.dim.open .arrow{transform:rotate(90deg)}
+.dim-progress{margin-left:auto;font-size:12px;font-weight:700;color:var(--ink-3);background:#f0f3f8;padding:3px 10px;border-radius:20px}
+.dim.done .dim-progress{background:var(--green-light);color:var(--green)}
+.dim-body{display:none;padding:2px 12px 12px;border-top:1px dashed var(--line)}
+.dim.open .dim-body{display:block}
+.item{display:flex;gap:10px;padding:11px 8px;border-radius:10px;cursor:pointer;align-items:flex-start;transition:background .15s}
+.item:active{background:#f4f7fc}
+.item .cb{width:24px;height:24px;border-radius:7px;border:2px solid #c9d2df;flex-shrink:0;margin-top:1px;position:relative;transition:all .18s;background:#fff}
+.item.checked .cb{background:var(--green);border-color:var(--green)}
+.item.checked .cb::after{content:'✓';color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900}
+.item .itext{flex:1}
+.item .iname{font-size:14.5px;font-weight:600}
+.item.checked .iname{color:var(--ink-3);text-decoration:line-through}
+.item .itip{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.item.red-item .cb{border-color:var(--red)}
+.item.red-item .iname::before{content:'★ ';color:var(--red)}
+.item .del{border:none;background:none;color:var(--ink-3);font-size:15px;cursor:pointer;padding:2px 4px}
+.add-item{display:block;width:100%;border:1.5px dashed #c9d2df;background:none;border-radius:10px;padding:9px;color:var(--ink-2);font-size:13px;cursor:pointer;margin-top:4px}
+.add-item:active{background:#f4f7fc}
+.overall-bar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:9px 14px;margin:0 -14px 14px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-2)}
+.overall-bar .track{flex:1;height:8px;background:#e8ecf3;border-radius:99px;overflow:hidden}
+.overall-bar .fill{height:100%;background:linear-gradient(90deg,#6b2fff,#16a34a);border-radius:99px;transition:width .4s}
+.overall-bar b{color:var(--ink)}
+.q-group{margin-bottom:6px}
+.q-title{font-size:14.5px;font-weight:700;margin:14px 0 8px;display:flex;gap:6px}
+.q-title .qtag{background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;flex-shrink:0;margin-top:2px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;cursor:pointer;display:flex;align-items:center;gap:8px;background:#fff;transition:all .15s}
+.opt .radio{width:18px;height:18px;border-radius:50%;border:2px solid #c9d2df;flex-shrink:0;position:relative}
+.opt.sel{border-color:var(--blue);background:var(--blue-light);font-weight:600}
+.opt.sel .radio{border-color:var(--blue)}
+.opt.sel .radio::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--blue)}
+.result-card{border-radius:var(--radius);padding:22px 16px;text-align:center;margin-bottom:14px;border:2px solid var(--line);background:#fff;box-shadow:var(--shadow)}
+.result-card .r-label{font-size:13px;color:var(--ink-2)}
+.result-card .r-score{font-size:52px;font-weight:900;line-height:1.15}
+.result-card .r-verdict{font-size:18px;font-weight:800;padding:6px 18px;border-radius:99px;display:inline-block;margin-top:6px}
+.result-card .r-why{font-size:12.5px;color:var(--ink-2);margin-top:10px}
+.v-go{background:var(--green-light);color:var(--green);border-color:var(--green)}
+.v-warn{background:var(--orange-light);color:var(--orange);border-color:var(--orange)}
+.v-no{background:var(--red-light);color:var(--red);border-color:var(--red)}
+.s-go{color:var(--green)}.s-warn{color:var(--orange)}.s-no{color:var(--red)}
+textarea.qa{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;font-family:inherit;background:#fbfcfe;color:var(--ink);resize:vertical;min-height:64px}
+textarea.qa:focus{outline:none;border-color:var(--blue)}
+.big-btn{display:block;width:100%;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px}
+.big-btn:active{transform:scale(.985)}
+.btn-blue{background:linear-gradient(135deg,#6b2fff,#9152ff);color:#fff}
+.btn-line{background:#fff;color:var(--ink);border:1.5px solid var(--line);margin-top:10px}
+.tabbar{position:fixed;bottom:0;left:0;right:0;z-index:50;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.tabbar .tab{flex:1;text-align:center;padding:5px 2px;cursor:pointer;border-radius:10px;color:var(--ink-3)}
+.tab .t-icon{font-size:18px;line-height:1.2}
+.tab .t-name{font-size:10px;font-weight:700}
+.tab.on{color:var(--blue);background:var(--blue-light)}
+.tab-page{display:none}.tab-page.on{display:block}
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-80px);background:#1f2430;color:#fff;padding:9px 18px;border-radius:99px;font-size:13.5px;font-weight:600;z-index:99;transition:transform .3s;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:88vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.modal-mask{position:fixed;inset:0;background:rgba(15,18,26,.45);z-index:80;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-mask.show{display:flex}
+.modal{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:420px;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:16px;margin-bottom:8px}
+.modal p{font-size:13.5px;color:var(--ink-2);margin-bottom:14px}
+.modal input,.modal select,.modal textarea{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;font-size:14px;font-family:inherit;margin-bottom:8px}
+.modal input:focus,.modal select:focus,.modal textarea:focus{outline:none;border-color:var(--blue)}
+.modal .m-btns{display:flex;gap:10px;margin-top:6px}
+.modal .m-btns button{flex:1;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer}
+.m-cancel{background:#f0f3f8;color:var(--ink)}
+.m-ok{background:var(--blue);color:#fff}
+.phase-card{border:1.5px solid var(--line);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}
+.phase-head{padding:15px 16px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:10px}
+.phase-head .pnum{width:28px;height:28px;border-radius:8px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.phase-head .pname{font-size:15px;font-weight:800}
+.phase-head .psub{font-size:11.5px;color:var(--ink-3)}
+.phase-head .pbadge{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0f3f8;color:var(--ink-3)}
+.phase-body{display:none;padding:4px 16px 14px;border-top:1px dashed var(--line)}
+.phase.open .phase-body{display:block}
+.month-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.month-card{border:1.5px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;background:#fbfcfe}
+.month-card:active{background:#f4f7fc}
+.month-card .m-title{font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px}
+.month-card .m-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.month-card .m-stats{font-size:12px;color:var(--ink-2);margin-top:6px}
+.show-row{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:#fbfcfe;margin-bottom:6px;font-size:13px}
+.show-row .s-status{width:14px;height:14px;border-radius:50%;flex-shrink:0;cursor:pointer;border:2px solid #c9d2df}
+.show-row .s-date{font-weight:700;min-width:70px;font-size:12.5px}
+.show-row .s-venue{flex:1;color:var(--ink-2);font-size:12.5px}
+.show-row .s-note{font-size:11px;color:var(--ink-3)}
+.show-row .s-del{border:none;background:none;color:var(--ink-3);cursor:pointer;font-size:14px;padding:2px}
+.st-planned{background:#d5dbe5}.st-done{background:var(--green);border-color:var(--green)}.st-issue{background:var(--orange);border-color:var(--orange)}.st-cancel{background:var(--red);border-color:var(--red)}
+.risk-card{border:1.5px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
+.risk-card.high{border-color:#f3c1c1;background:var(--red-light)}
+.risk-card.med{border-color:#f3d8a0;background:var(--orange-light)}
+.risk-card.closed{opacity:.6}
+.risk-row{display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;align-items:center}
+.risk-row input,.risk-row select{border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px;background:#fff;font-family:inherit}
+.risk-badge{font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px}
+.rb-high{background:var(--red);color:#fff}.rb-med{background:var(--orange);color:#fff}.rb-low{background:var(--green);color:#fff}
+.review-block{border:1.5px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fbfcfe}
+.review-block .rb-head{font-size:13px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.review-block .rb-head .rb-tag{background:var(--blue);color:#fff;font-size:10px;padding:2px 6px;border-radius:4px}
+.score-breakdown{font-size:12px;color:var(--ink-2);margin-top:10px}
+.score-breakdown div{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed var(--line)}
+.score-breakdown div:last-child{border:none}
+.score-breakdown b{color:var(--ink)}
+.alert-box{margin-top:12px;padding:10px 12px;border-radius:10px;font-size:12.5px;line-height:1.5}
+.alert-warn{background:var(--orange-light);border:1.5px solid #f3d8a0;color:var(--orange)}
+.alert-red{background:var(--red-light);border:1.5px solid #f3c1c1;color:var(--red);font-weight:600}
+.alert-info{background:var(--blue-light);border:1.5px solid #d0c0ff;color:var(--blue)}
+.guide summary{cursor:pointer;font-size:13.5px;font-weight:700;color:var(--ink-2);padding:4px 0;list-style:none;display:flex;align-items:center;gap:6px}
+.guide summary::before{content:'💡'}
+.guide ul{margin:10px 0 4px 18px}
+.guide li{font-size:12.5px;color:var(--ink-2);margin-bottom:5px}
+.save-note{font-size:11.5px;color:var(--ink-3);text-align:center;padding:8px 0 4px}
+.big-num{font-size:28px;font-weight:900;color:var(--blue)}
+.stat-row{display:flex;gap:10px;flex-wrap:wrap}
+.stat-box{flex:1;min-width:100px;background:#fbfcfe;border:1.5px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+.stat-box .s-label{font-size:11px;color:var(--ink-2)}
+.stat-box .s-val{font-size:20px;font-weight:800;margin-top:2px}
+.health-light{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:middle;margin-right:4px}
+.health-green{background:var(--green)}.health-yellow{background:var(--orange)}.health-red{background:var(--red)}.health-gray{background:#ccc}
+@media print{
+body{background:#fff;padding-bottom:0}
+.top{background:#fff!important;color:#000!important;padding:0 0 10px;margin-bottom:10px;border-bottom:2px solid #000}
+.top h1{color:#000}.top .sub{color:#444}
+.top-btns,.tabbar,.overall-bar,.toast,.no-print,.add-item,.del{display:none!important}
+.tab-page{display:block!important}
+.dim .dim-body,.phase .phase-body{display:block!important}
+.card,.dim,.redline-box,.result-card,.phase-card,.month-card,.risk-card,.review-block{box-shadow:none;border:1px solid #bbb;page-break-inside:avoid}
+.item .cb{border-color:#666}
+textarea.qa{border-color:#999;min-height:40px}
+}
+</style>
+</head>
+<body>
+<div class="top">
+<div class="wrap">
+<h1>🎪 长期活动速查表</h1>
+<div class="sub">竞标 · 执行 · 复盘 · 风险追踪 · 团队版 v1.0</div>
+<div class="top-btns no-print">
+<button onclick="copySummary()">📋 复制汇总</button>
+<button onclick="exportData()">💾 导出数据</button>
+<button onclick="$('import-file').click()">📥 导入数据</button>
+<button onclick="window.print()">🖨️ 打印</button>
+<button onclick="resetAll()">🗑️ 新项目</button>
+<input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+</div>
+</div>
+</div>
+<div class="wrap">
+<div class="overall-bar no-print">
+<b id="ob-count">检查 0/0</b>
+<div class="track"><div class="fill" id="ob-fill" style="width:0%"></div></div>
+<span id="ob-progress">进度 0/0 场</span>
+</div>
+
+<!-- ===== TAB 1: 项目总览 ===== -->
+<div class="tab-page on" id="page-overview">
+<div class="card">
+<div class="card-title">📝 项目基本信息</div>
+<div class="card-desc">填一下项目概况，复制汇总和评分时都会用到。</div>
+<div class="info-grid">
+<div class="full"><label>项目名称</label><input id="f-name" placeholder="比如：XX文旅96场驻场演出"></div>
+<div><label>总场次</label><input id="f-total" type="number" placeholder="96"></div>
+<div><label>总周期</label><input id="f-duration" placeholder="2025.01-2025.12"></div>
+<div><label>总金额（元）</label><input id="f-amount" type="number" placeholder="160000"></div>
+<div><label>甲方名称</label><input id="f-client" placeholder="XX文旅集团"></div>
+<div class="full"><label>甲方联系人</label><input id="f-contact" placeholder="姓名+电话"></div>
+<div class="full"><label>外包计划</label><input id="f-outsource" placeholder="如：全部外包 / 部分外包 / 自己做"></div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">📊 项目看板</div>
+<div class="card-desc">根据下方进度追踪和评分自动计算。</div>
+<div class="stat-row">
+<div class="stat-box"><div class="s-label">已完成场次</div><div class="s-val" id="k-done">0</div></div>
+<div class="stat-box"><div class="s-label">总场次</div><div class="s-val" id="k-total">0</div></div>
+<div class="stat-box"><div class="s-label">异常场次</div><div class="s-val" id="k-issue" style="color:var(--orange)">0</div></div>
+</div>
+<div class="stat-row" style="margin-top:10px">
+<div class="stat-box"><div class="s-label">单场均收入</div><div class="s-val" id="k-avg">-</div></div>
+<div class="stat-box"><div class="s-label">检查完成率</div><div class="s-val" id="k-check">0%</div></div>
+<div class="stat-box"><div class="s-label">开放风险</div><div class="s-val" id="k-risk" style="color:var(--red)">0</div></div>
+</div>
+<div style="margin-top:14px;padding:12px;border:1.5px solid var(--line);border-radius:10px;text-align:center">
+<div style="font-size:13px;color:var(--ink-2);margin-bottom:6px">项目健康状态</div>
+<div id="health-status" style="font-size:16px;font-weight:800"><span class="health-light health-gray"></span>未评估</div>
+<div id="health-desc" style="font-size:12px;color:var(--ink-3);margin-top:4px">去「接不接」做评分，这里自动更新</div>
+</div>
+</div>
+<div class="card" id="risk-alert-card" style="display:none">
+<div class="card-title" style="color:var(--red)">⚠️ 风险预警</div>
+<div id="risk-alert-body"></div>
+</div>
+<details class="guide card" style="padding:14px 16px">
+<summary>这份表怎么用？（1分钟看完）</summary>
+<ul>
+<li><b>竞标前</b>：去「接不接」做阶段A评分，看这个标值不值得投。同时过一遍「检查清单」的红线项。</li>
+<li><b>中标后</b>：做阶段B评分决定自己干还是外包。然后按检查清单逐项落实。</li>
+<li><b>执行中</b>：在「进度与复盘」逐场添加和管理，每月做一次复盘，每季度做阶段C持续评估。</li>
+<li><b>风险</b>：发现的新风险随时记到「风险登记簿」，定期review。</li>
+<li>所有数据存在手机本地。<b>每月点「导出数据」备份一次</b>，换手机/清缓存不丢。</li>
+<li>发现表里没有的问题？在对应检查大项里点「+ 加一条」自己补。</li>
+</ul>
+</details>
+</div>
+
+<!-- ===== TAB 2: 检查清单 ===== -->
+<div class="tab-page" id="page-list">
+<div class="redline-box">
+<div class="redline-head">⚠️ 必须搞定的 7 件事<span class="cnt" id="red-cnt">0/7</span></div>
+<div class="card-desc">长期活动这 7 件任何一件没搞定，就有大风险。宁可推了也别硬上。</div>
+<div id="red-items" style="padding:0 12px 10px"></div>
+</div>
+<div class="card no-print" style="padding:13px 16px;display:flex;align-items:center;gap:10px">
+<div style="flex:1"><div class="card-title" style="margin:0;font-size:14.5px">📋 8 大项检查</div><div class="card-desc" style="margin:2px 0 0">点一行打勾，点标题展开收起</div></div>
+<button class="big-btn btn-line" style="width:auto;margin:0;padding:9px 14px;font-size:13px" onclick="toggleAllDims()">全部展开</button>
+</div>
+<div id="dims"></div>
+</div>
+
+<!-- ===== TAB 3: 接不接 ===== -->
+<div class="tab-page" id="page-score">
+<div class="phase-card open" id="phase-a">
+<div class="phase-head" onclick="document.getElementById('phase-a').classList.toggle('open')">
+<div class="pnum">A</div><div><div class="pname">竞标评估：这个标值不值得投？</div><div class="psub">财务35% + 战略25% + 可行性25% + 风险15%</div></div>
+<div class="pbadge" id="pa-badge">未评估</div>
+</div>
+<div class="phase-body">
+<div class="card-desc">竞标前答完这些选择题，自动出建议。★ 检查项没齐的话，风险分会大打折扣。</div>
+<div id="pa-qs"></div>
+<div class="result-card" id="pa-result" style="margin-top:14px">
+<div class="r-label">阶段A综合得分</div>
+<div class="r-score" id="pa-score">--</div>
+<div><span class="r-verdict v-warn" id="pa-verdict">先去答题</span></div>
+<div class="r-why" id="pa-why">把上面的选择题答完，自动出建议。</div>
+<div class="score-breakdown" id="pa-breakdown" style="display:none"></div>
+</div>
+<div class="alert-box alert-warn">⚠️ <b>对抗式审查提醒</b>：大项目诱惑大，人容易给自己打高分。建议找团队外的人复评一遍。记录"投标时预测分"，项目结束后对比实际，校准未来的评分。</div>
+</div>
+</div>
+<div class="phase-card" id="phase-b">
+<div class="phase-head" onclick="document.getElementById('phase-b').classList.toggle('open')">
+<div class="pnum">B</div><div><div class="pname">外包决策：自己干还是外包出去？</div><div class="psub">如果接了，这活自己做还是分包给别人</div></div>
+<div class="pbadge" id="pb-badge">未评估</div>
+</div>
+<div class="phase-body">
+<div class="card-desc">5 道选择题，帮你判断该不该外包。如果不需要外包可以跳过。</div>
+<div id="pb-qs"></div>
+<div class="result-card" id="pb-result" style="margin-top:14px">
+<div class="r-label">外包适合度得分</div>
+<div class="r-score" id="pb-score">--</div>
+<div><span class="r-verdict v-warn" id="pb-verdict">先去答题</span></div>
+<div class="r-why" id="pb-why">把上面的选择题答完，自动出建议。</div>
+</div>
+<div class="alert-box alert-info">📌 <b>外包隐藏陷阱</b>：①外包方案例可能美化，务必联系他们之前的甲方核实；②你-甲方合同和-外包方合同的违约/赔偿条款必须对齐，否则差额自己扛；③合同里写死"禁止转包"；④管理外包不是甩手不管，沟通成本别低估。</div>
+</div>
+</div>
+<div class="phase-card" id="phase-c">
+<div class="phase-head" onclick="document.getElementById('phase-c').classList.toggle('open')">
+<div class="pnum">C</div><div><div class="pname">持续评估：项目进行中怎么样了？</div><div class="psub">建议每月或每季度做一次，可以重复评估</div></div>
+<div class="pbadge" id="pc-badge">未评估</div>
+</div>
+<div class="phase-body">
+<div class="card-desc">项目进行中定期体检。财务30% + 执行25% + 团队20% + 风险25%。</div>
+<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+<input id="pc-date" type="date" style="border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px;font-family:inherit">
+<button class="big-btn btn-blue" style="width:auto;margin:0;padding:8px 14px;font-size:13px" onclick="saveOngoing()">保存本次评估</button>
+</div>
+<div id="pc-qs"></div>
+<div class="result-card" id="pc-result" style="margin-top:14px">
+<div class="r-label">阶段C综合得分</div>
+<div class="r-score" id="pc-score">--</div>
+<div><span class="r-verdict v-warn" id="pc-verdict">先去答题</span></div>
+<div class="r-why" id="pc-why">答完选择题点「保存本次评估」，记录这次体检结果。</div>
+</div>
+<div class="alert-box alert-red">🚨 <b>止损红线（一票否决）</b>：以下任何一条触发，必须执行退出方案，<u>不看已投入多少</u>（沉没成本谬误）：①甲方连续拖欠付款超2个月 ②累计亏损超总合同额20% ③核心人员流失且无法补充 ④外包方退出且无替代 ⑤甲方严重违约且拒绝纠正。</div>
+<div id="pc-history" style="margin-top:14px"></div>
+</div>
+</div>
+</div>
+
+<!-- ===== TAB 4: 进度与复盘 ===== -->
+<div class="tab-page" id="page-progress">
+<div class="card">
+<div class="card-title">📅 场次管理</div>
+<div class="card-desc">逐场添加和管理。点状态圆点切换：计划→正常→有问题→取消→计划。</div>
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+<button class="big-btn btn-blue" style="width:auto;margin:0;padding:9px 14px;font-size:13px" onclick="addShow()">＋ 添加一场</button>
+</div>
+<div id="show-stats" style="margin-bottom:14px"></div>
+<div class="month-grid" id="month-grid"></div>
+<div id="show-detail" style="display:none"></div>
+</div>
+<div class="card">
+<div class="card-title">🗣️ 月度复盘</div>
+<div class="card-desc">每月花30分钟，5个问题帮你看清全局。选月份后填写。</div>
+<div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+<label style="font-size:13px;font-weight:600">月份：</label>
+<select id="review-month" style="border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px;font-family:inherit">
+<option value="">选择月份</option>
+</select>
+</div>
+<div id="review-form"></div>
+<button class="big-btn btn-blue no-print" style="margin-top:10px" onclick="saveReview()">💾 保存月度复盘</button>
+</div>
+<div class="card">
+<div class="card-title">🐞 问题记录</div>
+<div class="card-desc">出了什么状况？记下来，想清楚下次怎么办，点「加入清单」它就会出现在检查表里。</div>
+<div id="prob-list"></div>
+<button class="big-btn btn-line" onclick="addProblem()">＋ 记一个问题</button>
+</div>
+</div>
+
+<!-- ===== TAB 5: 风险登记簿 ===== -->
+<div class="tab-page" id="page-risk">
+<div class="card">
+<div class="card-title">⚠️ 风险登记簿</div>
+<div class="card-desc">长期项目风险会累积。把识别到的风险都记下来，定期review。概率×影响=风险等级。</div>
+<div id="risk-list"></div>
+<button class="big-btn btn-blue" onclick="addRisk()">＋ 登记一个风险</button>
+</div>
+<div class="card">
+<div class="card-title">📊 风险看板</div>
+<div class="stat-row">
+<div class="stat-box"><div class="s-label">高风险（开放）</div><div class="s-val" id="rk-high" style="color:var(--red)">0</div></div>
+<div class="stat-box"><div class="s-label">中风险（开放）</div><div class="s-val" id="rk-med" style="color:var(--orange)">0</div></div>
+<div class="stat-box"><div class="s-label">低风险（开放）</div><div class="s-val" id="rk-low" style="color:var(--green)">0</div></div>
+<div class="stat-box"><div class="s-label">已关闭</div><div class="s-val" id="rk-closed">0</div></div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="tabbar no-print">
+<div class="tab on" data-tab="overview" onclick="switchTab('overview')"><div class="t-icon">📊</div><div class="t-name">总览</div></div>
+<div class="tab" data-tab="list" onclick="switchTab('list')"><div class="t-icon">📋</div><div class="t-name">检查清单</div></div>
+<div class="tab" data-tab="score" onclick="switchTab('score')"><div class="t-icon">⚖️</div><div class="t-name">接不接</div></div>
+<div class="tab" data-tab="progress" onclick="switchTab('progress')"><div class="t-icon">📅</div><div class="t-name">进度复盘</div></div>
+<div class="tab" data-tab="risk" onclick="switchTab('risk')"><div class="t-icon">⚠️</div><div class="t-name">风险簿</div></div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal-mask" id="modal-mask">
+<div class="modal">
+<h3 id="modal-title">输入</h3>
+<p id="modal-desc"></p>
+<div id="modal-fields"></div>
+<div class="m-btns">
+<button class="m-cancel" onclick="closeModal()">取消</button>
+<button class="m-ok" onclick="confirmModal()">确定</button>
+</div>
+</div>
+</div>
+<script>
+/* ================= 数据定义 ================= */
+const DATA=[
+{key:'A',name:'合同与商务',icon:'📄',color:'#e8f1ff',sub:'合同是长期合作的根基，条款不利×96场=灾难',
+items:[
+{id:'A1',red:true,name:'合同条款由律师或懂行的人审过',tip:'长期合同藏着违约金上限、单方变更权、知识产权归属等大坑。花几百块请律师看一遍，值。'},
+{id:'A2',name:'付款节点和比例写进合同',tip:'典型：签约付30%、按月/季付60%、尾款10%。不接受"全部演完再结"。'},
+{id:'A3',name:'甲方拖延付款的违约条款有写',tip:'逾期滞纳金、超X天可暂停演出。没这条甲方拖你你也没辙。'},
+{id:'A4',name:'演出取消/变更的赔偿条款有写',tip:'甲方单方面取消、减场、改内容怎么赔？按比例还是全额？写清楚。'},
+{id:'A5',name:'不可抗力条款定义和处理明确',tip:'什么算不可抗力？触发后双方责任怎么分？96场跨一年，遇到概率不低。'},
+{id:'A6',name:'知识产权和肖像权条款看过',tip:'演出录像照片归谁？能否用于宣传？长期活动积累大量素材，权属要清楚。'},
+{id:'A7',name:'合同变更必须书面确认的条款有',tip:'口头答应不算数。任何变更（加场减场改内容）必须双方书面确认。'},
+{id:'A8',name:'报价含税还是不含税写清楚了',tip:'16万含税和不含税差很多。开票税点谁承担？写进合同。'},
+]},
+{key:'B',name:'财务与现金流',icon:'💰',color:'#e8f7ee',sub:'现金流是长期项目的生命线，垫资撑不住就崩盘',
+items:[
+{id:'B1',red:true,name:'算过最坏情况下的垫资额，扛得住',tip:'假设甲方拖延3个月付款，你需要垫多少付人员工资、设备维护、交通？这个数能扛住吗？'},
+{id:'B2',name:'做了详细的成本测算表',tip:'把96场成本拆细：人员费、交通、设备折旧、耗材、保险、管理成本、税费。别只算"每场×96"。'},
+{id:'B3',name:'人员成本按月排了预算',tip:'密集排期月成本高，淡季也要养人。按月做预算。'},
+{id:'B4',name:'设备折旧和维护费用算进去了',tip:'96场设备损耗很大。音箱、麦克风、线材都有寿命，按场次折旧，预留维修更换预算。'},
+{id:'B5',name:'有应急备用金（至少1-2个月运营成本）',tip:'万一甲方拖延或临时大修设备，手里要有现金。'},
+{id:'B6',name:'每场实际成本在追踪记录',tip:'每场记一下实际花了多少，和预算对比，偏差超20%找原因。'},
+{id:'B7',name:'税务成本算进去了',tip:'16万收入交多少税？个税还是企业税？有没有进项发票抵扣？提前搞清楚。'},
+{id:'B8',name:'外包后的利润空间算清楚了',tip:'扣掉外包费、管理成本、沟通成本、风险溢价后利润还剩多少？值不值？'},
+]},
+{key:'C',name:'外包与供应链',icon:'🤝',color:'#f0eaff',sub:'外包方质量=你的口碑，甲方不管谁演的只认合同方',
+items:[
+{id:'C1',red:true,name:'外包方资质和过往案例核实过',tip:'看对方之前接过什么活、做了多少场。要案例视频照片，最好联系他们的甲方问一句。'},
+{id:'C2',red:true,name:'外包合同签了，质量标准和违约条款明确',tip:'合同里写清楚：演什么、怎么算合格、不合格怎么扣钱、违约怎么赔。口头约定=没约定。'},
+{id:'C3',name:'外包方的设备清单和人手确认过',tip:'对方用什么设备？多少人？够不够这个场子的要求？'},
+{id:'C4',name:'外包方的替补方案问清楚了',tip:'外包方的人临时来不了怎么办？设备坏了怎么办？他们有没有Plan B？'},
+{id:'C5',name:'建立了外包方质量抽检机制',tip:'不能96场全甩手。定期（比如每月）派人去现场看一场，拍照录像存档。'},
+{id:'C6',name:'外包方付款节点和你的收款节点匹配',tip:'别出现你还没收到甲方钱就要先付外包方的尴尬。'},
+{id:'C7',name:'有备选外包方（不能只依赖一家）',tip:'96场跨一年，外包方可能中途退出/涨价。至少谈1-2家备选。'},
+{id:'C8',name:'外包合同里写了"不得转包"条款',tip:'外包方把活再转给别人，质量完全失控。合同明确禁止转包。'},
+]},
+{key:'D',name:'人力与排班',icon:'👥',color:'#fdf3e3',sub:'96场靠一拨人撑不下来，轮换和替补是必须的',
+items:[
+{id:'D1',red:true,name:'核心岗位有2-3人能轮换',tip:'每个核心岗位（主唱、音响、舞台监督）至少有2-3人能顶。'},
+{id:'D2',name:'全年排班表做出来了',tip:'96场按月/周排好谁上哪场。提前规划，留出休息周。'},
+{id:'D3',name:'每人每月演出上限定了',tip:'连续演出会疲劳。定一个每人每月最多演几场，超过就换人。'},
+{id:'D4',name:'替补人员清单和联系方式有',tip:'临时有人生病/退出，谁能顶上？准备一份替补名单，提前打过招呼。'},
+{id:'D5',name:'人员薪酬标准和结算方式定了',tip:'每场多少钱？月结还是场结？外包和自己人标准一样吗？写清楚。'},
+{id:'D6',name:'人员保险买了（意外险）',tip:'演出中受伤算谁的？给所有参与人员买意外险，一年几十到一百多块/人。'},
+{id:'D7',name:'培训/排练机制有了',tip:'新人怎么上手？有没有一次带教排练？不能直接扔上场。'},
+{id:'D8',name:'疲劳信号监测机制有',tip:'有人连续演出状态下滑、情绪不好，怎么发现？指定一个人负责观察沟通。'},
+]},
+{key:'E',name:'设备与资产',icon:'🔌',color:'#ffeef0',sub:'单场设备坏了是意外，96场坏了是必然',
+items:[
+{id:'E1',name:'设备总清单和估值有',tip:'所有设备的清单、购买日期、当前估值、预计寿命。一份表格管理。'},
+{id:'E2',name:'设备维护计划定了',tip:'定期检查、清洁、更换易损件。比如每10场做一次全面检查。'},
+{id:'E3',name:'关键设备有备用',tip:'麦克风、主要线材、电源——每样至少一个替补。'},
+{id:'E4',name:'设备折旧预算留了',tip:'96场用下来损耗很大。按场次折旧，预留更换预算。'},
+{id:'E5',name:'设备存放和运输安全有保障',tip:'96场来回搬运，存放点安全吗？运输防震吗？'},
+{id:'E6',name:'设备保险买了',tip:'贵重设备买财产险，覆盖存放、运输、演出全过程。'},
+{id:'E7',name:'耗材清单和补给计划有',tip:'电池、胶带、扎带、灯泡等耗材，定期补充。'},
+]},
+{key:'F',name:'进度与里程碑',icon:'📌',color:'#eef2f6',sub:'96场不能走到哪算哪，要有阶段目标',
+items:[
+{id:'F1',name:'96场按月/季分了阶段',tip:'12个月分4个季度，每季度有阶段性目标（完成几场、质量达标率、甲方满意度）。'},
+{id:'F2',name:'每月有固定检查点',tip:'每月底花1小时回顾：这个月完成几场？有没有问题？下月怎么调？'},
+{id:'F3',name:'甲方验收/确认机制有',tip:'每场或每阶段演完，甲方签字/微信确认。口头说好不算数。'},
+{id:'F4',name:'进度偏差超10%会预警',tip:'计划每月8场实际只完成6场？偏差超10%要找原因、调整。'},
+{id:'F5',name:'里程碑交付物清单有',tip:'合同要求的交付物（演出报告、视频照片、观众数据等），列清单按时交付。'},
+{id:'F6',name:'每场演出记录有存档',tip:'每场日期、场地、人员、设备、问题——简单记几行。年底复盘有数据。'},
+]},
+{key:'G',name:'风险与应急预案',icon:'🛟',color:'#f0eaff',sub:'长期活动风险会累积，提前想好退路',
+items:[
+{id:'G1',red:true,name:'退出/止损方案想好了',tip:'什么情况下应该终止（甲方长期拖欠、外包方跑路、亏损超X万）？退出路径和违约金清楚吗？'},
+{id:'G2',name:'风险登记簿建了，定期更新',tip:'把所有识别到的风险列出来（概率、影响、应对措施、状态）。每月review一次。'},
+{id:'G3',name:'季节性风险预案有',tip:'台风季(7-9月)、雨季、高温季、寒冬——不同季节的风险预案提前做。'},
+{id:'G4',name:'不可抗力预案有',tip:'疫情、自然灾害导致大规模取消怎么处理？合同条款+保险+备用方案。'},
+{id:'G5',name:'每场有现场应急方案',tip:'长期活动可以标准化：固定一套应急流程，每场照着走。'},
+{id:'G6',name:'应急联络人树有',tip:'甲方、外包方、设备维修、保险报案、替补人员——一份清单全员可查。'},
+{id:'G7',name:'危机公关预案有',tip:'演出事故、甲方投诉、负面传播——怎么应对、谁发言、怎么补救。'},
+]},
+{key:'H',name:'关系与口碑',icon:'🤝',color:'#e8f7ee',sub:'长期合作靠关系维护，小问题累积成大矛盾',
+items:[
+{id:'H1',name:'甲方有固定对接人，定期沟通',tip:'别等到出问题才联系。每月至少一次主动沟通：进度汇报、问题反馈、需求确认。'},
+{id:'H2',name:'甲方满意度定期收集',tip:'每季度问一次甲方：满意吗？有什么问题？别等合同到期才发现不满。'},
+{id:'H3',name:'场地方关系维护了',tip:'96场可能涉及多个场地。和场地方搞好关系，后续排期、协调、应急都方便。'},
+{id:'H4',name:'外包方关系维护了',tip:'外包方不是一次性工具。保持良好关系，关键时刻能优先帮你、给你更好价格。'},
+{id:'H5',name:'演出素材积累和传播了',tip:'每场拍照录像，积累素材用于自己的宣传。长期活动是最好的内容来源。'},
+{id:'H6',name:'观众反馈收集了',tip:'观众反应怎么样？有什么建议？简单收集一下，持续改进。'},
+{id:'H7',name:'团队内部沟通顺畅',tip:'96场跨度一年，团队内部要保持信息同步。定期开会、共享文档、微信群及时响应。'},
+]},
+];
+const RED_IDS=['A1','B1','C1','C2','D1','G1'];
+const RISK_REDS=['R1合同审过','R2付款节点进合同+首笔到账','R3垫资扛得住','R4核心人员有替补','R5外包方合同签了','R6保险买了','R7退出止损方案想好'];
+
+const PA_QS=[
+{group:'finance',label:'财务回报（35%）',qs:[
+{id:'pa_f1',q:'单场收入约'+(0)+'元，你觉得怎么样？',opts:[{t:'明显低于成本，要倒贴',s:5},{t:'勉强覆盖成本，利润很薄',s:35},{t:'有合理利润，和行情差不多',s:70},{t:'利润不错，高于行情',s:100}]},
+{id:'pa_f2',q:'甲方付款节点怎么样？',opts:[{t:'全部演完才结',s:5},{t:'按季度/月结，但有账期',s:50},{t:'预付一部分+按阶段结',s:80},{t:'预付比例高，按月结',s:100}]},
+{id:'pa_f3',q:'最坏情况（甲方拖延3个月）你能扛住吗？',opts:[{t:'扛不住，会断链',s:10},{t:'勉强能撑，但压力很大',s:45},{t:'有备用金，能撑',s:75},{t:'资金充裕，不是问题',s:100}]},
+]},
+{group:'strategy',label:'战略价值（25%）',qs:[
+{id:'pa_s1',q:'这个项目对品牌/口碑有帮助吗？',opts:[{t:'没什么帮助，就是个活',s:15},{t:'一般，能写进履历',s:50},{t:'有帮助，甲方有一定影响力',s:80},{t:'很有帮助，知名项目/大甲方',s:100}]},
+{id:'pa_s2',q:'有没有后续合作的可能？',opts:[{t:'一次性项目',s:20},{t:'说不好',s:50},{t:'甲方暗示有后续',s:75},{t:'明确有长期合作意向',s:100}]},
+{id:'pa_s3',q:'对团队能力提升有帮助吗？',opts:[{t:'就是重复劳动',s:15},{t:'有些新挑战',s:55},{t:'能拓展新能力/新领域',s:100}]},
+]},
+{group:'feasibility',label:'可行性（25%）',qs:[
+{id:'pa_fe1',q:'团队现有能力能覆盖吗？',opts:[{t:'明显不够，要现学/现招',s:15},{t:'勉强能覆盖，但很紧张',s:45},{t:'基本能覆盖',s:75},{t:'完全在能力范围内',s:100}]},
+{id:'pa_fe2',q:'96场的时间精力你们够吗？',opts:[{t:'根本排不开',s:10},{t:'能排开但会非常累',s:45},{t:'合理安排可以应对',s:75},{t:'时间充裕',s:100}]},
+{id:'pa_fe3',q:'核心人员到位吗？',opts:[{t:'还没找齐',s:15},{t:'勉强凑齐，替补没着落',s:45},{t:'基本到位，替补待定',s:75},{t:'人齐且有替补',s:100}]},
+]},
+{group:'risk',label:'风险水平（15%）',qs:[
+{id:'pa_r1',q:'合同条款风险你觉得怎么样？',opts:[{t:'条款很不利，全是坑',s:10},{t:'有些不利条款，可以谈',s:40},{t:'条款基本合理',s:70},{t:'条款对我们有利/很公平',s:100}]},
+{id:'pa_r2',q:'外包风险（如果需要外包）？',opts:[{t:'没有可靠的外包方',s:10},{t:'有但不太放心',s:45},{t:'有可靠的外包方',s:80},{t:'不需要外包/外包方很可靠',s:100}]},
+]},
+];
+const PA_WEIGHTS={finance:0.35,strategy:0.25,feasibility:0.25,risk:0.15};
+
+const PB_QS=[
+{id:'pb1',q:'外包后还剩多少利润？',opts:[{t:'亏本或几乎没利润',s:10},{t:'利润很薄（<15%）',s:35},{t:'有合理利润（15-30%）',s:70},{t:'利润不错（>30%）',s:100}]},
+{id:'pb2',q:'外包方的质量你能放心吗？',opts:[{t:'完全不放心',s:10},{t:'需要大量监督才能达标',s:40},{t:'基本放心，偶尔检查',s:75},{t:'完全放心，质量有保障',s:100}]},
+{id:'pb3',q:'管理外包方需要多少精力？',opts:[{t:'比自己做还累',s:10},{t:'需要专人管理',s:40},{t:'定期检查就行',s:75},{t:'基本不用管',s:100}]},
+{id:'pb4',q:'外包能转移多少风险（人员、设备、保险）？',opts:[{t:'几乎不能',s:10},{t:'转移一部分',s:45},{t:'大部分转移',s:80},{t:'几乎全部转移',s:100}]},
+{id:'pb5',q:'自己做能获得什么外包得不到的价值？（品牌、能力、素材、人脉）',opts:[{t:'没什么特别的',s:15},{t:'有一些',s:50},{t:'价值明显',s:100}]},
+];
+
+const PC_QS=[
+{group:'finance',label:'财务健康（30%）',qs:[
+{id:'pc_f1',q:'目前实际利润和预期比？',opts:[{t:'亏损，比预期差很多',s:10},{t:'利润低于预期',s:40},{t:'和预期差不多',s:70},{t:'超出预期',s:100}]},
+{id:'pc_f2',q:'现金流状态？',opts:[{t:'紧张，在垫资',s:15},{t:'勉强平衡',s:50},{t:'健康',s:85},{t:'充裕',s:100}]},
+{id:'pc_f3',q:'成本控制情况？',opts:[{t:'超支严重',s:10},{t:'有些超支',s:45},{t:'基本控制在预算内',s:75},{t:'控制得很好',s:100}]},
+]},
+{group:'execution',label:'执行状态（25%）',qs:[
+{id:'pc_e1',q:'进度和计划比？',opts:[{t:'严重滞后',s:10},{t:'有些滞后',s:40},{t:'基本按计划',s:75},{t:'超前或正好',s:100}]},
+{id:'pc_e2',q:'演出质量达标率？',opts:[{t:'经常出问题',s:10},{t:'偶尔有问题',s:45},{t:'基本达标',s:75},{t:'质量很好',s:100}]},
+{id:'pc_e3',q:'甲方满意度？',opts:[{t:'有投诉/不满',s:15},{t:'没说好也没说坏',s:50},{t:'比较满意',s:80},{t:'非常满意',s:100}]},
+]},
+{group:'team',label:'团队状态（20%）',qs:[
+{id:'pc_t1',q:'团队疲劳程度？',opts:[{t:'非常疲惫，有人想退',s:10},{t:'比较累',s:40},{t:'还行，能持续',s:75},{t:'状态好',s:100}]},
+{id:'pc_t2',q:'人员稳定吗？',opts:[{t:'有人要退/已退',s:15},{t:'不太稳定',s:45},{t:'基本稳定',s:75},{t:'很稳定',s:100}]},
+]},
+{group:'risk',label:'风险趋势（25%）',qs:[
+{id:'pc_r1',q:'新风险出现频率？',opts:[{t:'频繁出现新问题',s:10},{t:'偶尔有新问题',s:45},{t:'很少有新问题',s:80},{t:'风险基本可控',s:100}]},
+{id:'pc_r2',q:'未解决风险的数量和等级？',opts:[{t:'有高风险未解决',s:10},{t:'有中风险未解决',s:45},{t:'只有低风险未解决',s:75},{t:'风险全部可控/已关闭',s:100}]},
+]},
+];
+const PC_WEIGHTS={finance:0.30,execution:0.25,team:0.20,risk:0.25};
+
+const REVIEW_QS=[
+{id:'rq1',q:'1️⃣ 这个月计划完成几场？实际完成几场？偏差原因？'},
+{id:'rq2',q:'2️⃣ 这个月收入和成本各多少？和预算比怎么样？'},
+{id:'rq3',q:'3️⃣ 团队状态怎么样？有人疲劳/想退吗？'},
+{id:'rq4',q:'4️⃣ 这个月最大的问题是什么？怎么解决的？'},
+{id:'rq5',q:'5️⃣ 下个月需要调整什么？'},
+];
+
+const DIM_NAMES={};DATA.forEach(d=>DIM_NAMES[d.key]=d.name);
+
+/* ================= 状态 ================= */
+const STORE_KEY='longShowCheck_v1';
+let S=loadState();
+function defaultState(){
+return{
+info:{name:'',total:'',duration:'',amount:'',client:'',contact:'',outsource:''},
+checks:{},custom:[],
+bidScore:{},outsourceScore:{},
+ongoingScores:[],ongoingCurrent:{},
+reviews:{},problems:[],
+shows:[],risks:[],
+};
+}
+function loadState(){try{const r=localStorage.getItem(STORE_KEY);if(r)return Object.assign(defaultState(),JSON.parse(r))}catch(e){}return defaultState()}
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(S))}catch(e){}}
+
+/* ================= 工具 ================= */
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+let toastTimer=null;
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2000)}
+function allItems(){const a=[];DATA.forEach(d=>d.items.forEach(it=>a.push({dim:d.key,...it})));S.custom.forEach(it=>a.push({dim:it.dim,id:it.id,name:it.name,tip:it.tip||'',custom:true}));return a}
+function avgGroup(sel,groups){
+let total=0,count=0;
+groups.forEach(g=>{g.qs.forEach(q=>{if(sel[q.id]!=null){total+=q.opts[sel[q.id]].s;count++}})});
+return count?Math.round(total/count):null;
+}
+function weightedScore(sel,groups,weights){
+let total=0,allAnswered=true;
+groups.forEach(g=>{const gAvg=avgGroup(sel,[g]);if(gAvg==null)allAnswered=false;else total+=gAvg*weights[g.group]});
+return allAnswered?Math.round(total):null;
+}
+
+/* ================= Tab ================= */
+function switchTab(tab){
+document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('on'));
+document.querySelectorAll('.tabbar .tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));
+$('page-'+tab).classList.add('on');
+window.scrollTo({top:0});
+}
+
+/* ================= 信息表单 ================= */
+function bindInfo(){
+const map={'f-name':'name','f-total':'total','f-duration':'duration','f-amount':'amount','f-client':'client','f-contact':'contact','f-outsource':'outsource'};
+Object.entries(map).forEach(([elId,k])=>{const el=$(elId);el.value=S.info[k]||'';el.oninput=()=>{S.info[k]=el.value;save();updateOverview();updateBidQuestion()}});
+}
+
+/* ================= 清单渲染 ================= */
+function renderList(){
+const redBox=$('red-items');
+redBox.innerHTML=DATA.flatMap(d=>d.items).filter(it=>it.red).map(it=>itemHTML(it)).join('');
+const dimsEl=$('dims');
+dimsEl.innerHTML=DATA.map((d,di)=>{
+const items=[...d.items.map(it=>itemHTML(it)),...S.custom.filter(c=>c.dim===d.key).map(c=>itemHTML({id:c.id,name:c.name,tip:c.tip+(c.from==='review'?'（来自复盘）':''),custom:true},true))].join('');
+return `<div class="dim ${di===0?'open':''}" id="dim-${d.key}"><div class="dim-head" onclick="this.parentNode.classList.toggle('open')"><div class="dicon" style="background:${d.color}">${d.icon}</div><div><div class="dname">${d.key} · ${d.name}</div><div class="dsub">${d.sub}</div></div><div class="dim-progress" id="dp-${d.key}"></div><div class="arrow">▶</div></div><div class="dim-body">${items}<button class="add-item" onclick="askAddCustom('${d.key}')">＋ 加一条（自己补充的检查项）</button></div></div>`;
+}).join('');
+bindChecks();updateProgress();
+}
+function itemHTML(it,withDel){
+const checked=S.checks[it.id]?' checked':'';
+const redCls=it.red?' red-item':'';
+const del=(withDel&&it.custom)?`<button class="del" onclick="event.stopPropagation();delCustom('${it.id}')">✕</button>`:'';
+return `<div class="item${checked}${redCls}" data-id="${it.id}"><div class="cb"></div><div class="itext"><div class="iname">${esc(it.name)}</div>${it.tip?`<div class="itip">${esc(it.tip)}</div>`:''}</div>${del}</div>`;
+}
+function bindChecks(){document.querySelectorAll('.item').forEach(el=>{el.onclick=e=>{if(e.target.closest('.del'))return;toggleCheck(el.dataset.id)}})}
+function toggleCheck(id){S.checks[id]=!S.checks[id];if(!S.checks[id])delete S.checks[id];save();document.querySelectorAll(`.item[data-id="${id}"]`).forEach(el=>el.classList.toggle('checked',!!S.checks[id]));updateProgress();renderScoreA();updateOverview()}
+function updateProgress(){
+const items=allItems();const done=items.filter(it=>S.checks[it.id]).length;
+$('ob-count').textContent='检查 '+done+'/'+items.length;
+$('ob-fill').style.width=Math.round(done/items.length*100)+'%';
+const redDone=RED_IDS.filter(id=>S.checks[id]).length;
+$('red-cnt').textContent=redDone+'/'+RED_IDS.length;
+DATA.forEach(d=>{const list=[...d.items,...S.custom.filter(c=>c.dim===d.key)];const dn=list.filter(x=>S.checks[x.id]).length;const el=$('dp-'+d.key);if(el){el.textContent=dn+'/'+list.length;const dimEl=$('dim-'+d.key);if(dimEl)dimEl.classList.toggle('done',dn===list.length&&list.length>0)}});
+}
+
+/* ================= 自定义项 ================= */
+let modalCtx=null;
+function askAddCustom(dim){modalCtx={type:'custom',dim};$('modal-title').textContent='加一条检查项';$('modal-desc').textContent='写到「'+DIM_NAMES[dim]+'」里。';$('modal-fields').innerHTML='<input id="modal-input" placeholder="要检查什么？">';$('modal-mask').classList.add('show');setTimeout(()=>$('modal-input').focus(),50)}
+function delCustom(id){S.custom=S.custom.filter(c=>c.id!==id);if(S.checks[id])delete S.checks[id];save();renderList()}
+function confirmModal(){
+if(modalCtx&&modalCtx.type==='reset'){S=defaultState();save();initAll();toast('已重置，开始新项目 🎬');closeModal();return}
+if(modalCtx&&modalCtx.type==='show'){const d=$('modal-input-date').value.trim();const v=$('modal-input-venue').value.trim();if(!d){toast('请填日期');return}S.shows.push({id:'s'+Date.now(),date:d,venue:v||'待定',status:'planned',note:''});save();renderProgress();updateOverview();toast('已添加 ✅');closeModal();return}
+if(modalCtx&&modalCtx.type==='risk'){const desc=$('modal-input-desc').value.trim();if(!desc){toast('请填风险描述');return}S.risks.push({id:'r'+Date.now(),desc,prob:3,impact:3,status:'open',measure:'',owner:''});save();renderRisks();updateOverview();toast('已登记 ✅');closeModal();return}
+const input=$('modal-input');if(input){const v=input.value.trim();if(!v){closeModal();return}if(modalCtx&&modalCtx.type==='custom'){S.custom.push({id:modalCtx.dim+'_c'+Date.now(),dim:modalCtx.dim,name:v,tip:'（自己补充的）',from:'manual'});save();const dimEl=$('dim-'+modalCtx.dim);if(dimEl)dimEl.classList.add('open');renderList();toast('已加入清单 ✅')}}
+closeModal();
+}
+function closeModal(){$('modal-mask').classList.remove('show')}
+
+/* ================= 评分渲染 ================= */
+function renderScoreA(){
+// 更新竞标题的单场收入
+const total=parseInt(S.info.total)||0;const amount=parseInt(S.info.amount)||0;
+const avg=total&&amount?Math.round(amount/total):0;
+const f1q=PA_QS[0].qs[0];
+const f1el=document.querySelector(`.opt[data-q="${f1q.id}"]`)?.closest('.q-group')?.querySelector('.q-title');
+if(f1el)f1el.innerHTML=`<span class="qtag">钱</span>单场收入约${avg}元，你觉得怎么样？`;
+
+if(!$('pa-qs').dataset.rendered){
+$('pa-qs').innerHTML=PA_QS.map(g=>`<div class="q-group"><div class="q-title" style="font-size:14px;color:var(--blue);margin-top:12px">${g.label}</div>${g.qs.map(q=>qHTML(q)).join('')}</div>`).join('');
+$('pb-qs').innerHTML=PB_QS.map(q=>qHTML(q)).join('');
+$('pc-qs').innerHTML=PC_QS.map(g=>`<div class="q-group"><div class="q-title" style="font-size:14px;color:var(--blue);margin-top:12px">${g.label}</div>${g.qs.map(q=>qHTML(q)).join('')}</div>`).join('');
+$('pa-qs').dataset.rendered='1';
+bindScoreOpts();
+// 回显
+PA_QS.forEach(g=>g.qs.forEach(q=>{if(S.bidScore[q.id]!=null)markOpt(q.id,S.bidScore[q.id])}));
+PB_QS.forEach(q=>{if(S.outsourceScore[q.id]!=null)markOpt(q.id,S.outsourceScore[q.id])});
+PC_QS.forEach(g=>g.qs.forEach(q=>{if(S.ongoingCurrent[q.id]!=null)markOpt(q.id,S.ongoingCurrent[q.id])}));
+}
+updateScoreA();updateScoreB();updateScoreC();renderOngoingHistory();
+}
+function updateBidQuestion(){const total=parseInt(S.info.total)||0;const amount=parseInt(S.info.amount)||0;const avg=total&&amount?Math.round(amount/total):0;const el=document.querySelector(`[data-q="pa_f1"]`)?.closest('.q-group')?.querySelector('.q-title');if(el)el.innerHTML=`<span class="qtag">钱</span>单场收入约${avg}元，你觉得怎么样？`}
+
+function qHTML(q){return `<div class="q-group" data-q="${q.id}"><div class="q-title"><span class="qtag">${q.id.includes('_f')?'钱':q.id.includes('_s')?'值':q.id.includes('_fe')?'力':q.id.includes('_r')?'险':q.id.includes('_e')?'执':q.id.includes('_t')?'人':'评'}</span>${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<div class="opt" data-q="${q.id}" data-i="${i}"><div class="radio"></div><div>${esc(o.t)}</div></div>`).join('')}</div></div>`}
+function bindScoreOpts(){document.querySelectorAll('.opt').forEach(el=>{el.onclick=()=>{const qid=el.dataset.q,i=+el.dataset.i;
+if(qid.startsWith('pa_'))S.bidScore[qid]=i;
+else if(qid.startsWith('pb_'))S.outsourceScore[qid]=i;
+else if(qid.startsWith('pc_'))S.ongoingCurrent[qid]=i;
+save();markOpt(qid,i);
+if(qid.startsWith('pa_'))updateScoreA();
+if(qid.startsWith('pb_'))updateScoreB();
+if(qid.startsWith('pc_'))updateScoreC();
+}})}
+function markOpt(qid,i){document.querySelectorAll(`.opt[data-q="${qid}"]`).forEach(el=>el.classList.toggle('sel',+el.dataset.i===i))}
+
+function updateScoreA(){
+const redDone=RED_IDS.filter(id=>S.checks[id]).length;
+const groups=PA_QS;
+let scores={};let allDone=true;
+groups.forEach(g=>{const s=avgGroup(S.bidScore,[g]);scores[g.group]=s;if(s==null)allDone=false});
+const riskRaw=scores.risk;
+let riskFinal=riskRaw;
+if(redDone<RED_IDS.length&&riskRaw!=null)riskFinal=Math.min(riskRaw,40);
+scores.risk=riskFinal;
+let total=null;
+if(allDone){
+total=Math.round((scores.finance*PA_WEIGHTS.finance+scores.strategy*PA_WEIGHTS.strategy+scores.feasibility*PA_WEIGHTS.feasibility+scores.risk*PA_WEIGHTS.risk));
+if(redDone<RED_IDS.length)total=Math.min(total,69);
+}
+$('pa-badge').textContent=total==null?'未完成':total+'分';
+const sc=$('pa-score'),vd=$('pa-verdict'),wy=$('pa-why'),bd=$('pa-breakdown');
+if(!allDone){sc.textContent='--';sc.className='r-score';vd.textContent='还有题没答完';vd.className='r-verdict v-warn';wy.textContent='把上面所有选择题答完，自动出建议。';bd.style.display='none';return}
+sc.textContent=total;
+sc.className='r-score '+(total>=80?'s-go':total>=60?'s-warn':'s-no');
+let v,c,w;
+if(redDone<RED_IDS.length){v='⚠️ 红线未齐，暂缓竞标';c='v-warn';w=`「必须搞定的7件事」还有${RED_IDS.length-redDone}件没落实。分数被限制在69分以下。先去检查清单补上★项，再回来看。`}
+else if(total>=80){v='✅ 值得竞标';c='v-go';w='财务、战略、可行性都说得过去，风险可控。全力投入竞标。'}
+else if(total>=60){v='⚠️ 可以竞标，但要谈条件';c='v-warn';const gaps=[];if(scores.finance<60)gaps.push('财务回报偏低');if(scores.strategy<60)gaps.push('战略价值一般');if(scores.feasibility<60)gaps.push('可行性有疑虑');if(scores.risk<60)gaps.push('风险偏高');w='问题在：'+gaps.join('；')+'。拿这些理由跟甲方谈条件（加价/改条款/减场次）。'}
+else{v='❌ 不建议竞标';c='v-no';w='算下来不太值。除非特别想拿这个项目，否则建议放弃，或只作为备选。'}
+vd.textContent=v;vd.className='r-verdict '+c;wy.textContent=w;
+bd.style.display='block';
+bd.innerHTML=`<div><span>财务回报(35%)</span><b>${scores.finance}</b></div><div><span>战略价值(25%)</span><b>${scores.strategy}</b></div><div><span>可行性(25%)</span><b>${scores.feasibility}</b></div><div><span>风险水平(15%)</span><b>${scores.risk}${redDone<RED_IDS.length?' (红线未齐,封顶40)':''}</b></div>`;
+updateOverview();
+}
+function updateScoreB(){
+const qs=PB_QS;let total=0,allDone=true;
+qs.forEach(q=>{if(S.outsourceScore[q.id]!=null)total+=q.opts[S.outsourceScore[q.id]].s;else allDone=false});
+total=allDone?Math.round(total/qs.length):null;
+$('pb-badge').textContent=total==null?'未完成':total+'分';
+const sc=$('pb-score'),vd=$('pb-verdict'),wy=$('pb-why');
+if(!allDone){sc.textContent='--';sc.className='r-score';vd.textContent='先去答题';vd.className='r-verdict v-warn';wy.textContent='答完5道题自动出建议。';return}
+sc.textContent=total;sc.className='r-score '+(total>=75?'s-go':total>=50?'s-warn':'s-no');
+const profitScore=S.outsourceScore['pb1']!=null?PB_QS[0].opts[S.outsourceScore['pb1']].s:0;
+let v,c,w;
+if(total>=75&&profitScore>=70){v='✅ 建议外包';c='v-go';w='外包利润合理、质量可控、管理成本低。外包比自己干更划算。'}
+else if(total>=50){v='⚠️ 部分外包';c='v-warn';w='核心场次自己做（保品牌/保质量），其他外包出去省精力。注意外包方质量抽检。'}
+else{v='❌ 自己做或不接';c='v-no';w='外包后利润太薄或质量不可控。要么自己做，要么这单不接。'}
+vd.textContent=v;vd.className='r-verdict '+c;wy.textContent=w;
+}
+function updateScoreC(){
+const groups=PC_QS;let scores={};let allDone=true;
+groups.forEach(g=>{const s=avgGroup(S.ongoingCurrent,[g]);scores[g.group]=s;if(s==null)allDone=false});
+let total=null;
+if(allDone)total=Math.round(scores.finance*PC_WEIGHTS.finance+scores.execution*PC_WEIGHTS.execution+scores.team*PC_WEIGHTS.team+scores.risk*PC_WEIGHTS.risk);
+$('pc-badge').textContent=total==null?'未完成':total+'分';
+const sc=$('pc-score'),vd=$('pc-verdict'),wy=$('pc-why');
+if(!allDone){sc.textContent='--';sc.className='r-score';vd.textContent='先去答题';vd.className='r-verdict v-warn';wy.textContent='答完选择题点「保存本次评估」记录结果。';return}
+sc.textContent=total;sc.className='r-score '+(total>=80?'s-go':total>=60?'s-warn':total>=40?'s-warn':'s-no');
+let v,c,w;
+if(total>=80){v='✅ 项目健康';c='v-go';w='各方面正常，按计划继续执行。'}
+else if(total>=60){v='⚠️ 黄色预警';c='v-warn';const gaps=[];if(scores.finance<60)gaps.push('财务');if(scores.execution<60)gaps.push('执行');if(scores.team<60)gaps.push('团队');if(scores.risk<60)gaps.push('风险');w='问题在：'+gaps.join('、')+'。找出短板，制定调整方案。'}
+else if(total>=40){v='⚠️ 橙色预警';c='v-warn';w='需要重大调整（换人/减场/重新谈判）。如果调整后仍无改善，考虑止损。'}
+else{v='🚨 红色预警';c='v-no';w='项目处于危险状态。立即评估是否止损退出。检查止损红线是否触发。'}
+vd.textContent=v;vd.className='r-verdict '+c;wy.textContent=w;
+}
+function saveOngoing(){
+const groups=PC_QS;let allDone=true;
+groups.forEach(g=>g.qs.forEach(q=>{if(S.ongoingCurrent[q.id]==null)allDone=false}));
+if(!allDone){toast('还有题没答完');return}
+const scores={};groups.forEach(g=>scores[g.group]=avgGroup(S.ongoingCurrent,[g]));
+const total=Math.round(scores.finance*PC_WEIGHTS.finance+scores.execution*PC_WEIGHTS.execution+scores.team*PC_WEIGHTS.team+scores.risk*PC_WEIGHTS.risk);
+const date=$('pc-date').value||new Date().toISOString().slice(0,10);
+S.ongoingScores.push({date,total,scores:scores});
+S.ongoingCurrent={};save();
+document.querySelectorAll('#pc-qs .opt.sel').forEach(el=>el.classList.remove('sel'));
+updateScoreC();renderOngoingHistory();
+toast('✅ 已保存本次评估（'+total+'分）');
+}
+function renderOngoingHistory(){
+const el=$('pc-history');
+if(!S.ongoingScores.length){el.innerHTML='';return}
+el.innerHTML='<div style="font-size:13px;font-weight:700;margin-bottom:8px">📈 历史评估记录</div>'+S.ongoingScores.slice().reverse().map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;font-size:12.5px"><span style="font-weight:700">${r.date}</span><span class="r-score ${r.total>=80?'s-go':r.total>=60?'s-warn':'s-no'}" style="font-size:18px">${r.total}</span><span style="color:var(--ink-2);font-size:11px">财${r.scores.finance} 执${r.scores.execution} 团${r.scores.team} 险${r.scores.risk}</span></div>`).join('');
+}
+
+/* ================= 进度追踪 ================= */
+const SHOW_STATUSES=['planned','done','issue','cancel'];
+const STATUS_NAMES={planned:'计划',done:'正常',issue:'有问题',cancel:'取消'};
+function renderProgress(){
+const shows=S.shows;
+const stats={planned:0,done:0,issue:0,cancel:0};
+shows.forEach(s=>stats[s.status]++);
+const total=shows.length;
+const doneN=stats.done+stats.issue;
+$('ob-progress').textContent='进度 '+doneN+'/'+(parseInt(S.info.total)||total)+' 场';
+// 统计卡
+$('show-stats').innerHTML=`<div class="stat-row"><div class="stat-box"><div class="s-label">总场次</div><div class="s-val">${total}</div></div><div class="stat-box"><div class="s-label">已完成</div><div class="s-val" style="color:var(--green)">${doneN}</div></div><div class="stat-box"><div class="s-label">有问题</div><div class="s-val" style="color:var(--orange)">${stats.issue}</div></div><div class="stat-box"><div class="s-label">取消</div><div class="s-val" style="color:var(--red)">${stats.cancel}</div></div></div>`;
+// 按月分组
+const byMonth={};
+shows.forEach(s=>{const m=s.date.slice(0,7);if(!byMonth[m])byMonth[m]=[];byMonth[m].push(s)});
+const months=Object.keys(byMonth).sort();
+$('month-grid').innerHTML=months.length?months.map(m=>{
+const arr=byMonth[m];const d=arr.filter(s=>s.status==='done'||s.status==='issue').length;const iss=arr.filter(s=>s.status==='issue').length;const cnl=arr.filter(s=>s.status==='cancel').length;
+const light=cnl>0?'health-red':iss>0?'health-yellow':d===arr.length?'health-green':'health-gray';
+return `<div class="month-card" onclick="toggleMonth('${m}')"><div class="m-title"><span class="m-dot health-${light==='health-gray'?'gray':light==='health-green'?'green':light==='health-yellow'?'yellow':'red'}" style="width:10px;height:10px;border-radius:50%;display:inline-block"></span>${m}</div><div class="m-stats">计划${arr.length} · 完成${d} · 异常${iss} · 取消${cnl}</div></div>`;
+}).join(''):'<div style="font-size:13px;color:var(--ink-3);padding:20px;text-align:center">还没有场次。点「添加一场」开始记录。</div>';
+$('show-detail').innerHTML='';$('show-detail').style.display='none';
+}
+let openMonth=null;
+function toggleMonth(m){
+if(openMonth===m){openMonth=null;$('show-detail').style.display='none';return}
+openMonth=m;
+const arr=S.shows.filter(s=>s.date.slice(0,7)===m).sort((a,b)=>a.date.localeCompare(b.date));
+$('show-detail').style.display='block';
+$('show-detail').innerHTML=`<div class="card-title" style="font-size:14px;margin-bottom:10px">${m} 的场次（点圆点切换状态）</div>`+arr.map(s=>`<div class="show-row"><div class="s-status st-${s.status}" onclick="cycleStatus('${s.id}')"></div><div class="s-date">${s.date}</div><div class="s-venue">${esc(s.venue)}${s.note?' · '+esc(s.note):''}</div><input style="border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-size:11px;width:80px" value="${esc(s.note||'')}" placeholder="备注" oninput="updShowNote('${s.id}',this.value)"><button class="s-del" onclick="delShow('${s.id}')">✕</button></div>`).join('');
+}
+function cycleStatus(id){const s=S.shows.find(x=>x.id===id);if(!s)return;const idx=SHOW_STATUSES.indexOf(s.status);s.status=SHOW_STATUSES[(idx+1)%SHOW_STATUSES.length];save();renderProgress();if(openMonth)toggleMonth(openMonth);updateOverview()}
+function updShowNote(id,v){const s=S.shows.find(x=>x.id===id);if(s){s.note=v;save()}}
+function delShow(id){S.shows=S.shows.filter(s=>s.id!==id);save();renderProgress();updateOverview()}
+function addShow(){modalCtx={type:'show'};$('modal-title').textContent='添加一场';$('modal-desc').textContent='填日期和场地，状态默认为「计划中」。添加后点圆点切换状态。';$('modal-fields').innerHTML='<input id="modal-input-date" type="date" placeholder="日期"><input id="modal-input-venue" placeholder="场地（如XX公园）">';$('modal-mask').classList.add('show')}
+
+/* ================= 复盘 ================= */
+function renderReview(){
+const sel=$('review-month');
+const months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+if(sel.options.length<=1)months.forEach((m,i)=>sel.add(new Option(m,String(i+1))));
+const form=$('review-form');
+form.innerHTML=REVIEW_QS.map(q=>`<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:700;margin-bottom:4px">${q.q}</div><textarea class="qa" data-rq="${q.id}" placeholder="写下来..." >${esc(S.reviews[sel.value]?.[q.id]||'')}</textarea></div>`).join('');
+sel.onchange=()=>{REVIEW_QS.forEach(q=>{const ta=form.querySelector(`[data-rq="${q.id}"]`);if(ta)ta.value=S.reviews[sel.value]?.[q.id]||''})};
+}
+function saveReview(){
+const m=$('review-month').value;if(!m){toast('先选月份');return}
+const data={};REVIEW_QS.forEach(q=>{const ta=document.querySelector(`[data-rq="${q.id}"]`);if(ta)data[q.id]=ta.value});
+S.reviews[m]=data;save();toast('✅ '+$('review-month').selectedOptions[0].text+'复盘已保存');
+}
+
+/* ================= 问题记录 ================= */
+function renderProblems(){
+const el=$('prob-list');
+if(!S.problems.length){el.innerHTML='<div style="font-size:12.5px;color:var(--ink-3);padding:4px 2px 8px">还没有记录。</div>';return}
+el.innerHTML=S.problems.map((p,i)=>{
+const stars=[1,2,3,4,5].map(function(n){return '<span class="star '+(p.impact>=n?'on':'')+'" onclick="setImpact('+i+','+n+')" style="font-size:20px;cursor:pointer;color:'+(p.impact>=n?'#f5b301':'#d5dbe5')+'">★</span>'}).join('');
+const opts=DATA.map(function(d){return '<option value="'+d.key+'" '+(p.dim===d.key?'selected':'')+'>'+d.icon+' '+d.name+'</option>'}).join('');
+return '<div class="prob-card" style="border:1.5px solid var(--line);border-radius:12px;padding:13px;margin-bottom:10px;background:#fbfcfe"><div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap"><input style="flex:1 1 100%;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px" placeholder="出了什么事？" value="'+esc(p.what)+'" oninput="updProb('+i+',\'what\',this.value)"></div><div style="display:flex;gap:8px;margin-bottom:8px;align-items:center"><span style="font-size:12.5px;color:var(--ink-2)">影响：</span>'+stars+'</div><div style="display:flex;gap:8px;margin-bottom:8px"><input style="flex:1 1 100%;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px" placeholder="为什么？" value="'+esc(p.why)+'" oninput="updProb('+i+',\'why\',this.value)"></div><div style="display:flex;gap:8px;margin-bottom:8px"><input style="flex:1 1 100%;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px" placeholder="下次怎么办？" value="'+esc(p.next)+'" oninput="updProb('+i+',\'next\',this.value)"></div><div style="display:flex;gap:8px;align-items:center"><select onchange="updProb('+i+',\'dim\',this.value)" style="flex:1;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px"><option value="">加入哪个检查大项？</option>'+opts+'</select>'+(p.added?'<span style="font-size:12px;color:var(--green);font-weight:600">✓ 已加入</span>':'<button onclick="probToList('+i+')" style="border:none;background:var(--blue);color:#fff;border-radius:8px;padding:7px 13px;font-size:12.5px;cursor:pointer;font-weight:700">加入清单</button>')+'<button onclick="delProb('+i+')" style="border:none;background:none;color:var(--ink-3);font-size:15px;cursor:pointer">✕</button></div></div>';
+}).join('');
+}
+function addProblem(){S.problems.push({what:'',impact:3,why:'',next:'',added:false,dim:''});save();renderProblems()}
+function updProb(i,k,v){S.problems[i][k]=v;save()}
+function setImpact(i,n){S.problems[i].impact=n;save();renderProblems()}
+function delProb(i){S.problems.splice(i,1);save();renderProblems()}
+function probToList(i){const p=S.problems[i];if(!p.next.trim()){toast('先填「下次怎么办」');return}if(!p.dim){toast('先选加入哪个大项');return}S.custom.push({id:p.dim+'_r'+Date.now(),dim:p.dim,name:p.next.trim(),tip:'来自复盘：'+(p.what||''),from:'review'});p.added=true;save();renderProblems();renderList();toast('✅ 已加入「'+DIM_NAMES[p.dim]+'」')}
+
+/* ================= 风险登记簿 ================= */
+function renderRisks(){
+const el=$('risk-list');
+if(!S.risks.length){el.innerHTML='<div style="font-size:12.5px;color:var(--ink-3);padding:4px 2px 8px">还没有登记风险。点下面按钮添加。</div>';renderRiskStats();return}
+el.innerHTML=S.risks.map((r,i)=>{
+const level=r.prob*r.impact;const cls=level>=15?'high':level>=8?'med':'';const bc=r.status==='closed'?'closed':'';
+const btxt=level>=15?'高':level>=8?'中':'低';const bcls=level>=15?'rb-high':level>=8?'rb-med':'rb-low';
+const optList=[1,2,3,4,5].map(function(n){return '<option '+(r.prob===n?'selected':'')+'>'+n+'</option>'}).join('');
+const optList2=[1,2,3,4,5].map(function(n){return '<option '+(r.impact===n?'selected':'')+'>'+n+'</option>'}).join('');
+return '<div class="risk-card '+cls+' '+bc+'"><div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;align-items:center"><span class="risk-badge '+bcls+'">'+btxt+'风险</span>'+(r.status==='closed'?'<span style="font-size:11px;color:var(--ink-3)">已关闭</span>':'')+'<button onclick="toggleRiskStatus('+i+')" style="border:1px solid var(--line);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;background:#fff">'+(r.status==='closed'?'重新打开':'关闭')+'</button><button onclick="delRisk('+i+')" style="border:none;background:none;color:var(--ink-3);font-size:14px;cursor:pointer;margin-left:auto">✕</button></div><div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap"><input style="flex:1 1 100%;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px" placeholder="风险描述" value="'+esc(r.desc)+'" oninput="updRisk('+i+',\'desc\',this.value)"></div><div style="display:flex;gap:8px;margin-bottom:6px"><label style="font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:4px">概率<select onchange="updRisk('+i+',\'prob\',+this.value)" style="border:1.5px solid var(--line);border-radius:6px;padding:4px;font-size:12px">'+optList+'</select></label><label style="font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:4px">影响<select onchange="updRisk('+i+',\'impact\',+this.value)" style="border:1.5px solid var(--line);border-radius:6px;padding:4px;font-size:12px">'+optList2+'</select></label></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1 1 100%;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px" placeholder="应对措施" value="'+esc(r.measure)+'" oninput="updRisk('+i+',\'measure\',this.value)"></div><div style="display:flex;gap:8px"><input style="flex:1 1 100%;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px" placeholder="负责人" value="'+esc(r.owner)+'" oninput="updRisk('+i+',\'owner\',this.value)"></div></div>';
+}).join('');
+renderRiskStats();
+}
+function renderRiskStats(){
+const open=S.risks.filter(r=>r.status==='open');
+const high=open.filter(r=>r.prob*r.impact>=15).length;
+const med=open.filter(r=>r.prob*r.impact>=8&&r.prob*r.impact<15).length;
+const low=open.filter(r=>r.prob*r.impact<8).length;
+const closed=S.risks.filter(r=>r.status==='closed').length;
+$('rk-high').textContent=high;$('rk-med').textContent=med;$('rk-low').textContent=low;$('rk-closed').textContent=closed;
+}
+function addRisk(){modalCtx={type:'risk'};$('modal-title').textContent='登记风险';$('modal-desc').textContent='描述风险，后面可以调概率和影响。';$('modal-fields').innerHTML='<input id="modal-input-desc" placeholder="比如：甲方可能拖延付款"><input id="modal-input-measure" placeholder="应对措施（可选）">';$('modal-mask').classList.add('show')}
+function updRisk(i,k,v){S.risks[i][k]=v;save();renderRisks();updateOverview()}
+function toggleRiskStatus(i){S.risks[i].status=S.risks[i].status==='closed'?'open':'closed';save();renderRisks();updateOverview()}
+function delRisk(i){S.risks.splice(i,1);save();renderRisks();updateOverview()}
+
+/* ================= 总览更新 ================= */
+function updateOverview(){
+const shows=S.shows;const doneN=shows.filter(s=>s.status==='done'||s.status==='issue').length;const issN=shows.filter(s=>s.status==='issue').length;
+const total=parseInt(S.info.total)||shows.length;
+const amount=parseInt(S.info.amount)||0;
+const avg=total&&amount?Math.round(amount/total):0;
+$('k-done').textContent=doneN;$('k-total').textContent=total;$('k-issue').textContent=issN;
+$('k-avg').textContent=avg?'¥'+avg:'-';
+const items=allItems();$('k-check').textContent=Math.round(items.filter(it=>S.checks[it.id]).length/items.length*100)+'%';
+const openRisks=S.risks.filter(r=>r.status==='open');$('k-risk').textContent=openRisks.length;
+// 健康状态：取最新阶段C评分
+const lastC=S.ongoingScores[S.ongoingScores.length-1];
+const hs=$('health-status'),hd=$('health-desc');
+if(lastC){const t=lastC.total;if(t>=80){hs.innerHTML='<span class="health-light health-green"></span>健康（'+t+'分）';hd.textContent='各方面正常，继续按计划执行'}else if(t>=60){hs.innerHTML='<span class="health-light health-yellow"></span>黄色预警（'+t+'分）';hd.textContent='有短板需要关注，去「接不接」看详情'}else if(t>=40){hs.innerHTML='<span class="health-light health-yellow"></span>橙色预警（'+t+'分）';hd.textContent='需要重大调整，去「接不接」看详情'}else{hs.innerHTML='<span class="health-light health-red"></span>红色预警（'+t+'分）';hd.textContent='考虑止损！检查止损红线是否触发'}}else{hs.innerHTML='<span class="health-light health-gray"></span>未评估';hd.textContent='去「接不接」做阶段C评分，这里自动更新'}
+// 风险预警卡
+const highRisks=openRisks.filter(r=>r.prob*r.impact>=15);
+const card=$('risk-alert-card');
+if(highRisks.length){card.style.display='block';$('risk-alert-body').innerHTML=highRisks.map(r=>`<div style="font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line)"><b style="color:var(--red)">⚠️ ${esc(r.desc)}</b><br><span style="font-size:12px;color:var(--ink-2)">应对：${esc(r.measure||'未制定')} | 负责人：${esc(r.owner||'未指定')}</span></div>`).join('')}else{card.style.display='none'}
+}
+
+/* ================= 汇总导出 ================= */
+function copySummary(){
+const items=allItems();const done=items.filter(it=>S.checks[it.id]);const redDone=RED_IDS.filter(id=>S.checks[id]).length;
+const shows=S.shows;const doneN=shows.filter(s=>s.status==='done'||s.status==='issue').length;const issN=shows.filter(s=>s.status==='issue').length;const cnlN=shows.filter(s=>s.status==='cancel').length;
+let t='';
+t+=`【长期活动速查表 · ${S.info.name||'未命名项目'}】\n`;
+t+=`周期：${S.info.duration||'-'}｜总场次：${S.info.total||'-'}｜总金额：${S.info.amount||'-'}元\n`;
+t+=`甲方：${S.info.client||'-'}（${S.info.contact||'-'}）｜外包计划：${S.info.outsource||'-'}\n`;
+t+=`\n—— 检查进度 ——\n完成 ${done.length}/${items.length}，★必办 ${redDone}/${RED_IDS.length}\n`;
+t+=`\n—— 场次进度 ——\n已完成 ${doneN}/${S.info.total||shows.length}，异常 ${issN}，取消 ${cnlN}\n`;
+// 阶段A
+const paGroups=PA_QS;let paScores={};let paAll=true;paGroups.forEach(g=>{const s=avgGroup(S.bidScore,[g]);paScores[g.group]=s;if(s==null)paAll=false});
+let paTotal=paAll?Math.round(paScores.finance*PA_WEIGHTS.finance+paScores.strategy*PA_WEIGHTS.strategy+paScores.feasibility*PA_WEIGHTS.feasibility+paScores.risk*PA_WEIGHTS.risk):null;
+if(paTotal!=null&&redDone<RED_IDS.length)paTotal=Math.min(paTotal,69);
+t+=`\n—— 阶段A 竞标评估 ——\n`;
+t+=paTotal==null?'未完成\n':`综合分 ${paTotal}（财${paScores.finance} 战${paScores.strategy} 力${paScores.feasibility} 险${paScores.risk}）\n`;
+// 阶段B
+const pbAll=PB_QS.every(q=>S.outsourceScore[q.id]!=null);
+let pbTotal=pbAll?Math.round(PB_QS.reduce((s,q)=>s+q.opts[S.outsourceScore[q.id]].s,0)/PB_QS.length):null;
+t+=`\n—— 阶段B 外包决策 ——\n`;
+t+=pbTotal==null?'未完成\n':`外包适合度 ${pbTotal}分\n`;
+// 阶段C
+const lastC=S.ongoingScores[S.ongoingScores.length-1];
+t+=`\n—— 阶段C 最新持续评估 ——\n`;
+t+=lastC?`${lastC.date}：${lastC.total}分（财${lastC.scores.finance} 执${lastC.scores.execution} 团${lastC.scores.team} 险${lastC.scores.risk}）\n`:'未评估\n';
+// 风险
+const openRisks=S.risks.filter(r=>r.status==='open');
+const highR=openRisks.filter(r=>r.prob*r.impact>=15);
+t+=`\n—— 风险登记簿 ——\n开放风险 ${openRisks.length} 条，其中高风险 ${highR.length} 条\n`;
+if(highR.length)t+=highR.map(r=>`  ⚠️ ${r.desc}（${r.measure||'未制定应对'}）\n`).join('');
+// 复盘
+const reviews=Object.entries(S.reviews).filter(([k,v])=>v&&v.rq1);
+if(reviews.length){t+=`\n—— 月度复盘 ——\n`;reviews.forEach(([m,v])=>{t+=`${m}月：\n`;REVIEW_QS.forEach(q=>{if(v[q.id]&&v[q.id].trim())t+=`  ${q.q}\n  ${v[q.id].trim()}\n`})})}
+// 问题
+const probs=S.problems.filter(p=>p.what.trim());
+if(probs.length){t+=`\n—— 问题记录 ——\n`;probs.forEach((p,i)=>{t+=`${i+1}. ${p.what}（影响${p.impact}/5）\n`;if(p.next)t+=`   下次：${p.next}${p.added?'（已加入清单✓）':''}\n`})}
+t+=`\n（由长期活动速查表·团队版生成，数据存在本机，此消息即备份。建议每月点「导出数据」存一份JSON）`;
+const copy=txt=>{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('已复制 ✅ 去微信粘贴发群')}catch(e){toast('复制失败，请手动复制')}document.body.removeChild(ta)};
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast('已复制 ✅')).catch(()=>copy(t))}else copy(t);
+}
+
+/* ================= 数据导出导入 ================= */
+function exportData(){
+const data=JSON.stringify(S,null,2);
+const blob=new Blob([data],{type:'application/json'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');a.href=url;a.download='长期活动数据_'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+toast('✅ 已导出JSON文件，请保存到安全位置');
+}
+function importData(event){
+const file=event.target.files[0];if(!file)return;
+const reader=new FileReader();
+reader.onload=e=>{
+try{const data=JSON.parse(e.target.result);S=Object.assign(defaultState(),data);save();initAll();toast('✅ 数据导入成功')}
+catch(err){toast('❌ 文件格式不对，请选择导出的JSON文件')}
+};
+reader.readAsText(file);
+event.target.value='';
+}
+
+/* ================= 重置 ================= */
+function resetAll(){modalCtx={type:'reset'};$('modal-title').textContent='开始新项目？';$('modal-desc').textContent='会清空所有数据。如果里面有想留的内容，先点「导出数据」或「复制汇总」保存。确定清空吗？';$('modal-fields').innerHTML='';$('modal-mask').classList.add('show')}
+
+function toggleAllDims(){const dims=document.querySelectorAll('.dim');const anyClosed=[...dims].some(d=>!d.classList.contains('open'));dims.forEach(d=>d.classList.toggle('open',anyClosed))}
+
+/* ================= 初始化 ================= */
+function initAll(){bindInfo();renderList();renderScoreA();renderProgress();renderReview();renderProblems();renderRisks();updateOverview()}
+initAll();
+</script>
+</body>
+</html>
