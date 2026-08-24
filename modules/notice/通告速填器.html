@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="通告速填器：勾选创建排练/演出通告，一键生成微信文本">
+<title>通告速填器 · 吾也乐队</title>
+<style>
+:root{
+  --bg:#faf9f6; --panel:#ffffff; --line:#e7e3d8;
+  --text:#26241f; --muted:#7a766c;
+  --gold:#b8860b; --gold-soft:#f7efd9; --gold-line:#e4d3a4;
+  --green:#3f7d53; --green-soft:#e9f4ec;
+  --blue:#3a6fa3; --blue-soft:#e8f0f7;
+  --red:#b04a3a; --red-soft:#f9ece9;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.75}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px 80px}
+header{padding:32px 0 12px}
+h1{font-size:22px;font-weight:700}
+.sub{color:var(--muted);font-size:13px;margin-top:5px}
+.howto{background:var(--gold-soft);border:1px solid var(--gold-line);border-radius:14px;padding:14px 18px;margin:14px 0 8px;font-size:13px;color:#5a5448}
+.howto b{color:var(--gold)}
+
+.seg{display:flex;gap:10px;margin:14px 0}
+.seg button{flex:1;padding:12px;border-radius:12px;border:1.5px solid var(--line);background:var(--panel);font-size:15px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.seg button.on-pr{background:var(--blue);border-color:var(--blue);color:#fff}
+.seg button.on-sh{background:var(--gold);border-color:var(--gold);color:#fff}
+
+h2{font-size:16.5px;font-weight:700;margin:24px 0 6px;display:flex;align-items:center;gap:9px}
+h2::before{content:"";width:16px;height:3px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.hint{font-size:12.5px;color:var(--muted);margin:0 0 10px}
+
+.form{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.f-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.f-field{flex:1;min-width:130px}
+.f-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.f-field input,.f-field select{width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit;background:#fff;color:var(--text)}
+.f-field input:focus,.f-field select:focus{outline:none;border-color:var(--gold)}
+
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.pill{display:flex;align-items:center;gap:7px;border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:7px 13px;font-size:13.5px;cursor:pointer;user-select:none;transition:all .15s}
+.pill.on{border-color:var(--green);background:var(--green-soft);color:var(--green);font-weight:700}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.pill.on .dot{background:var(--green)}
+.pill small{color:var(--muted);font-weight:400}
+
+.btn{padding:11px 16px;border-radius:11px;border:none;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;transition:all .15s}
+.btn-primary{background:var(--gold);color:#fff;box-shadow:0 4px 14px rgba(184,134,11,.25)}
+.btn-primary:hover{background:#a3790a}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-ghost{background:var(--panel);color:var(--muted);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--red);color:var(--red)}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:8px}
+
+/* setlist */
+.sl-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sl-list{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.sl-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--line);font-size:14px}
+.sl-item:first-child{border-top:none}
+.sl-item .no{font-weight:800;color:var(--gold);min-width:24px;font-variant-numeric:tabular-nums}
+.sl-item .t{flex:1;min-width:0}
+.sl-item .t b{display:block}
+.sl-item .t small{color:var(--muted);font-size:11.5px}
+.sl-item .ops{display:flex;gap:4px;flex-shrink:0}
+.sl-item select{padding:4px 6px;border:1px solid var(--line);border-radius:7px;font-size:12px;font-family:inherit;background:#fff}
+.mv{background:none;border:1px solid var(--line);border-radius:7px;cursor:pointer;font-size:12px;padding:4px 7px;color:var(--muted)}
+.mv:hover{border-color:var(--gold);color:var(--gold)}
+.mv.del:hover{border-color:var(--red);color:var(--red)}
+.empty{color:var(--muted);text-align:center;padding:20px;font-size:13px}
+
+/* 弹层选歌 */
+.mask{position:fixed;inset:0;background:rgba(38,36,31,.5);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.mask.show{display:flex}
+.modal{background:var(--panel);width:100%;max-width:640px;max-height:82vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden}
+.modal-h{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.modal-h b{font-size:15px;flex:1}
+.modal-h .x{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);padding:0 6px}
+.modal-s{padding:10px 14px;border-bottom:1px solid var(--line)}
+.modal-s input{width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit}
+.modal-b{overflow-y:auto;flex:1;padding:6px 0 14px}
+.grp-t{font-size:12.5px;font-weight:800;color:var(--gold);padding:10px 18px 4px;letter-spacing:.05em}
+.pick{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;font-size:14px}
+.pick:hover{background:var(--bg)}
+.pick.on{background:var(--green-soft)}
+.pick .cb{width:19px;height:19px;border:1.5px solid var(--line);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}
+.pick.on .cb{background:var(--green);border-color:var(--green)}
+.pick .pt{flex:1}
+.pick .pt small{color:var(--muted);font-size:11.5px;margin-left:6px}
+.modal-f{padding:10px 18px;border-top:1px solid var(--line);display:flex;gap:10px}
+.modal-f .btn{flex:1}
+
+/* 生成结果 */
+.out{background:#26241f;border-radius:14px;padding:16px;margin-top:12px}
+.out pre{color:#f2e8d0;font-size:13px;white-space:pre-wrap;word-break:break-all;font-family:inherit;line-height:1.85}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.actions .btn{flex:1;min-width:150px}
+
+.loop{background:var(--green-soft);border:1px solid #cfe3d5;border-radius:14px;padding:15px 18px;font-size:13px;color:#2c4a37;margin-top:24px}
+.loop b{color:var(--green)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#26241f;color:#fff;font-size:13.5px;border-radius:30px;padding:10px 22px;opacity:0;pointer-events:none;transition:all .3s;z-index:99;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:560px){
+  h1{font-size:19px}
+  .seg button{font-size:13.5px;padding:10px 6px}
+  .actions{flex-direction:column}.actions .btn{min-width:0}
+}
+@media print{body{background:#fff}.actions,.howto,.seg,.sl-toolbar{display:none !important}.out{background:#fff}.out pre{color:#26241f}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>📣 通告速填器</h1>
+  <p class="sub">排练/演出通告 · 勾选填写 · 一键生成微信文本 · 自动编号</p>
+</header>
+
+<div class="howto">
+  <b>怎么用（4步）：</b>① 选<b>排练/演出</b> → ② 填基本信息、<b>点到场人员</b> → ③ 从曲库<b>勾选曲目</b>（自动带调号BPM）或加急新歌 → ④ 点「生成通告」→ 复制发微信群。编号自动生成，确认发布后序号+1。
+</div>
+
+<div class="seg">
+  <button id="btnP" class="segbtn">🎸 排练通告</button>
+  <button id="btnS" class="segbtn">🎤 演出通告</button>
+</div>
+
+<h2>基本信息 <span style="font-weight:400;color:var(--gold);font-size:13px" id="codeView"></span></h2>
+<div class="form">
+  <div class="f-row">
+    <div class="f-field" style="min-width:140px"><label>日期</label><input type="date" id="fDate"></div>
+    <div class="f-field" style="min-width:180px"><label>主题</label><input type="text" id="fTheme" placeholder="如 日常排练 / 茅台商演"></div>
+    <div class="f-field" style="min-width:150px"><label>地点</label>
+      <select id="fVenue"><option value="">— 选常用地点 —</option></select></div>
+    <div class="f-field" id="venueCustomWrap" style="min-width:150px;display:none"><label>地点（手输）</label><input type="text" id="fCustomVenue" placeholder="输入地点"></div>
+  </div>
+  <div class="f-row" id="prTimes">
+    <div class="f-field" style="min-width:110px"><label>开始</label><input type="time" id="fStart"></div>
+    <div class="f-field" style="min-width:110px"><label>结束</label><input type="time" id="fEnd"></div>
+  </div>
+  <div class="f-row" id="shTimes" style="display:none">
+    <div class="f-field" style="min-width:95px"><label>到场</label><input type="time" id="fArrive"></div>
+    <div class="f-field" style="min-width:95px"><label>彩排</label><input type="time" id="fRehearse"></div>
+    <div class="f-field" style="min-width:95px"><label>开演</label><input type="time" id="fStart2"></div>
+  </div>
+  <div class="f-row" id="shBiz" style="display:none">
+    <div class="f-field" style="min-width:150px"><label>对接人/结算</label><input type="text" id="fContact" placeholder="如 惠城 · 现金"></div>
+  </div>
+</div>
+
+<h2>人员到场（勾选）</h2>
+<p class="hint">点到的成员会出现在通告里，收到请回复确认。</p>
+<div class="pills" id="memRow"></div>
+
+<h2 id="hSetlist"><span id="hSetTitle">本场曲目（选填，排练可只写主题）</span><span style="font-weight:400;color:var(--gold);font-size:13px" id="slCount">0</span></h2>
+<p class="hint">从曲库勾选自动带出调号/BPM，按歌单分组；「日常排练歌单」「姝言的歌单」是两人的熟悉曲目池，从中选歌可缩短排练周期；加急新歌用「加急新歌」手动加。每首可选演唱者、填备注，生成时自动按演唱者分组。</p>
+<div class="sl-toolbar">
+  <button class="btn btn-blue" id="btnOpenPick" type="button">☰ 从曲库选</button>
+</div>
+<div class="form" style="margin-bottom:10px">
+  <div class="f-row" style="margin-bottom:0">
+    <div class="f-field" style="min-width:130px"><label>加急新歌</label><input type="text" id="cTitle" placeholder="歌名"></div>
+    <div class="f-field" style="min-width:100px"><label>原唱(选填)</label><input type="text" id="cSinger"></div>
+    <div class="f-field" style="min-width:70px"><label>调</label><input type="text" id="cKey" placeholder="g"></div>
+    <div class="f-field" style="min-width:70px"><label>BPM</label><input type="text" id="cBpm" placeholder="120"></div>
+    <div class="f-field" style="min-width:90px;flex:0 0 auto;align-self:flex-end"><button class="btn btn-ghost btn-sm" id="btnAddCustom" type="button" style="width:100%">＋ 加入</button></div>
+  </div>
+</div>
+<div class="sl-list" id="slList"></div>
+
+<h2>特别提示（选填）</h2>
+<div class="form">
+  <div class="f-row" style="margin-bottom:0">
+    <div class="f-field" style="min-width:100%"><label>如：下雨注意运鼓 / 户外注意防雨设备 / 观众互动安排</label>
+      <input type="text" id="fNote" placeholder="选填"></div>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn btn-primary" id="btnGen" type="button">⚡ 生成通告</button>
+</div>
+
+<div class="out" id="outBox" style="display:none">
+  <pre id="outPre"></pre>
+</div>
+<div class="actions" id="outActions" style="display:none">
+  <button class="btn btn-primary" id="btnCopy" type="button">📋 复制到微信</button>
+  <button class="btn btn-ghost" id="btnConfirm" type="button">✓ 确认发布（编号+1）</button>
+</div>
+
+<div class="loop">
+  <b>数据流：</b>本页管「快速创建 + 分发生成」；<b>通告 Excel 仍是权威台账</b>——重要场次（演出/首演）生成后把要点回填 Excel 存档，日常排练可只发群不归档。曲库扩充后找 AI 更新本页曲库数据块即可（新歌就能勾选）。
+</div>
+
+</div>
+
+<div class="mask" id="mask">
+  <div class="modal">
+    <div class="modal-h"><b>从曲库选歌（45首）</b><button class="x" id="btnClosePick" type="button">✕</button></div>
+    <div class="modal-s"><input type="text" id="pickQ" placeholder="搜歌名 / 歌手…"></div>
+    <div class="modal-b" id="pickBody"></div>
+    <div class="modal-f"><button class="btn btn-primary" id="btnConfirmPick" type="button">确定加入</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script id="DATA" type="application/json">
+{
+ "songs": [
+  {
+   "t": "不该",
+   "s": "周杰伦 张惠妹",
+   "k": "E",
+   "b": "75",
+   "g": "",
+   "from": [
+    "日常排练歌单"
+   ]
+  },
+  {
+   "t": "刀马旦",
+   "s": "周杰伦",
+   "k": "",
+   "b": "",
+   "g": "",
+   "from": [
+    "日常排练歌单"
+   ]
+  },
+  {
+   "t": "危险派对",
+   "s": "王以太 刘至佳",
+   "k": "e",
+   "b": "105",
+   "g": "rap",
+   "from": [
+    "日常排练歌单"
+   ]
+  },
+  {
+   "t": "夜的第七章",
+   "s": "周杰伦",
+   "k": "",
+   "b": "",
+   "g": "",
+   "from": [
+    "日常排练歌单"
+   ]
+  },
+  {
+   "t": "我爱你",
+   "s": "卢广仲",
+   "k": "c或d",
+   "b": "93",
+   "g": "",
+   "from": [
+    "日常排练歌单"
+   ]
+  },
+  {
+   "t": "爱是怀疑",
+   "s": "陈奕迅",
+   "k": "",
+   "b": "",
+   "g": "",
+   "from": [
+    "日常排练歌单"
+   ]
+  },
+  {
+   "t": "独上c楼",
+   "s": "黄宣",
+   "k": "c",
+   "b": "195",
+   "g": "",
+   "from": [
+    "日常排练歌单"
+   ]
+  },
+  {
+   "t": "谢谢侬",
+   "s": "陈奕迅",
+   "k": "A",
+   "b": "92",
+   "g": "funk",
+   "from": [
+    "日常排练歌单"
+   ]
+  },
+  {
+   "t": "zombie",
+   "s": "",
+   "k": "g",
+   "b": "84",
+   "g": "",
+   "from": [
+    "姝言的歌单"
+   ]
+  },
+  {
+   "t": "告白气球",
+   "s": "",
+   "k": "d",
+   "b": "85",
+   "g": "",
+   "from": [
+    "姝言的歌单"
+   ]
+  },
+  {
+   "t": "夏天的风",
+   "s": "温岚",
+   "k": "d",
+   "b": "",
+   "g": "",
+   "from": [
+    "姝言的歌单",
+    "渔光里驻唱歌单",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "天天",
+   "s": "",
+   "k": "D转bE",
+   "b": "65",
+   "g": "",
+   "from": [
+    "姝言的歌单"
+   ]
+  },
+  {
+   "t": "孤独颂歌",
+   "s": "",
+   "k": "e",
+   "b": "",
+   "g": "",
+   "from": [
+    "姝言的歌单"
+   ]
+  },
+  {
+   "t": "百年孤寂",
+   "s": "",
+   "k": "C转F",
+   "b": "75",
+   "g": "",
+   "from": [
+    "姝言的歌单"
+   ]
+  },
+  {
+   "t": "红色高跟鞋",
+   "s": "",
+   "k": "d",
+   "b": "89",
+   "g": "",
+   "from": [
+    "姝言的歌单"
+   ]
+  },
+  {
+   "t": "那些你很冒险的梦",
+   "s": "",
+   "k": "g",
+   "b": "68",
+   "g": "",
+   "from": [
+    "姝言的歌单"
+   ]
+  },
+  {
+   "t": "霓虹甜心",
+   "s": "",
+   "k": "d",
+   "b": "118",
+   "g": "",
+   "from": [
+    "姝言的歌单"
+   ]
+  },
+  {
+   "t": "龙卷风",
+   "s": "",
+   "k": "d",
+   "b": "72",
+   "g": "",
+   "from": [
+    "姝言的歌单"
+   ]
+  },
+  {
+   "t": "再见",
+   "s": "邓紫棋",
+   "k": "D",
+   "b": "68",
+   "g": "",
+   "from": [
+    "百脑汇邓紫棋专场"
+   ]
+  },
+  {
+   "t": "句号",
+   "s": "邓紫棋",
+   "k": "e",
+   "b": "72",
+   "g": "",
+   "from": [
+    "百脑汇邓紫棋专场"
+   ]
+  },
+  {
+   "t": "喜欢你",
+   "s": "邓紫棋",
+   "k": "C",
+   "b": "78",
+   "g": "",
+   "from": [
+    "百脑汇邓紫棋专场"
+   ]
+  },
+  {
+   "t": "红蔷薇白玫瑰",
+   "s": "邓紫棋",
+   "k": "A",
+   "b": "70",
+   "g": "",
+   "from": [
+    "百脑汇邓紫棋专场"
+   ]
+  },
+  {
+   "t": "乌克丽丽",
+   "s": "刘瑞琦",
+   "k": "c",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "亲密爱人",
+   "s": "王若琳",
+   "k": "c",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "甜蜜经济260816",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "南方姑娘",
+   "s": "赵雷",
+   "k": "f",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "外面的世界",
+   "s": "齐秦",
+   "k": "",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "女孩",
+   "s": "",
+   "k": "",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "好久不见",
+   "s": "陈奕迅",
+   "k": "d",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "姑娘",
+   "s": "陈楚生",
+   "k": "C",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "小半",
+   "s": "陈粒",
+   "k": "C",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "小孩",
+   "s": "",
+   "k": "",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "小宇",
+   "s": "张震岳",
+   "k": "c",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "甜蜜经济260816",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "弹唱",
+   "s": "林俊杰",
+   "k": "c",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "甜蜜经济260816",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "当你老了",
+   "s": "赵照",
+   "k": "d",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "思念",
+   "s": "黄宣",
+   "k": "g",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "恋曲1980",
+   "s": "罗大佑",
+   "k": "",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "我是一只鱼",
+   "s": "任贤齐",
+   "k": "g转a",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "我要你",
+   "s": "任素汐",
+   "k": "d",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "易燃易爆",
+   "s": "陈粒",
+   "k": "降d",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "春风吹",
+   "s": "方大同",
+   "k": "a",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "甜蜜经济260816",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "曾经的你",
+   "s": "许巍",
+   "k": "g",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "每个人都会",
+   "s": "",
+   "k": "c",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "甜蜜经济260816"
+   ]
+  },
+  {
+   "t": "活着",
+   "s": "郝云",
+   "k": "g",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "爱的初体验",
+   "s": "张震岳",
+   "k": "a转b",
+   "b": "123",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "茅台商演260815"
+   ]
+  },
+  {
+   "t": "理想三旬",
+   "s": "陈鸿宇",
+   "k": "f",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "男孩",
+   "s": "",
+   "k": "c",
+   "b": "70",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "茅台商演260815"
+   ]
+  },
+  {
+   "t": "画",
+   "s": "赵雷",
+   "k": "g",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "米店",
+   "s": "张玮玮",
+   "k": "d",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "老男孩",
+   "s": "筷子兄弟",
+   "k": "c",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "胡广生",
+   "s": "任素汐",
+   "k": "f",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "花房姑娘",
+   "s": "崔健",
+   "k": "g",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单",
+    "甜蜜经济260816",
+    "茅台莆田场260823"
+   ]
+  },
+  {
+   "t": "远行",
+   "s": "黄宣",
+   "k": "",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "骊歌",
+   "s": "gala",
+   "k": "d",
+   "b": "",
+   "g": "",
+   "from": [
+    "渔光里驻唱歌单"
+   ]
+  },
+  {
+   "t": "viva la vida",
+   "s": "",
+   "k": "g",
+   "b": "138",
+   "g": "",
+   "from": [
+    "茅台商演260815",
+    "甜蜜经济260816"
+   ]
+  },
+  {
+   "t": "假行僧",
+   "s": "",
+   "k": "c",
+   "b": "",
+   "g": "",
+   "from": [
+    "茅台商演260815"
+   ]
+  },
+  {
+   "t": "嘿姑娘",
+   "s": "",
+   "k": "g",
+   "b": "166",
+   "g": "",
+   "from": [
+    "茅台商演260815"
+   ]
+  },
+  {
+   "t": "找自己",
+   "s": "",
+   "k": "a",
+   "b": "95",
+   "g": "",
+   "from": [
+    "茅台商演260815"
+   ]
+  },
+  {
+   "t": "王妃",
+   "s": "",
+   "k": "g",
+   "b": "",
+   "g": "funk",
+   "from": [
+    "茅台商演260815"
+   ]
+  },
+  {
+   "t": "说好的幸福呢",
+   "s": "",
+   "k": "B",
+   "b": "113",
+   "g": "摇滚版",
+   "from": [
+    "茅台商演260815"
+   ]
+  },
+  {
+   "t": "迷迭香",
+   "s": "",
+   "k": "c",
+   "b": "",
+   "g": "bossanova",
+   "from": [
+    "茅台商演260815"
+   ]
+  },
+  {
+   "t": "阳光宅男",
+   "s": "",
+   "k": "降e",
+   "b": "134",
+   "g": "",
+   "from": [
+    "茅台商演260815"
+   ]
+  },
+  {
+   "t": "can't help fall in love",
+   "s": "",
+   "k": "c",
+   "b": "",
+   "g": "",
+   "from": [
+    "甜蜜经济260816"
+   ]
+  },
+  {
+   "t": "七里香",
+   "s": "周杰伦",
+   "k": "d",
+   "b": "",
+   "g": "",
+   "from": [
+    "茅台莆田场260823"
+   ]
+  }
+ ],
+ "members": [
+  {
+   "pos": "吉他手",
+   "name": "超子"
+  },
+  {
+   "pos": "歌手",
+   "name": "青宝"
+  },
+  {
+   "pos": "歌手",
+   "name": "陈姝言"
+  },
+  {
+   "pos": "鼓手",
+   "name": "游舒米"
+  },
+  {
+   "pos": "贝斯手",
+   "name": "梓渊"
+  },
+  {
+   "pos": "键盘手",
+   "name": "张铭哲"
+  },
+  {
+   "pos": "统筹",
+   "name": "惠城"
+  }
+ ],
+ "venues": [
+  "百脑汇",
+  "环岛路音乐广场",
+  "渔光里",
+  "泉州",
+  "莆田",
+  "其他（手输）"
+ ],
+ "seq": {
+  "PL": 5,
+  "YC": 4
+ }
+}
+</script>
+<script>
+
+var LS_KEY='bandToolbox.notice.v1';
+var DATA=JSON.parse(document.getElementById('DATA').textContent);
+var SONGS=DATA.songs, MEMBERS=DATA.members, SEQ=DATA.seq;
+
+var state={type:'practice',date:'',theme:'',venue:'',customVenue:'',
+  tArrive:'',tRehearse:'',tStart:'',tEnd:'',
+  contact:'',settle:'',note:'',members:[],setlist:[],ts:0};
+function loadState(){try{var s=JSON.parse(localStorage.getItem(LS_KEY)||'null');if(s&&s.type){for(var k in state){if(s[k]!==undefined)state[k]=s[k];}}}catch(e){}
+  try{var q=JSON.parse(localStorage.getItem(LS_KEY+'.seq')||'null');if(q){SEQ.PL=q.PL;SEQ.YC=q.YC;}}catch(e){}}
+function save(){state.ts=Date.now();try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}
+  try{localStorage.setItem(LS_KEY+'.seq',JSON.stringify(SEQ));}catch(e){}}
+
+/* ---- 类型切换 ---- */
+function setType(t){
+  state.type=t;
+  var bp=document.getElementById('btnP'),bs=document.getElementById('btnS');
+  bp.className=t==='practice'?'on-pr':'';bs.className=t==='show'?'on-sh':'';
+  bp.classList.add('segbtn');bs.classList.add('segbtn');
+  document.getElementById('prTimes').style.display=t==='practice'?'':'none';
+  document.getElementById('shTimes').style.display=t==='show'?'':'none';
+  document.getElementById('shBiz').style.display=t==='show'?'':'none';
+  document.getElementById('hSetTitle').textContent=t==='practice'?'本场曲目（选填，排练可只写主题）':'演出曲目（Setlist）';
+  renderCode(); save();
+}
+function ymd(){return state.date?state.date.replace(/-/g,'').slice(2):'';}
+function renderCode(){
+  var pre=state.type==='practice'?'PL':'YC';
+  var n=SEQ[pre]+1;
+  var el=document.getElementById('codeView');
+  el.textContent=pre+'-'+(ymd()||'YYMMDD')+'-'+String(n).padStart(2,'0');
+}
+
+/* ---- 基本信息 ---- */
+function bindInputs(){
+  var map={fDate:'date',fTheme:'theme',fVenue:'venue',fArrive:'tArrive',fRehearse:'tRehearse',fStart:'tStart',fStart2:'tStart',fEnd:'tEnd',fContact:'contact',fSettle:'settle',fNote:'note'};
+  for(var id in map){
+    (function(id,key){
+      var el=document.getElementById(id);
+      if(el){el.addEventListener('input',function(){
+        state[key]=el.value;
+        if(key==='tStart'){ /* 保持排练/演出两个开演输入框同步 */
+          var o=document.getElementById(id==='fStart'?'fStart2':'fStart');
+          if(o&&o.value!==el.value)o.value=el.value;
+        }
+        if(key==='date')renderCode();
+        save();
+      });}
+    })(id,map[id]);
+  }
+}
+function initVenue(){
+  var sel=document.getElementById('fVenue');
+  DATA.venues.forEach(function(v,i){
+    if(i===DATA.venues.length-1)return; /* 跳过数组末尾的"其他（手输）"占位，用下面的 ✎ 选项 */
+    var o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o);
+  });
+  var last=document.createElement('option');last.value='__custom';last.textContent='✎ 其他（手输）';sel.appendChild(last);
+  sel.addEventListener('change',function(){
+    if(sel.value==='__custom'){
+      document.getElementById('venueCustomWrap').style.display='';
+      state.venue='';
+    }else{
+      document.getElementById('venueCustomWrap').style.display='none';
+      document.getElementById('fCustomVenue').value='';
+      state.customVenue='';state.venue=sel.value;renderCode();save();
+    }
+  });
+  var cu=document.getElementById('fCustomVenue');
+  cu.addEventListener('input',function(){state.customVenue=cu.value;save();});
+}
+function venueText(){return state.venue==='其他（手输）'||!state.venue&&state.customVenue?state.customVenue:(state.venue||state.customVenue);}
+
+/* ---- 成员 ---- */
+function renderMembers(){
+  var box=document.getElementById('memRow');box.innerHTML='';
+  MEMBERS.forEach(function(m){
+    var on=state.members.indexOf(m.pos)>=0;
+    var d=document.createElement('div');d.className='pill'+(on?' on':'');
+    d.innerHTML='<span class="dot"></span>'+m.pos+'·<small>'+m.name+'</small>';
+    d.onclick=function(){var i=state.members.indexOf(m.pos);if(i>=0)state.members.splice(i,1);else state.members.push(m.pos);renderMembers();save();};
+    box.appendChild(d);
+  });
+}
+
+/* ---- 选歌弹层 ---- */
+var picker={open:false,q:'',picked:{}};
+function openPicker(){
+  picker.open=true;picker.q='';picker.picked={};
+  document.getElementById('pickQ').value='';
+  document.getElementById('mask').classList.add('show');
+  renderPicker();
+}
+function closePicker(){picker.open=false;document.getElementById('mask').classList.remove('show');}
+function renderPicker(){
+  var q=picker.q.toLowerCase();
+  var box=document.getElementById('pickBody');box.innerHTML='';
+  var groups={};
+  SONGS.forEach(function(s,i){
+    if(q&&s.t.toLowerCase().indexOf(q)<0&&(s.s||'').toLowerCase().indexOf(q)<0)return;
+    s.from.forEach(function(g){(groups[g]=groups[g]||[]).push({s:s,i:i});});
+  });
+  var order=['日常排练歌单','姝言的歌单','茅台莆田场260823','茅台商演260815','甜蜜经济260816','百脑汇邓紫棋专场','渔光里驻唱歌单'];
+  Object.keys(groups).sort(function(a,b){return order.indexOf(a)-order.indexOf(b);}).forEach(function(g){
+    var t=document.createElement('div');t.className='grp-t';t.textContent='♭ '+g+'（'+groups[g].length+'）';box.appendChild(t);
+    groups[g].forEach(function(o){
+      var inSl=state.setlist.some(function(x){return x.t===o.s.t;});
+      var d=document.createElement('div');
+      d.className='pick'+(picker.picked[o.i]||inSl?' on':'');
+      var meta=[];
+      if(o.s.k)meta.push('调'+o.s.k);
+      if(o.s.b)meta.push(o.s.b+'bpm');
+      d.innerHTML='<div class="cb">'+((picker.picked[o.i]||inSl)?'✓':'')+'</div><div class="pt"><b>'+o.s.t+'</b><small>'+(o.s.s||'')+(meta.length?' · '+meta.join(' · '):'')+'</small></div>';
+      if(inSl&&!picker.picked[o.i]){d.style.opacity=.45;}
+      d.onclick=function(){
+        if(state.setlist.some(function(x){return x.t===o.s.t;})&&!picker.picked[o.i]){toast('已在曲目里');return;}
+        picker.picked[o.i]=!picker.picked[o.i];renderPicker();
+      };
+      box.appendChild(d);
+    });
+  });
+  if(!Object.keys(groups).length){var e=document.createElement('div');e.className='empty';e.textContent='没有匹配的歌曲';box.appendChild(e);}
+}
+function confirmPick(){
+  var added=0;
+  for(var i in picker.picked){
+    if(picker.picked[i]){var s=SONGS[i];
+      state.setlist.push({t:s.t,s:s.s,k:s.k,b:s.b,who:'青宝',note:''});added++;}
+  }
+  save();renderSetlist();closePicker();
+  if(added)toast('已加 '+added+' 首');
+}
+function addCustomSong(){
+  var t=document.getElementById('cTitle').value.trim();
+  if(!t){toast('请填歌名');return;}
+  state.setlist.push({t:t,s:document.getElementById('cSinger').value.trim(),k:document.getElementById('cKey').value.trim(),
+    b:document.getElementById('cBpm').value.trim(),who:'青宝',note:'',custom:true});
+  document.getElementById('cTitle').value='';document.getElementById('cSinger').value='';
+  document.getElementById('cKey').value='';document.getElementById('cBpm').value='';
+  save();renderSetlist();toast('已加新歌「'+t+'」');
+}
+function moveSl(i,d){
+  var j=i+d;if(j<0||j>=state.setlist.length)return;
+  var a=state.setlist;var tmp=a[i];a[i]=a[j];a[j]=tmp;
+  save();renderSetlist();
+}
+function renderSetlist(){
+  var box=document.getElementById('slList');box.innerHTML='';
+  var cnt=document.getElementById('slCount');
+  if(!state.setlist.length){cnt.textContent='0';box.innerHTML='<div class="empty">还没选歌，点上面「从曲库选」或加急新歌直接加</div>';return;}
+  cnt.textContent=state.setlist.length;
+  state.setlist.forEach(function(s,i){
+    var d=document.createElement('div');d.className='sl-item';
+    var meta=[];
+    if(s.k)meta.push('调'+s.k);if(s.b)meta.push(s.b+'bpm');
+    if(s.custom)meta.push('新');
+    d.innerHTML='<div class="no">'+(i+1)+'</div><div class="t"><b>'+esc(s.t)+(s.s?' <small style="color:var(--muted);font-weight:400">'+esc(s.s)+'</small>':'')+'</b>'+
+      (meta.length?'<small>'+meta.join(' · ')+'</small>':'')+'</div>'+
+      '<div class="ops"><select data-i="'+i+'"><option'+(s.who==='青宝'?' selected':'')+'>青宝</option><option'+(s.who==='姝言'?' selected':'')+'>姝言</option><option'+(s.who==='合唱'?' selected':'')+'>合唱</option><option'+(s.who==='器乐'?' selected':'')+'>器乐</option></select>'+
+      '<input type="text" data-n="'+i+'" value="'+esc(s.note)+'" placeholder="备注" style="width:76px;padding:4px 6px;border:1px solid var(--line);border-radius:7px;font-size:12px">'+
+      '<button class="mv" data-up="'+i+'">↑</button><button class="mv" data-dn="'+i+'">↓</button><button class="mv del" data-rm="'+i+'">✕</button></div>';
+    box.appendChild(d);
+  });
+  box.querySelectorAll('select[data-i]').forEach(function(sel){sel.onchange=function(){state.setlist[+sel.getAttribute('data-i')].who=sel.value;save();};});
+  box.querySelectorAll('input[data-n]').forEach(function(inp){inp.oninput=function(){state.setlist[+inp.getAttribute('data-n')].note=inp.value;save();};});
+  box.querySelectorAll('[data-up]').forEach(function(b){b.onclick=function(){moveSl(+b.getAttribute('data-up'),-1);};});
+  box.querySelectorAll('[data-dn]').forEach(function(b){b.onclick=function(){moveSl(+b.getAttribute('data-dn'),1);};});
+  box.querySelectorAll('[data-rm]').forEach(function(b){b.onclick=function(){state.setlist.splice(+b.getAttribute('data-rm'),1);save();renderSetlist();};});
+}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ---- 生成通告 ---- */
+function weekday(dateStr){
+  if(!dateStr)return '';
+  var d=new Date(dateStr+'T00:00:00');
+  return '周'+'日一二三四五六'.charAt(d.getDay());
+}
+function fmtDate(){
+  if(!state.date)return '____-__-__';
+  return state.date.replace(/-/g,'/')+' '+weekday(state.date);
+}
+function genText(){
+  var isPr=state.type==='practice';
+  var pre=isPr?'PL':'YC';
+  var code=pre+'-'+ymd()+'-'+String(SEQ[pre]+1).padStart(2,'0');
+  var L=[];
+  var BAR='━━━━━━━━━━━━';
+  L.push(isPr?'🎸 乐队排练通告':'🎤 乐队演出通告');
+  L.push(BAR);
+  L.push('场次编号：'+code);
+  L.push('日期：'+fmtDate());
+  L.push((isPr?'主题':'演出主题')+'：'+(state.theme||'待定'));
+  L.push((isPr?'排练地点':'演出地点')+'：'+(venueText()||'待定'));
+  if(isPr){
+    if(state.tStart)L.push('时间：'+state.tStart+(state.tEnd?' - '+state.tEnd:''));
+  }else{
+    var tl=[];
+    if(state.tArrive)tl.push('到场 '+state.tArrive);
+    if(state.tRehearse)tl.push('彩排 '+state.tRehearse);
+    if(state.tStart)tl.push('开演 '+state.tStart);
+    if(state.tEnd)tl.push('结束 '+state.tEnd);
+    if(tl.length)L.push('时间轴：'+tl.join(' / '));
+    if(state.contact)L.push('对接人：'+state.contact+(state.settle?' · '+state.settle:''));
+  }
+  L.push(BAR);
+  L.push('👥 人员到场（收到请回复）');
+  MEMBERS.forEach(function(m){
+    var on=state.members.indexOf(m.pos)>=0;
+    if(on)L.push(m.pos+' '+m.name+'：□');
+  });
+  if(state.setlist.length){
+    L.push(BAR);
+    L.push('🎼 曲目安排（'+state.setlist.length+' 首）');
+    var groups={};
+    state.setlist.forEach(function(s){(groups[s.who]=groups[s.who]||[]).push(s);});
+    Object.keys(groups).forEach(function(who){
+      L.push('【'+who+'】');
+      groups[who].forEach(function(s,i){
+        var line='  '+(i+1)+'. '+s.t;
+        if(s.k)line+='（'+s.k+'调）';
+        if(s.note)line+=' · '+s.note;
+        L.push(line);
+      });
+    });
+  }
+  if(state.note){L.push(BAR);L.push('📝 特别提示：'+state.note);}
+  L.push(BAR);
+  L.push('—— 吾也乐队 · 通告中心');
+  return L.join('\n');
+}
+function renderOut(){
+  document.getElementById('outPre').textContent=genText();
+  document.getElementById('outBox').style.display='';
+  document.getElementById('outActions').style.display='';
+}
+function copyText(){
+  var text=genText();
+  function ok(){toast('✓ 已复制，去微信群粘贴');}
+  function fb(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){toast('复制失败，长按文本手动复制');}document.body.removeChild(ta);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,fb);}else{fb();}
+}
+function confirmNotice(){
+  var pre=state.type==='practice'?'PL':'YC';
+  SEQ[pre]++;
+  DATA.seq=SEQ;
+  save(); renderCode();
+  toast('已确认发布（编号占用），可复制文本发群');
+}
+
+/* ---- init ---- */
+function initAll(){
+  loadState();
+  document.getElementById('fDate').value=state.date;
+  document.getElementById('fTheme').value=state.theme;
+  if(state.tArrive)document.getElementById('fArrive').value=state.tArrive;
+  if(state.tRehearse)document.getElementById('fRehearse').value=state.tRehearse;
+  if(state.tStart)document.getElementById('fStart').value=state.tStart;
+  if(state.tStart)document.getElementById('fStart2').value=state.tStart;
+  if(state.tEnd)document.getElementById('fEnd').value=state.tEnd;
+  if(state.venue && DATA.venues.indexOf(state.venue)>=0 && DATA.venues.indexOf(state.venue)<DATA.venues.length-1){
+    document.getElementById('fVenue').value=state.venue;
+  }else if(state.customVenue){
+    document.getElementById('fVenue').value='__custom';
+    document.getElementById('venueCustomWrap').style.display='';
+    document.getElementById('fCustomVenue').value=state.customVenue;
+  }
+  document.getElementById('fContact').value=state.contact||'';
+  document.getElementById('fNote').value=state.note;
+  setType(state.type);
+  renderMembers();renderSetlist();renderCode();
+  bindInputs();
+  initVenue();
+  document.getElementById('btnP').onclick=function(){setType('practice');};
+  document.getElementById('btnS').onclick=function(){setType('show');};
+  document.getElementById('btnOpenPick').onclick=openPicker;
+  document.getElementById('btnClosePick').onclick=closePicker;
+  document.getElementById('btnConfirmPick').onclick=confirmPick;
+  document.getElementById('pickQ').addEventListener('input',function(){picker.q=this.value;renderPicker();});
+  document.getElementById('btnAddCustom').onclick=addCustomSong;
+  document.getElementById('btnGen').onclick=renderOut;
+  document.getElementById('btnCopy').onclick=copyText;
+  document.getElementById('btnConfirm').onclick=confirmNotice;
+  document.getElementById('mask').addEventListener('click',function(e){if(e.target===this)closePicker();});
+}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show');},2400);}
+initAll();
+
+</script>
+</body>
+</html>
