@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="演出前准备清单：按角色勾选，就绪度自动计算">
+<title>演出前准备清单 · 吾也乐队</title>
+<style>
+:root{
+  --bg:#faf9f6; --panel:#ffffff; --line:#e7e3d8;
+  --text:#26241f; --muted:#7a766c;
+  --gold:#b8860b; --gold-soft:#f7efd9; --gold-line:#e4d3a4;
+  --green:#3f7d53; --green-soft:#e9f4ec;
+  --blue:#3a6fa3; --blue-soft:#e8f0f7;
+  --red:#b04a3a; --red-soft:#f9ece9;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.75;
+}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 90px}
+header{padding:34px 0 14px}
+h1{font-size:22px;font-weight:700}
+.sub{color:var(--muted);font-size:13px;margin-top:5px}
+
+/* sticky 就绪度仪表 */
+.meter{
+  position:sticky;top:0;z-index:20;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:12px 16px;margin:12px 0 6px;box-shadow:0 3px 14px rgba(38,36,31,.07);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.meter .pct{font-size:26px;font-weight:800;line-height:1;min-width:86px}
+.meter .pct small{font-size:13px;font-weight:600;color:var(--muted)}
+.meter .status{flex:1;min-width:150px}
+.meter .badge{display:inline-block;font-size:12.5px;font-weight:800;border-radius:8px;padding:3px 12px;letter-spacing:.04em}
+.meter .badge.go{background:var(--green-soft);color:var(--green);border:1px solid #bfe0ca}
+.meter .badge.warn{background:var(--gold-soft);color:#8a6b10;border:1px solid var(--gold-line)}
+.meter .badge.stop{background:var(--red-soft);color:var(--red);border:1px solid #e8c7c0}
+.meter .detail{font-size:12px;color:var(--muted);margin-top:3px}
+.meter .bar{width:100%;height:6px;background:var(--bg);border-radius:4px;overflow:hidden;margin-top:7px}
+.meter .bar i{display:block;height:100%;border-radius:4px;background:var(--gold);transition:width .3s,background .3s}
+
+.howto{
+  background:var(--gold-soft);border:1px solid var(--gold-line);border-radius:14px;
+  padding:14px 18px;margin:12px 0 8px;font-size:13px;color:#5a5448;
+}
+.howto b{color:var(--gold)}
+
+h2{font-size:16.5px;font-weight:700;margin:26px 0 6px;display:flex;align-items:center;gap:9px}
+h2::before{content:"";width:16px;height:3px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.hint{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+
+/* 场景开关 */
+.scene-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.chip{
+  border:1.5px solid var(--line);border-radius:24px;background:var(--panel);
+  padding:8px 18px;font-size:13.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;
+  transition:all .15s;
+}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.chip:hover{border-color:var(--gold)}
+
+/* 到场人员 */
+.att-row{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:8px}
+.att{
+  display:flex;align-items:center;gap:7px;border:1.5px solid var(--line);border-radius:12px;
+  background:var(--panel);padding:7px 13px;font-size:13.5px;cursor:pointer;user-select:none;transition:all .15s;
+}
+.att.on{border-color:var(--green);background:var(--green-soft);color:var(--green);font-weight:700}
+.att .dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.att.on .dot{background:var(--green)}
+.att-count{font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.att-count b{color:var(--red)}
+
+/* 组 */
+.group{margin:12px 0;border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
+.group.off{opacity:.45}
+details summary{
+  list-style:none;cursor:pointer;padding:13px 16px;
+  display:flex;align-items:center;gap:10px;user-select:none;
+}
+details summary::-webkit-details-marker{display:none}
+.g-arrow{transition:transform .2s;font-size:11px;color:var(--muted);flex-shrink:0}
+details[open] .g-arrow{transform:rotate(90deg)}
+.g-name{font-size:15px;font-weight:700;flex:1}
+.g-owner{font-size:12px;color:var(--gold);font-weight:700;background:var(--gold-soft);border-radius:14px;padding:2px 10px;white-space:nowrap}
+.g-prog{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.g-prog.done{color:var(--green);font-weight:800}
+.g-tag-off{font-size:11px;color:var(--red);background:var(--red-soft);border-radius:8px;padding:1px 8px;white-space:nowrap}
+.g-body{padding:2px 12px 12px;border-top:1px solid var(--line)}
+.item{
+  display:flex;align-items:flex-start;gap:11px;padding:9px 6px;font-size:14px;
+  cursor:pointer;border-radius:9px;
+}
+.item:hover{background:var(--bg)}
+.item input[type=checkbox]{
+  width:19px;height:19px;margin-top:3px;accent-color:var(--green);cursor:pointer;flex-shrink:0;
+}
+.item .txt{flex:1}
+.item.done .txt{color:var(--muted);text-decoration:line-through;text-decoration-color:#c9c4b8}
+.item .meta{display:flex;gap:6px;margin-top:2px;flex-wrap:wrap}
+.tag{font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px;letter-spacing:.03em}
+.tag.req{background:var(--red-soft);color:var(--red)}
+.tag.opt{background:#efece5;color:var(--muted)}
+.tag.w{background:var(--blue-soft);color:var(--blue)}
+.tag.scene{background:var(--gold-soft);color:#8a6b10}
+
+/* 操作 */
+.actions{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
+.btn{
+  flex:1;min-width:180px;padding:13px 18px;border-radius:12px;border:none;cursor:pointer;
+  font-size:15px;font-weight:700;font-family:inherit;transition:all .15s;
+}
+.btn-primary{background:var(--gold);color:#fff;box-shadow:0 4px 14px rgba(184,134,11,.28)}
+.btn-primary:hover{background:#a3790a}
+.btn-ghost{background:var(--panel);color:var(--muted);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--red);color:var(--red)}
+
+.loop{
+  background:var(--green-soft);border:1px solid #cfe3d5;border-radius:14px;
+  padding:15px 18px;font-size:13px;color:#2c4a37;margin-top:26px;
+}
+.loop b{color:var(--green)}
+.loop a{color:var(--green);font-weight:700}
+
+.toast{
+  position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+  background:#26241f;color:#fff;font-size:13.5px;border-radius:30px;padding:10px 22px;
+  opacity:0;pointer-events:none;transition:all .3s;z-index:99;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:560px){
+  h1{font-size:19px}
+  .meter .pct{font-size:22px;min-width:72px}
+  .actions{flex-direction:column}
+  .btn{min-width:0}
+}
+@media print{
+  body{background:#fff}
+  .actions,.howto{display:none !important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>🚦 演出前准备清单</h1>
+    <p class="sub">出发/装台前逐项打钩 · 按权重算就绪度 · 必选项全勾才 GO · 勾选状态自动保存在本机</p>
+  </header>
+
+  <div class="meter">
+    <div class="pct" id="mPct">0<small>%</small></div>
+    <div class="status">
+      <span class="badge warn" id="mBadge">需补</span>
+      <div class="detail" id="mDetail">—</div>
+    </div>
+    <div class="bar"><i id="mBar" style="width:0%"></i></div>
+  </div>
+
+  <div class="howto">
+    <b>怎么用（3步）：</b>① 开本场要用的<b>场景开关</b>（户外/录像）→ ② 勾<b>实际到场的角色</b>（没到场的组不计入就绪度）→ ③ 逐组打钩，顶部就绪度实时更新。
+    <b>规则：</b>≥95% 且必选全勾 = <b>GO</b>；80–94% 或缺必选 = <b>需补</b>；<80% = <b>建议延期</b>。
+  </div>
+
+  <h2>本场场景</h2>
+  <p class="hint">开了开关才会出现对应条目（户外电源、防雨罩、录像设备等）。</p>
+  <div class="scene-row" id="sceneRow"></div>
+
+  <h2>到场人员</h2>
+  <p class="hint">先勾实际到场的角色；流程总控/电力/耳返/财务四个功能职责每次必有人扛，不受这里影响。</p>
+  <div class="att-row" id="attRow"></div>
+  <p class="att-count" id="attCount"></p>
+
+  <h2>逐项清单（11组）</h2>
+  <p class="hint">点击组名展开/收起。必选项没勾完，就绪度会被封顶在 90%。</p>
+  <div id="groupList"></div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="btnExport" type="button">复制就绪汇总（发微信群）</button>
+    <button class="btn btn-ghost" id="btnReset" type="button">清空重填</button>
+  </div>
+
+  <div class="loop">
+    <b>和风控速查表怎么分工：</b>速查表管<b>全周期流程</b>（T-7 确认 → T-1 准备），这张清单管<b>出发/装台那一刻的最终就绪</b>（GO / 需补 / 建议延期）。建议流程：演出前一周用 <a href="演出速查表_团队版.html">团队版速查表</a> 跟进度 → 出发前用这张清单做最终检查。
+    <br><b>改清单内容：</b>本页数据来自内嵌 JSON（文件里 <code style="background:var(--gold-soft);border-radius:4px;padding:0 5px;font-size:11.5px">id="DATA"</code> 那一块），要增删条目、换负责人，把需求发给 AI 改即可，页面自动跟着变。
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script id="DATA" type="application/json">
+{
+  "tool": "演出风控速查",
+  "version": "team",
+  "desc": "演出前（排练后）逐项打钩，确保不遗漏。先勾出场人员，再勾各项。",
+  "rules": {
+    "readiness": "就绪度 = 已勾权重和 / 适用项权重和",
+    "requiredCap": "有必选项未勾 → 就绪度封顶 90%",
+    "green": "就绪度 ≥ 95% 且必选全勾 → GO（可演）",
+    "yellow": "就绪度 80–94% 或有必选未勾 → 需补",
+    "red": "就绪度 < 80% → 建议延期"
+  },
+  "attendance": {
+    "note": "顶部先勾实际到场角色；功能角色每次必有人扛",
+    "roles": [
+      {
+        "id": "bass",
+        "name": "贝斯",
+        "owner": "梓渊"
+      },
+      {
+        "id": "guitar",
+        "name": "吉他",
+        "owner": "超子"
+      },
+      {
+        "id": "keyboard",
+        "name": "键盘",
+        "owner": "铭哲"
+      },
+      {
+        "id": "drum",
+        "name": "鼓",
+        "owner": "游舒米"
+      },
+      {
+        "id": "male_vocal",
+        "name": "男主唱",
+        "owner": "你"
+      },
+      {
+        "id": "female_vocal",
+        "name": "女主唱",
+        "owner": "姝言"
+      }
+    ]
+  },
+  "roles": [
+    {
+      "id": "bass",
+      "name": "贝斯",
+      "owner": "梓渊",
+      "function": "signal",
+      "items": [
+        {
+          "id": "bass_body",
+          "text": "贝斯本体、背带、连接线",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "bass_spare",
+          "text": "备用琴弦、拨片",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "bass_tune",
+          "text": "贝斯调好音",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "mixer",
+          "text": "调音台带齐（主机+电源/适配器）",
+          "weight": 3,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "di_count",
+          "text": "DI盒数量够（按本场谁要DI登记）",
+          "weight": 3,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "di_test",
+          "text": "每个DI通断测试正常",
+          "weight": 3,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "mixer_pa",
+          "text": "调音台到PA主线材带齐",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "stagebox",
+          "text": "舞台接口箱接线完整",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "drum_mic_sig",
+          "text": "鼓麦信号确认有声音",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "spare_xlr",
+          "text": "备份XLR线 ≥2",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "spare_635",
+          "text": "备份6.35线 ≥1",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "balance",
+          "text": "主扩+返听整体平衡调好",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        }
+      ]
+    },
+    {
+      "id": "guitar",
+      "name": "吉他",
+      "owner": "超子",
+      "items": [
+        {
+          "id": "guitar_body",
+          "text": "吉他本体+背带",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "guitar_cable",
+          "text": "吉他线材",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "pick",
+          "text": "拨片若干",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "fx",
+          "text": "效果器/调音器",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "guitar_di",
+          "text": "吉他DI/信号接入",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "cam_body",
+          "text": "相机+空SD卡+满电电池",
+          "weight": 2,
+          "required": true,
+          "scene": "record"
+        },
+        {
+          "id": "tripod",
+          "text": "三脚架+快装板",
+          "weight": 1,
+          "required": true,
+          "scene": "record"
+        },
+        {
+          "id": "cam_batt",
+          "text": "备份相机电池",
+          "weight": 1,
+          "required": true,
+          "scene": "record"
+        },
+        {
+          "id": "cam_sd",
+          "text": "备份SD卡",
+          "weight": 1,
+          "required": true,
+          "scene": "record"
+        }
+      ]
+    },
+    {
+      "id": "keyboard",
+      "name": "键盘",
+      "owner": "铭哲",
+      "items": [
+        {
+          "id": "kb_body",
+          "text": "键盘主机",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "kb_stand",
+          "text": "键盘支架",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "kb_cable",
+          "text": "线材（6.35mm/USB）",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "kb_di",
+          "text": "DI/信号接入测试",
+          "weight": 3,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "kb_power",
+          "text": "电源/适配器",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "kb_pedal",
+          "text": "延音踏板",
+          "weight": 1,
+          "required": false,
+          "scene": "all"
+        },
+        {
+          "id": "kb_batt",
+          "text": "电池（若无线）",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "kb_preset",
+          "text": "音色预设/乐谱",
+          "weight": 1,
+          "required": false,
+          "scene": "all"
+        }
+      ]
+    },
+    {
+      "id": "drum",
+      "name": "鼓",
+      "owner": "游舒米",
+      "items": [
+        {
+          "id": "kick",
+          "text": "底鼓+踏板",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "snare",
+          "text": "军鼓",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "tom",
+          "text": "嗵鼓（×N）",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "cymbal",
+          "text": "镲片（踩镲/叮叮镲/吊镲）",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "throne",
+          "text": "鼓凳",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "drum_mat",
+          "text": "鼓垫/防滑垫",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "drum_mic",
+          "text": "鼓麦全套+固定夹",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "drum_mic_cable",
+          "text": "鼓麦线材+通断测试",
+          "weight": 3,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "drum_rug",
+          "text": "鼓地毯",
+          "weight": 2,
+          "required": true,
+          "scene": "outdoor"
+        },
+        {
+          "id": "cart",
+          "text": "鼓运输推车",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "drum_key",
+          "text": "鼓钥匙/调音扳手",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "drum_head",
+          "text": "备用鼓皮",
+          "weight": 1,
+          "required": false,
+          "scene": "all"
+        }
+      ]
+    },
+    {
+      "id": "male_vocal",
+      "name": "男主唱",
+      "owner": "你",
+      "items": [
+        {
+          "id": "mv_mic",
+          "text": "话筒（手持/耳麦）+线材/无线电池",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "mv_lyrics",
+          "text": "歌词本/歌单",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "mv_makeup",
+          "text": "化妆/造型",
+          "weight": 1,
+          "required": false,
+          "scene": "all"
+        }
+      ]
+    },
+    {
+      "id": "female_vocal",
+      "name": "女主唱",
+      "owner": "姝言",
+      "items": [
+        {
+          "id": "fv_mic",
+          "text": "话筒（手持/耳麦）+线材/无线电池",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "fv_lyrics",
+          "text": "歌词本/歌单",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "fv_makeup",
+          "text": "化妆/造型",
+          "weight": 1,
+          "required": false,
+          "scene": "all"
+        },
+        {
+          "id": "fv_stands",
+          "text": "谱架/麦架/A架",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "id": "control",
+      "name": "流程总控",
+      "owner": "轮换（超子/你/梓渊，每次明确指定）",
+      "items": [
+        {
+          "id": "ctrl_loadlist",
+          "text": "装台顺序清单（手机/打印）",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "ctrl_unloadlist",
+          "text": "撤场顺序清单（手机/打印）",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "xx_stageplot",
+          "text": "舞台图+输入清单，提前发场地",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "ctrl_meet",
+          "text": "演出前集合时间/地点全员确认",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "ctrl_cmd",
+          "text": "装台时喊『现在干啥』（顺序指挥）",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "ctrl_unload_cmd",
+          "text": "撤场指挥（先收贵重后收大件）",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "ctrl_emergency",
+          "text": "应急拍板：线断/下雨/人来不了",
+          "weight": 3,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "ctrl_review",
+          "text": "复盘记录（记本次卡住的地方）",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        }
+      ]
+    },
+    {
+      "id": "power",
+      "name": "电力",
+      "owner": "你",
+      "items": [
+        {
+          "id": "power_strip",
+          "text": "排插数量够+位置规划",
+          "weight": 3,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "power_main",
+          "text": "总电源开关位置全员知晓",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "power_emergency",
+          "text": "紧急断电方案说一遍",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "power_outdoor",
+          "text": "户外电源/发电机到位",
+          "weight": 3,
+          "required": true,
+          "scene": "outdoor"
+        },
+        {
+          "id": "power_ground",
+          "text": "接地+防水措施",
+          "weight": 3,
+          "required": true,
+          "scene": "outdoor"
+        }
+      ]
+    },
+    {
+      "id": "iem",
+      "name": "耳返/对讲",
+      "owner": "你",
+      "items": [
+        {
+          "id": "iem_host",
+          "text": "耳返主机开机+信号",
+          "weight": 3,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "radio_test",
+          "text": "对讲机全部频道测试",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "iem_check",
+          "text": "每个乐手耳返监听确认",
+          "weight": 3,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "iem_batt",
+          "text": "耳返电池/充电状态",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "pa_pos",
+          "text": "音响位置摆好+信号接入",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        }
+      ]
+    },
+    {
+      "id": "finance",
+      "name": "财务",
+      "owner": "你",
+      "items": [
+        {
+          "id": "finance_deal",
+          "text": "定金/结算/发票确认到位",
+          "weight": 2,
+          "required": true,
+          "scene": "all"
+        },
+        {
+          "id": "contact",
+          "text": "场地联络人方式存好",
+          "weight": 1,
+          "required": true,
+          "scene": "all"
+        }
+      ]
+    }
+  ],
+  "public": {
+    "id": "public",
+    "name": "公共项",
+    "owner": "全队",
+    "items": [
+      {
+        "id": "personal_cam",
+        "text": "个人机位（手机/相机）各自带",
+        "weight": 1,
+        "required": true,
+        "scene": "all"
+      },
+      {
+        "id": "spare_kit",
+        "text": "备份线材包（XLR×2、6.35×2、USB-C×1）",
+        "weight": 2,
+        "required": true,
+        "scene": "all"
+      },
+      {
+        "id": "rain",
+        "text": "防雨罩",
+        "weight": 2,
+        "required": true,
+        "scene": "outdoor"
+      },
+      {
+        "id": "light",
+        "text": "应急灯",
+        "weight": 1,
+        "required": true,
+        "scene": "outdoor"
+      },
+      {
+        "id": "firstaid",
+        "text": "急救包",
+        "weight": 1,
+        "required": true,
+        "scene": "all"
+      },
+      {
+        "id": "radio_ch",
+        "text": "对讲频道全员确认",
+        "weight": 1,
+        "required": true,
+        "scene": "all"
+      },
+      {
+        "id": "emergency_contact",
+        "text": "紧急联系人列表",
+        "weight": 1,
+        "required": true,
+        "scene": "all"
+      },
+      {
+        "id": "setlist",
+        "text": "节目单/歌单全员确认",
+        "weight": 2,
+        "required": true,
+        "scene": "all"
+      },
+      {
+        "id": "review_closed",
+        "text": "上次复盘遗留项已闭环",
+        "weight": 2,
+        "required": true,
+        "scene": "all"
+      }
+    ]
+  }
+}
+</script>
+<script>
+var LS_KEY = 'bandToolbox.precheck.v1';
+var DATA = JSON.parse(document.getElementById('DATA').textContent);
+
+/* ===== 状态 ===== */
+function freshState(){
+  return { scenes:{outdoor:false, record:false},
+           attendance:[],
+           checked:[],
+           ts:Date.now() };
+}
+var state = freshState();
+
+function loadState(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    var s = JSON.parse(raw);
+    if(!s || typeof s!=='object') return;
+    var base = freshState();
+    if(s.scenes) for(var k in base.scenes){ if(typeof s.scenes[k]==='boolean') base.scenes[k]=s.scenes[k]; }
+    if(Array.isArray(s.attendance)) base.attendance = s.attendance.filter(function(v){return typeof v==='string';});
+    if(Array.isArray(s.checked)) base.checked = s.checked.filter(function(v){return typeof v==='string';});
+    state = base;
+  }catch(e){}
+}
+var saveTimer=null;
+function save(){
+  state.ts = Date.now();
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+/* ===== 数据模型 ===== */
+var roleGroups = DATA.roles;                 /* 6个角色组：受到场影响 */
+var funcGroups = DATA.functions;             /* 4个功能组：始终适用 */
+var pubGroup   = DATA.public;                /* 公共组 */
+var allGroups  = roleGroups.concat(funcGroups, [pubGroup]);
+
+function itemApplies(item){
+  if(item.scene==='outdoor') return state.scenes.outdoor;
+  if(item.scene==='record')  return state.scenes.record;
+  return true;
+}
+function groupActive(g){
+  /* 角色组：勾了到场才计入；功能组/公共组恒计入 */
+  if(roleGroups.indexOf(g)>=0) return state.attendance.indexOf(g.id)>=0;
+  return true;
+}
+function applicableItems(g){
+  return g.items.filter(itemApplies);
+}
+
+/* ===== 就绪度计算 ===== */
+function compute(){
+  var sumW=0, gotW=0, missReq=[];
+  allGroups.forEach(function(g){
+    if(!groupActive(g)) return;
+    applicableItems(g).forEach(function(it){
+      sumW += it.weight;
+      if(state.checked.indexOf(it.id)>=0) gotW += it.weight;
+      else if(it.required) missReq.push(it);
+    });
+  });
+  var raw = sumW>0 ? gotW/sumW : 0;
+  var pct = Math.round(raw*100);
+  var capped = missReq.length>0 ? Math.min(pct,90) : pct;   /* 必选未勾 → 封顶90% */
+  var level, label;
+  if(capped>=95 && missReq.length===0){ level='go';   label='GO 可演'; }
+  else if(capped>=80){ level='warn'; label='需补'; }   /* 缺必选但<80% → 按延期处理（数值优先，更保守） */
+  else{ level='stop'; label='建议延期'; }
+  return {pct:capped, rawPct:pct, level:level, label:label, missReq:missReq, sumW:sumW, gotW:gotW};
+}
+
+/* ===== 渲染 ===== */
+function renderSceneChips(){
+  var box=document.getElementById('sceneRow');
+  box.innerHTML='';
+  [['outdoor','🏖 户外场'],['record','🎥 要录像']].forEach(function(p){
+    var b=document.createElement('button');
+    b.type='button'; b.className='chip'+(state.scenes[p[0]]?' on':'');
+    b.textContent=p[1];
+    b.onclick=function(){ state.scenes[p[0]] = !state.scenes[p[0]]; renderSceneChips(); renderGroups(); updateMeter(); save(); };
+    box.appendChild(b);
+  });
+}
+function renderAttendance(){
+  var box=document.getElementById('attRow');
+  box.innerHTML='';
+  DATA.attendance.roles.forEach(function(r){
+    var on = state.attendance.indexOf(r.id)>=0;
+    var d=document.createElement('div');
+    d.className='att'+(on?' on':'');
+    d.innerHTML='<span class="dot"></span>'+r.name+'·'+r.owner;
+    d.onclick=function(){
+      var i=state.attendance.indexOf(r.id);
+      if(i>=0) state.attendance.splice(i,1); else state.attendance.push(r.id);
+      renderAttendance(); renderGroups(); updateMeter(); save();
+    };
+    box.appendChild(d);
+  });
+  var total=DATA.attendance.roles.length, cur=state.attendance.length;
+  var el=document.getElementById('attCount');
+  el.innerHTML = '到场 '+(cur<total?'<b>'+cur+'</b>':cur)+'/'+total+' 个角色'+
+    (cur<total ? ' —— <b>未到场的角色组不计入就绪度</b>' : ' ✓全员到位');
+}
+function renderGroups(){
+  var box=document.getElementById('groupList');
+  box.innerHTML='';
+  allGroups.forEach(function(g){
+    var active=groupActive(g);
+    var app=applicableItems(g);
+    var done=app.filter(function(it){return state.checked.indexOf(it.id)>=0;}).length;
+    var allDone = app.length>0 && done===app.length;
+
+    var det=document.createElement('details');
+    det.className='group'+(active?'':' off');
+    if(!active || allDone) det.setAttribute('open','');
+    var sum=document.createElement('summary');
+    var html='<span class="g-arrow">▶</span><span class="g-name">'+g.name+'</span>';
+    html+='<span class="g-owner">'+(g.owner||'')+'</span>';
+    if(!active) html+='<span class="g-tag-off">未到场·不计入</span>';
+    else html+='<span class="g-prog'+(allDone?' done':'')+'">'+done+'/'+app.length+'</span>';
+    sum.innerHTML=html;
+
+    var body=document.createElement('div');
+    body.className='g-body';
+    if(app.length===0){
+      var p=document.createElement('p');
+      p.style.cssText='font-size:12.5px;color:var(--muted);padding:8px 6px';
+      p.textContent='当前场景下没有适用项（开了对应场景开关才会出现）';
+      body.appendChild(p);
+    }else{
+      app.forEach(function(it){
+        var lab=document.createElement('label');
+        var checked = state.checked.indexOf(it.id)>=0;
+        lab.className='item'+(checked?' done':'');
+        var meta='<span class="tag '+(it.required?'req':'opt')+'">'+(it.required?'必选':'可选')+'</span>'+
+                  '<span class="tag w">权重'+it.weight+'</span>';
+        if(it.scene!=='all') meta+='<span class="tag scene">'+(it.scene==='outdoor'?'户外':'录像')+'</span>';
+        lab.innerHTML='<input type="checkbox"'+(checked?' checked':'')+'><span class="txt">'+it.text+'<span class="meta">'+meta+'</span></span>';
+        lab.querySelector('input').onchange=function(ev){
+          var i=state.checked.indexOf(it.id);
+          if(ev.target.checked && i<0) state.checked.push(it.id);
+          if(!ev.target.checked && i>=0) state.checked.splice(i,1);
+          renderGroups(); updateMeter(); save();
+        };
+        body.appendChild(lab);
+      });
+    }
+    det.appendChild(sum); det.appendChild(body);
+    box.appendChild(det);
+  });
+}
+function updateMeter(){
+  var c=compute();
+  var pctEl=document.getElementById('mPct');
+  pctEl.innerHTML=c.pct+'<small>%</small>';
+  var badge=document.getElementById('mBadge');
+  badge.className='badge '+c.level;
+  badge.textContent=c.label;
+  var detail=document.getElementById('mDetail');
+  var parts=[];
+  parts.push('权重 '+c.gotW+'/'+c.sumW);
+  if(c.missReq.length>0) parts.push('缺 '+c.missReq.length+' 个必选项（就绪度封顶90%）');
+  else parts.push('必选项已全勾 ✓');
+  detail.textContent=parts.join(' · ');
+  var bar=document.getElementById('mBar');
+  bar.style.width=c.pct+'%';
+  bar.style.background = c.level==='go'?'var(--green)':(c.level==='warn'?'var(--gold)':'var(--red)');
+}
+
+/* ===== 导出汇总 ===== */
+function buildSummary(){
+  var c=compute();
+  var sceneTxt=[];
+  if(state.scenes.outdoor) sceneTxt.push('户外');
+  if(state.scenes.record) sceneTxt.push('录像');
+  var L=[];
+  L.push('【吾也乐队 · 演出准备就绪度】'+c.pct+'% '+(c.level==='go'?'✅GO可演':(c.level==='warn'?'⚠️需补':'🛑建议延期')));
+  L.push('场景：'+(sceneTxt.length?sceneTxt.join('+'):'常规')+' ｜ 到场：'+state.attendance.length+'/'+DATA.attendance.roles.length);
+  L.push('');
+  L.push('■ 分组进度');
+  allGroups.forEach(function(g){
+    if(!groupActive(g)){ L.push(g.name+'（'+(g.owner||'')+'）：未到场，不计入'); return; }
+    var app=applicableItems(g);
+    var done=app.filter(function(it){return state.checked.indexOf(it.id)>=0;}).length;
+    L.push(g.name+'（'+(g.owner||'')+'）：'+done+'/'+app);
+  });
+  if(c.missReq.length>0){
+    L.push('');
+    L.push('■ 未完成的必选项');
+    c.missReq.forEach(function(it){ L.push('· '+it.text); });
+  }
+  L.push('');
+  L.push('—— 乐队工具箱 · 演出前准备清单 生成');
+  return L.join('\n');
+}
+function copySummary(){
+  var text=buildSummary();
+  function ok(){ toast('✓ 已复制，去乐队微信群粘贴吧'); }
+  function fallback(){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); ok(); }
+    catch(e){ toast('复制失败，长按汇总框手动复制'); }
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(ok, fallback);
+  }else{ fallback(); }
+}
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(function(){ t.classList.remove('show'); },2200);
+}
+
+/* ===== 初始化 ===== */
+loadState();
+renderSceneChips();
+renderAttendance();
+renderGroups();
+updateMeter();
+
+document.getElementById('btnExport').addEventListener('click', copySummary);
+document.getElementById('btnReset').addEventListener('click', function(){
+  if(confirm('确定清空所有勾选和场景设置，重新开始吗？')){
+    state=freshState();
+    try{ localStorage.removeItem(LS_KEY); }catch(e){}
+    renderSceneChips(); renderAttendance(); renderGroups(); updateMeter();
+    toast('已清空，重新开始');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+});
+
+</script>
+</body>
+</html>
