@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="演出复盘：表单下载与归档索引">
+<meta name="description" content="演出复盘归档：在线评估、打印版PDF、归档索引">
 <title>演出复盘归档</title>
 <style>
   :root{
@@ -12,6 +12,7 @@
     --text:#26241f; --muted:#7a766c;
     --gold:#b8860b; --gold-soft:#f7efd9;
     --green:#3f7d53; --green-soft:#e9f4ec;
+    --blue:#3a6fa3; --blue-soft:#e8f0f7;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{
@@ -57,6 +58,12 @@
   .loop b{color:var(--green)}
   .loop a{color:var(--green);font-weight:700}
 
+  .note{
+    background:var(--blue-soft);border:1px solid #c5d8e8;border-radius:12px;
+    padding:14px 18px;font-size:13px;color:#1e3a52;margin-bottom:16px;
+  }
+  .note b{color:var(--blue)}
+
   @media (max-width:560px){
     header{padding:32px 0 20px}
     .tool{min-width:100%}
@@ -69,31 +76,36 @@
 
   <header>
     <h1>演出复盘归档</h1>
-    <p class="sub">回路模块 · 每场演出后 48 小时内完成：评估 → 归档 → 沉淀回系统</p>
+    <p class="sub">回路模块 · 每场演出后 48 小时内完成：评估 → 生成报告 → 归档 → 沉淀回系统</p>
   </header>
 
   <div class="tool-row">
     <a class="tool" href="复盘评估系统.html">
       <span class="t-icon">📋</span>
       <div class="t-info">
-        <div class="t-title">复盘评估系统（推荐）</div>
-        <div class="t-desc">观众6维打分 + 每首歌5维评分 + 自检清单 + 曲库优化规则</div>
+        <div class="t-title">复盘评估系统（推荐 · 在线版）</div>
+        <div class="t-desc">点击打分 + 自动算总分 + 一键生成复盘报告（可复制/打印存PDF）</div>
       </div>
     </a>
-    <a class="tool" href="复盘表单.pdf" download>
+    <a class="tool" href="乐队工具箱_打印版.pdf" download>
       <span class="t-icon">📄</span>
       <div class="t-info">
-        <div class="t-title">PDF 复盘表单</div>
-        <div class="t-desc">A4 可打印，现场填写用，适合无网环境</div>
+        <div class="t-title">打印版工具箱</div>
+        <div class="t-desc">复盘+串词+手册三件套纸质版，无网环境备用</div>
       </div>
     </a>
   </div>
 
+  <div class="note">
+    <b>为什么现在以「复盘评估系统」为主？</b> 原来的 PDF 打印版没法自动算分、不能一键出报告。新在线版点几下就能打分、自动算总分并标出「王牌/灵活/特定场景」，填到一半换页面草稿也不会丢。打印版留作现场无网备用。
+  </div>
+
   <div class="panel">
-    <h2>归档协议（三步，两分钟）</h2>
+    <h2>归档协议（四步，三分钟）</h2>
     <ol>
-      <li>用「复盘评估系统」在线填写，或打印 PDF 表单手写；</li>
-      <li>文件命名：<code>YYYY-MM-DD_场地_类型.pdf</code>（例：<code>2026-08-22_老码头酒馆_商演.pdf</code>）；</li>
+      <li>演出后 48 小时内，打开「<b>复盘评估系统</b>」在线填写；草稿会<b>自动保存在手机/电脑</b>里，没填完也不怕丢。</li>
+      <li>填完点「<b>生成复盘报告</b>」：① 复制全文发到乐队微信群存底；② 点「打印/存PDF」→ 把目标打印机选成「<b>另存为 PDF</b>」。</li>
+      <li>PDF 命名：<code>YYYY-MM-DD_场地_类型.pdf</code>（例：<code>2026-08-22_老码头酒馆_商演.pdf</code>）。</li>
       <li>放入本模块 <code>archive/</code> 文件夹，并在下方索引表加一行。<b>档案只增不改。</b></li>
     </ol>
   </div>

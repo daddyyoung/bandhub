@@ -30,6 +30,8 @@
   h1{font-size:26px;font-weight:700;letter-spacing:.06em}
   .sub{margin-top:8px;color:var(--muted);font-size:13px;letter-spacing:.28em}
   .rule{width:44px;height:2px;background:var(--gold);margin:22px auto 0;border-radius:2px}
+  .guide{margin-top:16px;color:var(--muted);font-size:12.5px;letter-spacing:.02em}
+  .guide b{color:var(--gold);font-weight:600}
 
   main{max-width:980px;margin:0 auto;padding:6px 20px 30px}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:14px}
@@ -90,6 +92,7 @@
     <h1>吾也乐队 · 管理中心</h1>
     <div class="sub">BAND&nbsp;HUB&nbsp;·&nbsp;统一入口</div>
     <div class="rule"></div>
+    <p class="guide">发<b>通告</b>用速填器 · 演出前过<b>风控</b>+<b>手册</b> · 演出后填<b>复盘</b>+<b>财务</b></p>
   </header>
 
   <main>
@@ -102,20 +105,23 @@
           <div class="tags"><span class="tag asset">资产</span><span class="tag vis">对内</span></div>
         </div>
         <h2>曲库管理</h2>
-        <p>日常排练、驻场、专场、商演各套歌单，含调号、BPM、歌曲结构与编配备注。</p>
-        <div class="card-meta"><span>XLSX · 5 套歌单</span><span class="go">打开 →</span></div>
+        <p>7 套歌单：日常排练、姝言的歌单、专场、驻场、商演甜蜜经济与莆田场，含调号、BPM、歌曲结构与编配备注。</p>
+        <div class="card-meta"><span>XLSX · 7 套歌单</span><span class="go">打开 →</span></div>
       </a>
 
-      <!-- 通告（高频E） -->
-      <a class="card" href="modules/schedule/通告.xlsx">
+      <!-- 通告（高频E，速填器 + Excel台账） -->
+      <div class="card">
         <div class="card-top">
           <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
           <div class="tags"><span class="tag flow">流程</span><span class="tag vis">对内</span></div>
         </div>
         <h2>通告中心</h2>
-        <p>排练与演出通告单：场次编号、人员确认、天气、时间轴与曲目安排，含汇总表与模板。</p>
-        <div class="card-meta"><span>XLSX · 含模板</span><span class="go">打开 →</span></div>
-      </a>
+        <p>排练/演出通告：勾选基本信息、人员、曲库选歌，一键生成微信通告文本直接发群。</p>
+        <div class="sub-links">
+          <a class="sub-link" href="modules/notice/通告速填器.html"><span class="dot"></span>通告速填器 · 勾选创建 + 一键发群</a>
+          <a class="sub-link" href="modules/schedule/通告.xlsx"><span class="dot"></span>通告台账 Excel · 模板 + 汇总表</a>
+        </div>
+      </div>
 
       <!-- 风控速查（高频A，两个版本） -->
       <div class="card">
@@ -129,8 +135,20 @@
           <a class="sub-link" href="modules/risk/演出速查表_团队版.html"><span class="dot"></span>团队版 · 单场日常使用</a>
           <a class="sub-link" href="modules/risk/长期活动速查表.html"><span class="dot"></span>长期活动版 · 多场次驻演</a>
           <a class="sub-link" href="modules/risk/演出风险控制速查表_专业版.html"><span class="dot"></span>专业版 · 深度复盘参考</a>
+          <a class="sub-link" href="modules/risk/演出前准备清单.html"><span class="dot"></span>演出前准备清单 · 就绪度 GO/NO-GO</a>
         </div>
       </div>
+
+      <!-- 财务对账（对内资产） -->
+      <a class="card" href="modules/finance/财务对账.html">
+        <div class="card-top">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div class="tags"><span class="tag asset">资产</span><span class="tag vis">对内</span></div>
+        </div>
+        <h2>财务对账</h2>
+        <p>演出收入/成本/出勤分账：线上勾选录入、自动汇总、导出 Excel 本地存储、上传云端备份。</p>
+        <div class="card-meta"><span>HTML → XLSX</span><span class="go">进入 →</span></div>
+      </a>
 
       <!-- 演出手册+串词（高频D，串词C归入此模块） -->
       <a class="card" href="modules/playbook/index.html">
@@ -150,8 +168,8 @@
           <div class="tags"><span class="tag loop">回路</span><span class="tag vis">对内</span></div>
         </div>
         <h2>复盘评估系统</h2>
-        <p>每场演出后填：观众6维打分、每首歌5维评分、自检清单、曲库优化规则，沉淀回歌单。</p>
-        <div class="card-meta"><span>HTML · 当天填</span><span class="go">进入 →</span></div>
+        <p>每场演出后在线填：观众6维点击打分、每首歌5维评分、自检清单、自动算分并生成复盘报告。</p>
+        <div class="card-meta"><span>HTML · 自动保存草稿</span><span class="go">进入 →</span></div>
       </a>
 
       <!-- 复盘归档+PDF表单 -->
@@ -161,8 +179,8 @@
           <div class="tags"><span class="tag loop">回路</span><span class="tag vis">对内</span></div>
         </div>
         <h2>复盘归档</h2>
-        <p>PDF复盘表单下载 + 逐场归档索引：每场演出后填写、归档、沉淀回曲库与风控。</p>
-        <div class="card-meta"><span>PDF + HTML</span><span class="go">进入 →</span></div>
+        <p>在线生成报告 → 存PDF归档 → 逐场索引：每场演出后填写、归档、沉淀回曲库与风控。</p>
+        <div class="card-meta"><span>HTML + PDF</span><span class="go">进入 →</span></div>
       </a>
 
       <!-- 乐队介绍（低频F，排后面） -->
@@ -191,7 +209,7 @@
   </main>
 
   <footer>
-    吾也乐队 Band Hub v1.1 · 2026-08<span class="dot">|</span>入口只做导航，不承载数据<span class="dot">|</span>结构与规范见 README.md
+    吾也乐队 Band Hub v1.7 · 2026-08<span class="dot">|</span>曲库/通告台账/财务账本是 Excel：手机点开会下载，用 WPS 或 Office 打开<span class="dot">|</span>其余工具是网页，点开直接用
   </footer>
 </div>
 </body>

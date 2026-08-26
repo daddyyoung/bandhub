@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="财务对账：勾选录入、自动汇总、一键导出">
+<title>财务对账 · 吾也乐队</title>
+<style>
+
+:root{
+  --bg:#faf9f6; --panel:#ffffff; --line:#e7e3d8;
+  --text:#26241f; --muted:#7a766c;
+  --gold:#b8860b; --gold-soft:#f7efd9; --gold-line:#e4d3a4;
+  --green:#3f7d53; --green-soft:#e9f4ec;
+  --blue:#3a6fa3; --blue-soft:#e8f0f7;
+  --red:#b04a3a; --red-soft:#f9ece9;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.75;
+}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px 80px}
+header{padding:32px 0 12px}
+h1{font-size:22px;font-weight:700}
+.sub{color:var(--muted);font-size:13px;margin-top:5px}
+
+.howto{background:var(--gold-soft);border:1px solid var(--gold-line);border-radius:14px;padding:14px 18px;margin:14px 0 8px;font-size:13px;color:#5a5448}
+.howto b{color:var(--gold)}
+
+/* 汇总仪表 */
+.overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:14px 0}
+.ov{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.ov .k{font-size:12px;color:var(--muted)}
+.ov .v{font-size:20px;font-weight:800;margin-top:3px;font-variant-numeric:tabular-nums}
+.ov .v.green{color:var(--green)}
+.ov .v.blue{color:var(--blue)}
+.ov .v.red{color:var(--red)}
+.ov .v.gold{color:var(--gold)}
+.ov .s{font-size:11px;color:var(--muted);margin-top:2px}
+
+h2{font-size:16.5px;font-weight:700;margin:26px 0 6px;display:flex;align-items:center;gap:9px}
+h2::before{content:"";width:16px;height:3px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.hint{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+
+/* 录入表单 */
+.form{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.f-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.f-field{flex:1;min-width:140px}
+.f-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.f-field input[type=text],.f-field input[type=date],.f-field select{
+  width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:9px;
+  font-size:14px;font-family:inherit;background:#fff;color:var(--text);
+}
+.f-field input[type=text]:focus,.f-field input[type=date]:focus,.f-field select:focus{outline:none;border-color:var(--gold)}
+.money{display:flex;gap:10px;flex-wrap:wrap}
+.money .f-field{min-width:120px}
+.att-pick{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.ap{
+  display:flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:11px;
+  background:#fff;padding:6px 12px;font-size:13px;cursor:pointer;user-select:none;transition:all .15s;
+}
+.ap.on{border-color:var(--green);background:var(--green-soft);color:var(--green);font-weight:700}
+.ap .dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.ap.on .dot{background:var(--green)}
+.split-hint{font-size:12.5px;color:var(--green);margin-top:8px;font-weight:600}
+.split-hint b{font-size:14px}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.btn{
+  flex:1;min-width:160px;padding:12px 16px;border-radius:11px;border:none;cursor:pointer;
+  font-size:14.5px;font-weight:700;font-family:inherit;transition:all .15s;
+}
+.btn-primary{background:var(--gold);color:#fff;box-shadow:0 4px 14px rgba(184,134,11,.25)}
+.btn-primary:hover{background:#a3790a}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#336845}
+.btn-ghost{background:var(--panel);color:var(--muted);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--red);color:var(--red)}
+
+/* 记录列表 */
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13px}
+th{background:var(--gold-soft);color:#6b5410;text-align:left;padding:8px 10px;font-size:12px}
+td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td .del{color:var(--red);cursor:pointer;font-weight:700;background:none;border:none;font-size:13px}
+.empty{color:var(--muted);text-align:center;padding:18px}
+
+.loop{background:var(--green-soft);border:1px solid #cfe3d5;border-radius:14px;padding:15px 18px;font-size:13px;color:#2c4a37;margin-top:26px}
+.loop b{color:var(--green)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#26241f;color:#fff;font-size:13.5px;border-radius:30px;padding:10px 22px;opacity:0;pointer-events:none;transition:all .3s;z-index:99;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:560px){
+  h1{font-size:19px}
+  .overview{grid-template-columns:repeat(2,1fr)}
+  .actions{flex-direction:column}
+  .btn{min-width:0}
+}
+@media print{ body{background:#fff} .actions,.howto,.form .actions{display:none !important} }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>💰 财务对账</h1>
+  <p class="sub">线上勾选录入 · 自动汇总 · 导出本地储存 · 上传云端备份</p>
+</header>
+
+<div class="howto">
+  <b>怎么用（3步）：</b>① 下面<b>勾选出勤成员</b>、填金额 → ② 点「保存本场」记下，顶部汇总实时更新 → ③ 记录攒够后点<b>「导出 Excel」</b>下载到电脑，用 WPS 打开另存为 .xlsx，再传 GitHub 做云端备份。
+  <b>分账规则：</b>净结余（应收-成本）按<b>出勤人头均分</b>；基金平时不抽成，需要时才全员凑（见说明）。
+</div>
+
+<div class="overview">
+  <div class="ov"><div class="k">本月应收合计</div><div class="v gold" id="ovYing">¥0</div><div class="s">总收入</div></div>
+  <div class="ov"><div class="k">本月实收合计</div><div class="v blue" id="ovShi">¥0</div><div class="s" id="ovDiff">—</div></div>
+  <div class="ov"><div class="k">净结余（分账基数）</div><div class="v green" id="ovNet">¥0</div><div class="s">应收-成本</div></div>
+  <div class="ov"><div class="k">本月场次</div><div class="v" id="ovCount">0 场</div><div class="s">已记记录</div></div>
+  <div class="ov"><div class="k">待结/定金</div><div class="v red" id="ovPending">0 笔</div><div class="s">尾款未到账</div></div>
+</div>
+
+<h2>录入本场</h2>
+<p class="hint">能勾选的都点了，只有金额需要手输。</p>
+<div class="form">
+  <div class="f-row">
+    <div class="f-field" style="min-width:150px"><label>日期</label><input type="date" id="fDate"></div>
+    <div class="f-field" style="min-width:160px"><label>场地</label><input type="text" id="fVenue" placeholder="如 环岛路音乐广场"></div>
+    <div class="f-field" style="min-width:140px"><label>类型</label>
+      <select id="fType"><option value="商演">商演</option><option value="驻场">驻场</option><option value="专场">专场</option><option value="品牌活动">品牌活动</option><option value="婚礼宴会">婚礼宴会</option><option value="酒馆驻场">酒馆驻场</option><option value="其他">其他</option></select></div>
+    <div class="f-field" style="min-width:140px"><label>到账状态</label>
+      <select id="fStatus"><option value="已结清">已结清</option><option value="定金已收">定金已收</option><option value="尾款待结">尾款待结</option><option value="口头约定">口头约定</option><option value="长周期待结">长周期待结</option></select></div>
+  </div>
+  <div class="f-row">
+    <div class="f-field" style="min-width:100%"><label>本场出勤成员（勾选）</label>
+      <div class="att-pick" id="attPick"></div>
+      <div class="split-hint" id="splitHint">点上面勾选本场出勤的成员 →</div>
+    </div>
+  </div>
+  <div class="f-row money">
+    <div class="f-field"><label>应收（¥）</label><input type="number" id="fYingShou" min="0" step="0.01" placeholder="0"></div>
+    <div class="f-field"><label>实收（¥）</label><input type="number" id="fShiShou" min="0" step="0.01" placeholder="0"></div>
+    <div class="f-field"><label>现金成本（¥）</label><input type="number" id="fChengBen" min="0" step="0.01" placeholder="0"></div>
+    <div class="f-field" style="min-width:180px"><label>备注</label><input type="text" id="fNote" placeholder="选填"></div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" id="btnAdd" type="button">＋ 保存本场</button>
+  </div>
+</div>
+
+<h2>已记录（<span id="recCount">0</span> 笔）</h2>
+<p class="hint">按时间倒序，最新在上。点「删」移除错账。</p>
+<table>
+  <tr><th>日期</th><th>场地</th><th>类型</th><th>出勤</th><th>应收</th><th>实收</th><th>成本</th><th>净结余</th><th>状态</th></tr>
+  <tbody id="recBody"></tbody>
+</table>
+
+<div class="actions">
+  <button class="btn btn-green" id="btnExport" type="button">⬇ 导出 Excel（下载本地）</button>
+  <button class="btn btn-ghost" id="btnReset" type="button">清空全部</button>
+</div>
+
+<div class="loop">
+  <b>分账与基金规则：</b>① 每场净结余（应收-成本）按<b>出勤人头均分</b>，谁干活谁拿钱；② 基金<b>平时不抽成</b>（余额为 0），需要时（设备维修/公共采购/宣发）全员按人头凑，一次一动，花完即清；③ 个人资产（乐手自购自持）算个人开支，不进基金。
+  <br><b>数据流：</b>本页勾选录入 → <b>导出 Excel 存本地</b>（权威源）→ 上传 GitHub 云端备份。改数据优先在本页或本地 Excel，上传前保持一致。
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+<script>
+
+var LS_KEY='bandToolbox.finance.v1';
+var MEMBERS=['青宝','姝言','超子','梓渊','铭哲','游舒米','蔡惠成'];
+var TYPES=['商演','驻场','专场','品牌活动','婚礼宴会','酒馆驻场','其他'];
+var PAY_STATUS=['已结清','定金已收','尾款待结','口头约定','长周期待结'];
+
+var state={records:[],ts:0};
+function freshState(){ return {records:[],ts:Date.now()}; }
+function loadState(){
+  try{
+    var raw=localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    var s=JSON.parse(raw);
+    if(s && Array.isArray(s.records)) state.records=s.records;
+  }catch(e){}
+}
+function save(){ state.ts=Date.now(); try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){} }
+
+/* ---- 成员勾选 ---- */
+function renderAttPick(){
+  var box=document.getElementById('attPick'); box.innerHTML='';
+  var selected = window._selAtt || [];
+  MEMBERS.forEach(function(m){
+    var on=selected.indexOf(m)>=0;
+    var d=document.createElement('div');
+    d.className='ap'+(on?' on':'');
+    d.innerHTML='<span class="dot"></span>'+m;
+    d.onclick=function(){
+      var i=selected.indexOf(m);
+      if(i>=0) selected.splice(i,1); else selected.push(m);
+      window._selAtt=selected;
+      renderAttPick(); updateSplitHint();
+    };
+    box.appendChild(d);
+  });
+}
+function updateSplitHint(){
+  var n=(window._selAtt||[]).length;
+  var amt=liveNet();
+  var el=document.getElementById('splitHint');
+  if(n===0){ el.innerHTML='点上面勾选本场出勤的成员 →'; el.style.color='var(--muted)'; return; }
+  if(amt<=0){ el.innerHTML=n+' 人出勤 · 净结余为 0 或未填，暂不分账'; return; }
+  var per=(amt/n).toFixed(2);
+  el.innerHTML=n+' 人出勤 · 净结余 '+amt.toFixed(2)+' 元 ÷ '+n+' 人 = 每人 <b>'+per+'</b> 元';
+  el.style.color='var(--green)';
+}
+function liveNet(){
+  var a=parseFloat(document.getElementById('fYingShou').value)||0;
+  var c=parseFloat(document.getElementById('fChengBen').value)||0;
+  return Math.max(0, a-c);
+}
+
+/* ---- 汇总 ---- */
+function computeOverview(){
+  var now=new Date(); var ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  var t={ying:0,shi:0,cost:0,net:0,n:0, pending:0};
+  state.records.forEach(function(r){
+    if(r.date && r.date.indexOf(ym)===0){ t.n++; }
+    t.ying+=(parseFloat(r.ying)||0); t.shi+=(parseFloat(r.shi)||0);
+    t.cost+=(parseFloat(r.cost)||0); t.net+=(parseFloat(r.ying)||0)-(parseFloat(r.cost)||0);
+    if(r.status==='定金已收'||r.status==='尾款待结'||r.status==='口头约定'||r.status==='长周期待结') t.pending++;
+  });
+  return t;
+}
+function renderOverview(){
+  var t=computeOverview();
+  document.getElementById('ovYing').textContent='¥'+t.ying.toFixed(0);
+  document.getElementById('ovShi').textContent='¥'+t.shi.toFixed(0);
+  document.getElementById('ovNet').textContent='¥'+t.net.toFixed(0);
+  document.getElementById('ovCount').textContent=t.n+' 场';
+  document.getElementById('ovPending').textContent=t.pending+' 笔';
+  var diff=t.shi-t.ying;
+  var pendEl=document.getElementById('ovDiff');
+  if(diff<0){ pendEl.textContent='待收 ¥'+(t.ying-t.shi).toFixed(0); pendEl.className='v red'; }
+  else { pendEl.textContent='已收齐'; pendEl.className='v green'; }
+}
+function renderTable(){
+  var tb=document.getElementById('recBody');
+  document.getElementById('recCount').textContent = state.records.length;
+  if(state.records.length===0){
+    tb.innerHTML='<tr><td colspan="9" class="empty">还没有记录，用上面的表单记第一笔吧</td></tr>';
+    return;
+  }
+  var rows=state.records.slice().reverse().map(function(r,i){
+    var idx=state.records.length-1-i;
+    var net=(parseFloat(r.ying)||0)-(parseFloat(r.cost)||0);
+    return '<tr><td>'+r.date+'</td><td>'+esc(r.venue)+'</td><td>'+esc(r.type)+'</td><td>'+esc(r.att)+'</td>'+
+      '<td>'+fmt(r.ying)+'</td><td>'+fmt(r.shi)+'</td><td>'+fmt(r.cost)+'</td>'+
+      '<td><b>'+fmt(net)+'</b></td><td>'+esc(r.status)+'<button class="del" data-i="'+idx+'">删</button></td></tr>';
+  }).join('');
+  tb.innerHTML=rows;
+  tb.querySelectorAll('.del').forEach(function(b){
+    b.onclick=function(){ var i=+b.getAttribute('data-i'); if(confirm('删除这条记录？')){ state.records.splice(i,1); save(); renderTable(); renderOverview(); } };
+  });
+}
+function fmt(v){ var n=parseFloat(v)||0; return '¥'+n.toFixed(0); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ---- 提交 ---- */
+function addRecord(){
+  var date=document.getElementById('fDate').value;
+  var venue=document.getElementById('fVenue').value.trim();
+  var type=document.getElementById('fType').value;
+  var ying=parseFloat(document.getElementById('fYingShou').value)||0;
+  var shi=parseFloat(document.getElementById('fShiShou').value)||0;
+  var cost=parseFloat(document.getElementById('fChengBen').value)||0;
+  var status=document.getElementById('fStatus').value;
+  var att=(window._selAtt||[]).join('/');
+  var note=document.getElementById('fNote').value.trim();
+  if(!date){ toast('请选日期'); return; }
+  if(!venue){ toast('请填场地'); return; }
+  if(!att){ toast('请勾选到场成员'); return; }
+  state.records.push({date:date,venue:venue,type:type,att:att,ying:ying,shi:shi,cost:cost,status:status,note:note});
+  save(); renderTable(); renderOverview();
+  // 清空表单（保留日期）
+  document.getElementById('fVenue').value=''; document.getElementById('fYingShou').value='';
+  document.getElementById('fShiShou').value=''; document.getElementById('fChengBen').value='';
+  document.getElementById('fNote').value=''; window._selAtt=[]; renderAttPick(); updateSplitHint();
+  toast('已保存 ✓');
+}
+
+/* ---- 导出 Excel（HTML 表格格式 .xls，WPS/Excel 兼容） ---- */
+function exportXls(){
+  var t=computeOverview();
+  function th(txt){ return '<th style="background:#f7efd9;font-weight:bold;border:1px solid #ccc">'+txt+'</th>'; }
+  function td(txt,opt){ return '<td style="border:1px solid #ccc;'+(opt||'')+'">'+txt+'</td>'; }
+  var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body>';
+  html+='<h3>吾也乐队 · 财务对账（导出于 '+new Date().toLocaleString()+'）</h3>';
+  html+='<h4>当月概览：总收入 ¥'+t.ying.toFixed(2)+' | 实收 ¥'+t.shi.toFixed(2)+' | 成本 ¥'+t.cost.toFixed(2)+' | 净结余 ¥'+t.net.toFixed(2)+' | '+t.n+' 场 | 待结 '+t.pending+' 笔</h4>';
+  html+='<table border="1"><tr>';
+  ['日期','场地','类型','出勤名单','应收','实收','现金成本','净结余','到账状态','备注'].forEach(function(h){ html+=th(h); });
+  html+='</tr>';
+  state.records.forEach(function(r){
+    var net=(parseFloat(r.ying)||0)-(parseFloat(r.cost)||0);
+    html+='<tr>'+td(r.date)+td(r.venue)+td(r.type)+td(r.att)+
+      td((parseFloat(r.ying)||0).toFixed(2))+td((parseFloat(r.shi)||0).toFixed(2))+td((parseFloat(r.cost)||0).toFixed(2))+
+      td(net.toFixed(2))+td(r.status)+td(r.note||'')+'</tr>';
+  });
+  html+='</table></body></html>';
+  var blob=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='财务对账_'+new Date().toISOString().slice(0,10)+'.xls';
+  document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);document.body.removeChild(a);},300);
+  toast('已导出，用 WPS 打开后另存为 .xlsx 再传云端');
+}
+function toast(msg){
+  var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._timer); t._timer=setTimeout(function(){t.classList.remove('show');},2600);
+}
+
+/* ---- init ---- */
+loadState();
+renderAttPick();
+renderTable();
+renderOverview();
+document.getElementById('fYingShou').addEventListener('input', updateSplitHint);
+document.getElementById('fChengBen').addEventListener('input', updateSplitHint);
+document.getElementById('btnAdd').addEventListener('click', addRecord);
+document.getElementById('btnExport').addEventListener('click', exportXls);
+document.getElementById('btnReset').addEventListener('click', function(){
+  if(confirm('确定清空所有财务记录吗？建议先导出备份！')){
+    state=freshState(); try{localStorage.removeItem(LS_KEY);}catch(e){}
+    renderTable(); renderOverview(); toast('已清空（记得导出备份）');
+  }
+});
+
+</script>
+</body>
+</html>

@@ -4,72 +4,830 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>演出复盘评估系统</title>
+<meta name="description" content="演出复盘评估系统：点击打分，一键生成复盘报告">
+<title>演出复盘评估系统 · 吾也乐队</title>
 <style>
 :root{
   --bg:#faf9f6; --panel:#ffffff; --line:#e7e3d8;
   --text:#26241f; --muted:#7a766c;
-  --gold:#b8860b; --gold-soft:#f7efd9;
+  --gold:#b8860b; --gold-soft:#f7efd9; --gold-line:#e4d3a4;
   --green:#3f7d53; --green-soft:#e9f4ec;
+  --blue:#3a6fa3; --blue-soft:#e8f0f7;
+  --red:#b04a3a; --red-soft:#f9ece9;
 }
 *{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
 body{
   background:var(--bg);color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
-  -webkit-font-smoothing:antialiased;line-height:1.8;
+  -webkit-font-smoothing:antialiased;line-height:1.75;
 }
-.wrap{max-width:860px;margin:0 auto;padding:0 20px 60px}
-header{padding:44px 0 26px}
-h1{font-size:24px;font-weight:700}
-.sub{color:var(--muted);font-size:13.5px;margin-top:6px}
-h2{font-size:18px;font-weight:700;margin:32px 0 14px;display:flex;align-items:center;gap:9px}
-h2::before{content:"";width:16px;height:3px;background:var(--gold);border-radius:2px}
-h3{font-size:15px;font-weight:700;margin:22px 0 10px;color:#4a463d}
-p{margin:8px 0;font-size:14.5px}
-strong{color:#4a463d}
-blockquote{
-  border-left:3px solid var(--gold);background:var(--gold-soft);
-  padding:12px 16px;margin:14px 0;border-radius:0 8px 8px 0;font-size:13.5px;color:#5a5448;
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 80px}
+header{padding:36px 0 8px;position:relative}
+h1{font-size:23px;font-weight:700}
+.sub{color:var(--muted);font-size:13px;margin-top:6px}
+.save-state{
+  position:absolute;right:0;top:40px;font-size:11.5px;color:var(--green);
+  opacity:0;transition:opacity .3s;
 }
-table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
-th{background:var(--gold-soft);color:#6b5410;text-align:left;padding:9px 12px;font-size:12.5px}
-td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
-ul,ol{padding-left:22px;margin:8px 0}
-li{margin:5px 0;font-size:14.5px}
-hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.save-state.show{opacity:1}
+
+.howto{
+  background:var(--gold-soft);border:1px solid var(--gold-line);border-radius:14px;
+  padding:16px 18px;margin:18px 0 8px;font-size:13.5px;color:#5a5448;
+}
+.howto b{color:var(--gold);display:block;margin-bottom:6px;font-size:14px}
+.howto ol{padding-left:20px}
+.howto li{margin:3px 0}
+
+h2{font-size:17px;font-weight:700;margin:34px 0 6px;display:flex;align-items:center;gap:9px}
+h2::before{content:"";width:16px;height:3px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.hint{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+
+/* ---------- 1 基本情况 ---------- */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px}
+.field input,.field select{
+  width:100%;border:1px solid var(--line);border-radius:10px;background:var(--panel);
+  padding:10px 12px;font-size:14.5px;color:var(--text);font-family:inherit;outline:none;
+  transition:border-color .15s;
+}
+.field input:focus,.field select:focus{border-color:var(--gold)}
+.field.wide{grid-column:1 / -1}
+
+/* ---------- 2 观众维度 ---------- */
+.dim-list{display:flex;flex-direction:column;gap:10px}
+.dim-row{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;
+}
+.dim-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dim-label{font-size:14.5px;font-weight:600}
+.dim-tip{font-size:12px;color:var(--muted)}
+.dim-scores{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.score-btn{
+  min-width:42px;height:36px;border:1.5px solid var(--line);border-radius:9px;background:var(--bg);
+  font-size:15px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;
+  transition:all .12s;
+}
+.score-btn:hover{border-color:var(--gold);color:var(--gold)}
+.score-btn.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.aud-type{
+  margin-top:12px;background:var(--blue-soft);border:1px solid #c5d8e8;border-radius:12px;
+  padding:12px 16px;font-size:13px;color:#1e3a52;
+}
+.aud-type b{color:var(--blue)}
+
+/* ---------- 3 歌曲评分 ---------- */
+details.guide{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:12px 16px;margin-bottom:14px;font-size:13.5px;
+}
+details.guide summary{cursor:pointer;font-weight:700;color:#4a463d;font-size:13.5px;user-select:none}
+details.guide table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+details.guide th{background:var(--gold-soft);color:#6b5410;text-align:left;padding:7px 10px}
+details.guide td{padding:7px 10px;border-top:1px solid var(--line);vertical-align:top}
+
+.song-list{display:flex;flex-direction:column;gap:12px}
+.song-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+}
+.song-head{display:flex;gap:10px;align-items:center}
+.song-head input{
+  flex:1;border:1px solid var(--line);border-radius:10px;background:var(--bg);
+  padding:9px 12px;font-size:14.5px;color:var(--text);font-family:inherit;outline:none;
+}
+.song-head input:focus{border-color:var(--gold)}
+.song-del{
+  width:32px;height:32px;border:none;border-radius:9px;background:transparent;
+  color:var(--muted);font-size:15px;cursor:pointer;flex-shrink:0;
+}
+.song-del:hover{background:var(--red-soft);color:var(--red)}
+.sgrid{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.srow{display:flex;align-items:center;gap:10px}
+.slabel{
+  width:44px;flex-shrink:0;font-size:12.5px;color:var(--muted);font-weight:600;text-align:right;
+}
+.sbtns{display:flex;gap:6px;flex-wrap:wrap}
+.sbtns .score-btn{min-width:36px;height:32px;font-size:13.5px;border-radius:8px}
+.song-total{
+  margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);
+  display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--muted);
+}
+.song-total b{font-size:17px;color:var(--text)}
+.badge{
+  font-size:11.5px;font-weight:700;border-radius:20px;padding:2px 11px;letter-spacing:.03em;
+}
+.badge.ace{background:var(--green-soft);color:var(--green);border:1px solid #bfe0ca}
+.badge.flex{background:var(--gold-soft);color:#8a6b10;border:1px solid var(--gold-line)}
+.badge.scene{background:#efece5;color:#7a766c;border:1px solid var(--line)}
+.add-song{
+  width:100%;margin-top:12px;padding:11px;border:1.5px dashed var(--gold-line);border-radius:12px;
+  background:transparent;color:var(--gold);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+  transition:background .15s;
+}
+.add-song:hover{background:var(--gold-soft)}
+.rule{
+  margin-top:16px;background:var(--green-soft);border:1px solid #cfe3d5;border-radius:12px;
+  padding:12px 16px;font-size:13px;color:#2c4a37;
+}
+.rule b{color:var(--green)}
+
+/* ---------- 4 自检 ---------- */
+.check-groups{display:flex;flex-direction:column;gap:12px}
+.check-group{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.check-head{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:14.5px;font-weight:700;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:8px;
+}
+.check-count{
+  font-size:12.5px;font-weight:700;color:var(--gold);background:var(--gold-soft);
+  border-radius:20px;padding:2px 11px;
+}
+.check-count.full{color:var(--green);background:var(--green-soft)}
+.check-item{
+  display:flex;gap:10px;align-items:flex-start;padding:6px 4px;font-size:14px;
+  cursor:pointer;border-radius:8px;
+}
+.check-item:hover{background:var(--bg)}
+.check-item input{
+  width:18px;height:18px;margin-top:4px;accent-color:var(--green);cursor:pointer;flex-shrink:0;
+}
+.check-item.done span{color:var(--muted);text-decoration:line-through;text-decoration-color:#c9c4b8}
+
+/* ---------- 5 总结 ---------- */
+.sum-list{display:flex;flex-direction:column;gap:12px}
+.sum-field label{display:block;font-size:13.5px;font-weight:600;margin-bottom:5px;color:#4a463d}
+.sum-field textarea{
+  width:100%;border:1px solid var(--line);border-radius:10px;background:var(--panel);
+  padding:10px 12px;font-size:14.5px;color:var(--text);font-family:inherit;outline:none;
+  resize:vertical;min-height:44px;line-height:1.6;
+}
+.sum-field textarea:focus{border-color:var(--gold)}
+.sum-field.key label{color:var(--red)}
+.sum-field.key textarea{border-color:#e0c3ba;background:#fffdfb}
+.sum-field.key textarea:focus{border-color:var(--red)}
+
+/* ---------- 操作区 ---------- */
+.actions{
+  margin-top:36px;display:flex;gap:12px;flex-wrap:wrap;
+}
+.btn{
+  flex:1;min-width:200px;padding:14px 18px;border-radius:12px;border:none;cursor:pointer;
+  font-size:15.5px;font-weight:700;font-family:inherit;transition:all .15s;
+}
+.btn-primary{background:var(--gold);color:#fff;box-shadow:0 4px 14px rgba(184,134,11,.28)}
+.btn-primary:hover{background:#a3790a}
+.btn-ghost{background:var(--panel);color:var(--muted);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--red);color:var(--red)}
+
 .loop{
   background:var(--green-soft);border:1px solid #cfe3d5;border-radius:14px;
-  padding:16px 18px;font-size:13.5px;color:#2c4a37;margin-top:20px;
+  padding:16px 18px;font-size:13px;color:#2c4a37;margin-top:28px;
 }
 .loop b{color:var(--green)}
-@media (max-width:560px){
-  td,th{padding:8px 9px;font-size:12.5px}
-  h2{font-size:16px}
+.loop a{color:var(--green);font-weight:700}
+
+/* ---------- 报告弹窗 ---------- */
+.modal{
+  display:none;position:fixed;inset:0;background:rgba(20,18,14,.55);z-index:50;
+  align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;
 }
+.modal.open{display:flex}
+.modal-box{
+  background:#fff;border-radius:16px;max-width:640px;width:100%;margin:auto 0;
+  padding:22px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.modal-box h3{font-size:17px;margin-bottom:4px}
+.modal-sub{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+.report-text{
+  background:var(--bg);border:1px solid var(--line);border-radius:12px;
+  padding:14px 16px;font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-all;
+  max-height:46vh;overflow-y:auto;font-family:inherit;color:var(--text);
+}
+.modal-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.modal-actions .btn{flex:1;min-width:140px;padding:11px 14px;font-size:14px}
+.modal-hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7}
+
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+  background:#26241f;color:#fff;font-size:13.5px;border-radius:30px;padding:10px 22px;
+  opacity:0;pointer-events:none;transition:all .3s;z-index:99;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- 移动端 ---------- */
+@media (max-width:560px){
+  .fgrid{grid-template-columns:1fr}
+  h1{font-size:20px}
+  .save-state{position:static;margin-top:8px;text-align:left}
+  .srow{flex-wrap:wrap}
+  .slabel{width:100%;text-align:left}
+  .sbtns .score-btn{min-width:42px;height:34px}
+  .actions{flex-direction:column}
+  .btn{min-width:0}
+}
+
+/* ---------- 打印 ---------- */
 @media print{
   body{background:#fff}
+  .no-print{display:none !important}
+  .actions,.add-song,.song-del,.howto{display:none !important}
+  .modal{display:none !important}
+  body.print-report .wrap{display:none !important}
+  body.print-report .modal{display:block !important;position:static;background:#fff;padding:0;overflow:visible}
+  body.print-report .modal-box{box-shadow:none;max-width:none;padding:0;border:none}
+  body.print-report .report-text{max-height:none;overflow:visible;border:none;background:#fff}
+  body.print-report .modal-actions,body.print-report .modal-hint,body.print-report .modal-sub{display:none !important}
 }
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <h1>演出复盘评估系统</h1>
-  <p class="sub">每场演出后当天填一次 · 趁记忆还热 · 帮你记住哪首歌好用、哪首该换、下次怎么改</p>
-</header>
 
-<h1>乐队工具箱（复盘评估 + 串词模板 + 演出手册模板）</h1>
-<blockquote>
-<p>每场演出：前3天填"演出手册模板" → 前1天填"串词模板" → 演出后当天填"复盘评估系统"。
-一句话总结：鼓手是时间锚，主唱是情绪锚，乐队跟鼓走。弹错不停，副歌有动作，串词说完就进歌。</p>
-</blockquote>
-<hr />
+  <header>
+    <h1>📋 演出复盘评估系统</h1>
+    <p class="sub">每场演出后填一次 · 趁记忆还热 · 点数字打分，填完一键生成复盘报告</p>
+    <div class="save-state" id="saveState">✓ 已自动保存</div>
+  </header>
 
-<div class="loop">
-  <b>回路闭环：</b>复盘评分 → 曲库优化规则（≥20王牌 / 15-19灵活 / ≤14特定场景） → 更新<a href="../songs/曲库.xlsx">曲库状态</a> → 下一场歌单更精准。
-  <br><b>归档：</b>填写后拍照存入 <a href="archive/">review/archive/</a>，在<a href="index.html">归档索引</a>加一行。
+  <div class="howto no-print">
+    <b>怎么用（6步，10分钟）</b>
+    <ol>
+      <li>演出结束后<b>当天或第二天</b>填完（趁记忆还热）</li>
+      <li>第1-2部分填"这场的情况"——场地、观众画像</li>
+      <li>第3部分给每首歌打分（点数字就行，0=最差，5=最好）</li>
+      <li>第4部分打勾自检——哪些做好了，哪些没做好</li>
+      <li>第5部分写一句话总结和下次要改什么</li>
+      <li>填完点"<b>生成复盘报告</b>"，可以复制发群、打印或存PDF归档</li>
+    </ol>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--gold-line)">
+      <b style="color:var(--gold)">分工建议（多人协作时）：</b>主唱填第 1、2、5 节＋主唱自检；鼓手/乐手各勾自己的自检组＋参与歌曲打分。
+      <b>注意：各自手机上填的数据不互通</b>——建议散场后口头对一遍，由<b>一个人</b>统一录入后生成报告，别各填各的最后合不上。
+    </div>
+  </div>
+
+  <!-- ========== 1 基本情况 ========== -->
+  <h2>1. 这场的基本情况</h2>
+  <p class="hint">记不清的先空着，报告里会提示"未填"。</p>
+  <div class="fgrid">
+    <div class="field"><label>演出日期</label><input type="date" id="f_date"></div>
+    <div class="field"><label>演出名称</label><input type="text" id="f_name" placeholder="例：茅台商演"></div>
+    <div class="field"><label>场地</label><input type="text" id="f_venue" placeholder="例：环岛路音乐广场"></div>
+    <div class="field"><label>场地类型</label>
+      <select id="f_vtype">
+        <option value="">选一个</option>
+        <option>户外广场</option><option>室内剧场</option><option>酒吧Livehouse</option>
+        <option>商场</option><option>婚礼宴会厅</option><option>企业活动</option><option>其他</option>
+      </select>
+    </div>
+    <div class="field"><label>能不能下台走近观众？</label>
+      <select id="f_stage">
+        <option value="">选一个</option>
+        <option>能（台低/没台）</option><option>不能（台高/有隔离）</option>
+      </select>
+    </div>
+    <div class="field"><label>估计观众人数</label><input type="text" id="f_count" placeholder="例：300"></div>
+  </div>
+
+  <!-- ========== 2 观众画像 ========== -->
+  <h2>2. 观众是什么人？</h2>
+  <p class="hint">6个维度，点数字打分：1=很低，5=很高。不确定就凭感觉填。</p>
+  <div class="dim-list" id="dimList"></div>
+  <div class="aud-type">
+    <b>自动判断：</b><span id="audType">还没打分</span><br>
+    口诀：小朋友多+家庭多=家庭型 ｜ 年轻人多+朋友多=社交型 ｜ 安静坐着认真听=乐迷型 ｜ 情侣多+小场=约会型
+  </div>
+
+  <!-- ========== 3 歌曲评分 ========== -->
+  <h2>3. 每首歌表现怎么样？</h2>
+  <p class="hint">先填歌名（这场唱了什么就填什么，不限数量），然后点数字打分。5个维度各0-5分，总分25。</p>
+  <details class="guide">
+    <summary>5个维度怎么打分？（点开看）</summary>
+    <table>
+      <tr><th style="width:74px">维度</th><th>5分</th><th>1分</th></tr>
+      <tr><td><b>路人钩子</b></td><td>前奏5秒能抓住耳朵</td><td>要听很久才进入</td></tr>
+      <tr><td><b>副歌跟唱</b></td><td>全民都会跟着唱</td><td>没人会</td></tr>
+      <tr><td><b>互动方便</b></td><td>天然有互动口子</td><td>纯欣赏</td></tr>
+      <tr><td><b>风格大众</b></td><td>谁都爱听</td><td>小众要挑人</td></tr>
+      <tr><td><b>能量调节</b></td><td>能快能慢很灵活</td><td>只能快或只能慢</td></tr>
+    </table>
+  </details>
+  <div class="song-list" id="songList"></div>
+  <button class="add-song" id="addSong" type="button">＋ 添加一首歌</button>
+  <div class="rule">
+    <b>曲库优化规则：</b>总分 <b>≥20</b> = 王牌，长期固定在开场/热场/情感位 ｜ <b>15-19</b> = 按场景灵活调换 ｜ <b>≤14</b> = 只在特定场景用，不进通用单 ｜ 连续2场冷场的歌：<b>降5分</b>并重新定位（实战数据优先于理论评分）。
+  </div>
+
+  <!-- ========== 4 自检清单 ========== -->
+  <h2>4. 自检：这场做好了吗？</h2>
+  <p class="hint">做到的打✓。没做到的不丢人，记住它就是下次的改进点。</p>
+  <div class="check-groups" id="checkGroups"></div>
+
+  <!-- ========== 5 一句话总结 ========== -->
+  <h2>5. 一句话总结 + 下次改进</h2>
+  <p class="hint">一句话就行，写多了反而没人看。</p>
+  <div class="sum-list">
+    <div class="sum-field"><label>这场最成功的是什么？</label><textarea id="s_best" rows="1"></textarea></div>
+    <div class="sum-field"><label>这场最大的问题？</label><textarea id="s_worst" rows="1"></textarea></div>
+    <div class="sum-field"><label>哪首歌反响最好？</label><textarea id="s_songbest" rows="1"></textarea></div>
+    <div class="sum-field"><label>哪首歌反响最差？</label><textarea id="s_songworst" rows="1"></textarea></div>
+    <div class="sum-field"><label>哪个动作/互动最有效？</label><textarea id="s_action" rows="1"></textarea></div>
+    <div class="sum-field key"><label>★ 下次要改什么？（最重要，只写一条）</label><textarea id="s_next" rows="2"></textarea></div>
+  </div>
+
+  <!-- ========== 操作 ========== -->
+  <div class="actions no-print">
+    <button class="btn btn-primary" id="btnReport" type="button">生成复盘报告</button>
+    <button class="btn btn-ghost" id="btnReset" type="button">清空重填</button>
+  </div>
+
+  <div class="loop">
+    <b>回路闭环：</b>复盘评分 → 曲库优化规则（≥20王牌 / 15-19灵活 / ≤14特定场景）→ 更新<a href="../songs/曲库.xlsx">曲库状态</a> → 下一场歌单更精准。<br>
+    <b>归档：</b>点「生成复盘报告」→「打印/存PDF」→ 文件名 <b>YYYY-MM-DD_场地_类型.pdf</b> → 上传到 <a href="index.html">复盘归档</a> 的 archive/ 文件夹并加一行索引。<br>
+    <b>无网备用：</b>手机没信号时用 <a href="乐队工具箱_打印版.pdf">打印版工具箱</a>（纸笔填，回头补录）。
+  </div>
+
 </div>
 
+<!-- ========== 报告弹窗 ========== -->
+<div class="modal" id="reportModal">
+  <div class="modal-box">
+    <h3>复盘报告已生成</h3>
+    <p class="modal-sub">下面就是完整的复盘报告，可以复制、打印或存成 PDF 归档。</p>
+    <div class="report-text" id="reportText"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="btnCopy" type="button">复制全文（发微信群）</button>
+      <button class="btn btn-ghost" id="btnPrint" type="button" style="border-color:var(--gold-line);color:var(--gold)">打印 / 存PDF归档</button>
+      <button class="btn btn-ghost" id="btnClose" type="button">返回修改</button>
+    </div>
+    <p class="modal-hint">存PDF：点上面的「打印 / 存PDF」→ 打印窗口里把"目标打印机"选成<b>"另存为 PDF"</b>→ 保存。文件名按归档规范：<b>YYYY-MM-DD_场地_类型.pdf</b>（例：2026-08-16_环岛路音乐广场_商演.pdf）。</p>
+  </div>
 </div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= 配置 ================= */
+var LS_KEY = 'bandToolbox.reviewDraft.v1';
+
+var DIMS = [
+  {k:'kids',     label:'小朋友多吗',       short:'小朋友',   tip:'小孩多的场要准备简单互动'},
+  {k:'elders',   label:'中老年人多吗',     short:'中老年',   tip:'要更多经典老歌'},
+  {k:'young',    label:'年轻人多吗',       short:'年轻人',   tip:'可以炸一点、新一点'},
+  {k:'family',   label:'是家庭/情侣/团建？', short:'家庭/情侣', tip:'决定互动方式'},
+  {k:'interact', label:'观众愿意互动吗',   short:'互动意愿',  tip:'高=可以多互动，低=少说话多唱歌'},
+  {k:'familiar', label:'观众熟悉你的歌吗',  short:'歌曲熟悉度', tip:'高=可以跟唱，低=纯表演'}
+];
+
+var SONG_DIMS = [
+  {label:'路人钩子', short:'钩子'},
+  {label:'副歌跟唱', short:'跟唱'},
+  {label:'互动方便', short:'互动'},
+  {label:'风格大众', short:'大众'},
+  {label:'能量调节', short:'能量'}
+];
+
+var CHECKS = [
+  {key:'vocal', title:'主唱自检', items:[
+    '每首歌副歌都走到台边了（不是站桩）',
+    '串词每句说完停了1-2秒（没有语速太快）',
+    '问观众问题后等了3秒再接（没有自说自话）',
+    '上台前锁定了台下1个具体的人',
+    '3秒规矩全程生效（超3秒没动作就补了）',
+    '副歌把话筒伸向观众至少1次',
+    '小朋友多的时候蹲下来和小朋友互动了',
+    '表情有笑（没被风吹僵）'
+  ]},
+  {key:'drum', title:'鼓手自检', items:[
+    '每首歌开头都数了4拍才点头',
+    '没有抢拍',
+    '副歌有重音提示"高潮来了"',
+    '结尾和大家同时收（没多打一下）',
+    '中间乱了用军鼓拉回了'
+  ]},
+  {key:'player', title:'吉他/键盘/贝斯自检', items:[
+    '每首歌开头看了鼓手才进',
+    '没有抢在鼓手前面进',
+    'solo的时候往前走了两步',
+    '弹错了没停，继续走了',
+    '切分/同步的地方和鼓手对齐了'
+  ]}
+];
+
+var SUM_FIELDS = ['best','worst','songbest','songworst','action','next'];
+
+/* ================= 状态 ================= */
+function freshState(){
+  return {
+    date:'', name:'', venue:'', vtype:'', stage:'', count:'',
+    dims:{kids:0,elders:0,young:0,family:0,interact:0,familiar:0},
+    songs:[emptySong(),emptySong(),emptySong()],
+    checks:{vocal:[],drum:[],player:[]},
+    summary:{best:'',worst:'',songbest:'',songworst:'',action:'',next:''}
+  };
+}
+function emptySong(){ return {name:'', s:[null,null,null,null,null]}; }
+
+var state = freshState();
+
+function loadState(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    var s = JSON.parse(raw);
+    if(!s || typeof s !== 'object') return;
+    /* 合并到新状态上，兼容旧草稿缺字段 */
+    var base = freshState();
+    ['date','name','venue','vtype','stage','count'].forEach(function(k){ if(typeof s[k]==='string') base[k]=s[k]; });
+    if(s.dims) for(var k in base.dims){ if(typeof s.dims[k]==='number') base.dims[k]=s.dims[k]; }
+    if(Array.isArray(s.songs) && s.songs.length){
+      base.songs = s.songs.map(function(x){
+        if(!x) return emptySong();
+        return {name:(x.name||''), s: SONG_DIMS.map(function(_,i){ var v=(x.s&&x.s[i]); return (typeof v==='number')?v:null; })};
+      });
+    }
+    if(s.checks) CHECKS.forEach(function(g){
+      if(Array.isArray(s.checks[g.key])) base.checks[g.key] = s.checks[g.key].filter(function(v){return typeof v==='number';});
+    });
+    if(s.summary) SUM_FIELDS.forEach(function(k){ if(typeof s.summary[k]==='string') base.summary[k]=s.summary[k]; });
+    state = base;
+  }catch(e){ /* 忽略坏数据 */ }
+}
+
+var saveTimer = null;
+function save(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+  var el = document.getElementById('saveState');
+  el.classList.add('show');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){ el.classList.remove('show'); }, 1800);
+}
+
+/* ================= 工具 ================= */
+function $(id){ return document.getElementById(id); }
+function toast(msg){
+  var t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+
+function songTotal(song){
+  if(song.s.some(function(v){ return v===null || typeof v!=='number'; })) return null;
+  return song.s[0]+song.s[1]+song.s[2]+song.s[3]+song.s[4];
+}
+function songGrade(total){
+  if(total===null) return '';
+  if(total>=20) return {t:'王牌', cls:'ace'};
+  if(total>=15) return {t:'灵活调换', cls:'flex'};
+  return {t:'特定场景', cls:'scene'};
+}
+
+function audTypeText(){
+  var d = state.dims, filled = 0;
+  DIMS.forEach(function(x){ if(d[x.k]>0) filled++; });
+  if(filled===0) return '还没打分';
+  if(d.kids>=4 && d.family>=4) return '家庭型 → 准备简单互动 + 经典安全曲';
+  if(d.young>=4 && d.interact>=3) return '社交型 → 可以炸一点、多互动';
+  if(d.elders>=4) return '中老年为主 → 经典老歌优先';
+  if(d.family>=4 && d.young<=2) return '约会/安静型 → 走心慢歌路线';
+  if(filled<6) return '还差 '+(6-filled)+' 个维度没打';
+  return '混合型 → 按口诀现场判断';
+}
+
+/* ================= 渲染：基本情况 ================= */
+var FIELD_MAP = {f_date:'date', f_name:'name', f_venue:'venue', f_vtype:'vtype', f_stage:'stage', f_count:'count'};
+function initFields(){
+  Object.keys(FIELD_MAP).forEach(function(fid){
+    var el = $(fid), key = FIELD_MAP[fid];
+    el.value = state[key];
+    el.addEventListener('input', function(){ state[key] = el.value.trim(); save(); });
+    el.addEventListener('change', function(){ state[key] = el.value.trim(); save(); });
+  });
+}
+
+/* ================= 渲染：观众维度 ================= */
+function initDims(){
+  var box = $('dimList');
+  box.innerHTML = '';
+  DIMS.forEach(function(dim){
+    var row = document.createElement('div');
+    row.className = 'dim-row';
+    var head = document.createElement('div');
+    head.className = 'dim-head';
+    head.innerHTML = '<span class="dim-label">'+dim.label+'</span><span class="dim-tip">'+dim.tip+'</span>';
+    var scores = document.createElement('div');
+    scores.className = 'dim-scores';
+    for(var v=1; v<=5; v++){
+      (function(val){
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'score-btn';
+        b.textContent = val;
+        b.addEventListener('click', function(){
+          state.dims[dim.k] = (state.dims[dim.k]===val) ? 0 : val; /* 再点一次=取消 */
+          refreshDims(); updateAudType(); save();
+        });
+        scores.appendChild(b);
+      })(v);
+    }
+    row.appendChild(head); row.appendChild(scores);
+    row._scores = scores; row._key = dim.k;
+    box.appendChild(row);
+  });
+  refreshDims(); updateAudType();
+}
+function refreshDims(){
+  var rows = $('dimList').children;
+  for(var i=0;i<rows.length;i++){
+    var cur = state.dims[rows[i]._key];
+    var btns = rows[i]._scores.children;
+    for(var j=0;j<btns.length;j++){
+      btns[j].classList.toggle('on', (j+1)===cur);
+    }
+  }
+}
+function updateAudType(){ $('audType').textContent = audTypeText(); }
+
+/* ================= 渲染：歌曲 ================= */
+function renderSongs(){
+  var box = $('songList');
+  box.innerHTML = '';
+  state.songs.forEach(function(song, idx){
+    box.appendChild(buildSongCard(song, idx));
+  });
+}
+function buildSongCard(song, idx){
+  var card = document.createElement('div');
+  card.className = 'song-card';
+
+  /* 歌名行 */
+  var head = document.createElement('div');
+  head.className = 'song-head';
+  var input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = '第'+(idx+1)+'首歌名（这场唱了什么就填什么）';
+  input.value = song.name;
+  input.addEventListener('input', function(){ song.name = input.value; save(); });
+  var del = document.createElement('button');
+  del.type = 'button'; del.className = 'song-del'; del.textContent = '✕';
+  del.title = '删除这首歌';
+  del.addEventListener('click', function(){
+    state.songs.splice(idx,1);
+    if(state.songs.length===0) state.songs.push(emptySong());
+    renderSongs(); save();
+  });
+  head.appendChild(input); head.appendChild(del);
+
+  /* 打分行 */
+  var grid = document.createElement('div');
+  grid.className = 'sgrid';
+  SONG_DIMS.forEach(function(d, di){
+    var row = document.createElement('div');
+    row.className = 'srow';
+    var lab = document.createElement('span');
+    lab.className = 'slabel'; lab.textContent = d.short; lab.title = d.label;
+    var btns = document.createElement('div');
+    btns.className = 'sbtns';
+    for(var v=0; v<=5; v++){
+      (function(val){
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'score-btn'; b.textContent = val;
+        b.addEventListener('click', function(){
+          song.s[di] = (song.s[di]===val) ? null : val; /* 再点一次=取消 */
+          refreshSongCard(card, song); save();
+        });
+        btns.appendChild(b);
+      })(v);
+    }
+    row.appendChild(lab); row.appendChild(btns);
+    grid.appendChild(row);
+  });
+
+  /* 总分行 */
+  var total = document.createElement('div');
+  total.className = 'song-total';
+
+  card.appendChild(head); card.appendChild(grid); card.appendChild(total);
+  card._total = total;
+  refreshSongCard(card, song);
+  return card;
+}
+function refreshSongCard(card, song){
+  /* 刷新打分按钮高亮 */
+  var rows = card.querySelectorAll('.srow');
+  for(var di=0; di<rows.length; di++){
+    var btns = rows[di].querySelectorAll('.score-btn');
+    for(var j=0;j<btns.length;j++){
+      btns[j].classList.toggle('on', song.s[di]===j);
+    }
+  }
+  /* 总分 + 分级 */
+  var t = songTotal(song);
+  var g = songGrade(t);
+  var html = '总分 <b>' + (t===null ? '–' : t) + '</b>/25';
+  if(g) html += ' <span class="badge '+g.cls+'">'+g.t+'</span>';
+  if(song.name && t===null) html += ' <span style="font-size:11.5px">（还有维度没打完）</span>';
+  card._total.innerHTML = html;
+}
+
+/* ================= 渲染：自检 ================= */
+function initChecks(){
+  var box = $('checkGroups');
+  box.innerHTML = '';
+  CHECKS.forEach(function(group){
+    var g = document.createElement('div');
+    g.className = 'check-group';
+    var head = document.createElement('div');
+    head.className = 'check-head';
+    var ht = document.createElement('span'); ht.textContent = group.title;
+    var hc = document.createElement('span'); hc.className = 'check-count';
+    head.appendChild(ht); head.appendChild(hc);
+    g.appendChild(head); g._count = hc;
+
+    group.items.forEach(function(item, i){
+      var lab = document.createElement('label');
+      lab.className = 'check-item';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      var checked = state.checks[group.key].indexOf(i) >= 0;
+      cb.checked = checked;
+      var sp = document.createElement('span'); sp.textContent = item;
+      lab.appendChild(cb); lab.appendChild(sp);
+      cb.addEventListener('change', function(){
+        var arr = state.checks[group.key];
+        var pos = arr.indexOf(i);
+        if(cb.checked && pos<0) arr.push(i);
+        if(!cb.checked && pos>=0) arr.splice(pos,1);
+        lab.classList.toggle('done', cb.checked);
+        refreshCheckCount(g, group); save();
+      });
+      lab.classList.toggle('done', checked);
+      g.appendChild(lab);
+    });
+    refreshCheckCount(g, group);
+    box.appendChild(g);
+  });
+}
+function refreshCheckCount(g, group){
+  var n = state.checks[group.key].length, m = group.items.length;
+  g._count.textContent = n + '/' + m;
+  g._count.classList.toggle('full', n===m);
+}
+
+/* ================= 渲染：总结 ================= */
+function initSummary(){
+  SUM_FIELDS.forEach(function(k){
+    var el = $('s_'+k);
+    el.value = state.summary[k];
+    el.addEventListener('input', function(){ state.summary[k] = el.value; save(); });
+  });
+}
+
+/* ================= 报告 ================= */
+function buildReport(){
+  var L = [];
+  L.push('【吾也乐队 · 演出复盘】');
+  var head = [];
+  head.push(state.date || '日期未填');
+  if(state.name) head.push(state.name);
+  L.push(head.join(' · ') + (state.venue ? (' @ ' + state.venue) : ''));
+  var meta = [];
+  if(state.vtype) meta.push('场地类型：' + state.vtype);
+  if(state.stage) meta.push('能否下台：' + state.stage);
+  if(state.count) meta.push('观众约 ' + state.count + ' 人');
+  if(meta.length) L.push(meta.join(' ｜ '));
+  L.push('');
+
+  L.push('■ 观众画像（1-5分）');
+  L.push(DIMS.map(function(d){
+    var v = state.dims[d.k];
+    return d.short + ' ' + (v>0 ? v : '未填');
+  }).join(' ｜ '));
+  var at = audTypeText();
+  if(at.indexOf('还差')<0 && at.indexOf('还没')<0){
+    L.push('判断：' + at.split(' → ')[0]);
+  }
+  L.push('');
+
+  L.push('■ 歌曲评分（5维各0-5，满分25）');
+  var named = state.songs.filter(function(s){ return s.name.trim(); });
+  if(named.length===0){
+    L.push('（这场没填歌曲评分）');
+  }else{
+    named.forEach(function(s, i){
+      var t = songTotal(s), g = songGrade(t);
+      var dims = s.s.map(function(v){ return v===null ? '-' : v; }).join('·');
+      L.push((i+1) + '. ' + s.name + ' — ' + (t===null ? '未评完' : (t + '/25')) + (g ? '【' + g.t + '】' : '') + '（' + dims + '）');
+    });
+  }
+  L.push('');
+
+  L.push('■ 自检完成度');
+  L.push(CHECKS.map(function(g){
+    return g.title.replace('/键盘/贝斯','') + ' ' + state.checks[g.key].length + '/' + g.items.length;
+  }).join(' ｜ '));
+  L.push('');
+
+  L.push('■ 一句话总结');
+  var sumMap = [
+    ['best','最成功'], ['worst','最大问题'], ['songbest','反响最好'],
+    ['songworst','反响最差'], ['action','最有效动作'], ['next','★ 下次要改']
+  ];
+  sumMap.forEach(function(p){
+    if(state.summary[p[0]]) L.push(p[1] + '：' + state.summary[p[0]]);
+  });
+  L.push('');
+  L.push('—— 乐队工具箱 · 复盘评估系统 生成（归档：review/archive/）');
+  return L.join('\n');
+}
+
+function openReport(){
+  /* 软校验：缺关键信息时提醒但不拦 */
+  var warns = [];
+  if(!state.date) warns.push('演出日期');
+  if(!state.name) warns.push('演出名称');
+  if(!state.venue) warns.push('场地');
+  var named = state.songs.filter(function(s){ return s.name.trim(); });
+  if(named.length===0) warns.push('歌曲评分（一首都没填）');
+  else{
+    var unfinished = named.filter(function(s){ return songTotal(s)===null; }).length;
+    if(unfinished>0) warns.push(unfinished + '首歌评分没打完');
+  }
+  if(!state.summary.next) warns.push('下次要改什么（最重要的一条）');
+
+  if(warns.length){
+    if(!confirm('还有这些没填：\n· ' + warns.join('\n· ') + '\n\n仍然生成报告吗？（也可以点"取消"回去补）')) return;
+  }
+  $('reportText').textContent = buildReport();
+  $('reportModal').classList.add('open');
+}
+
+function copyReport(){
+  var text = $('reportText').textContent;
+  function ok(){ toast('✓ 已复制，去乐队微信群粘贴吧'); }
+  function fallback(){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); ok(); }
+    catch(e){ toast('复制失败，长按报告文字手动复制'); }
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(ok, fallback);
+  }else{
+    fallback();
+  }
+}
+
+function printReport(){
+  document.body.classList.add('print-report');
+  window.print();
+}
+window.addEventListener('afterprint', function(){
+  document.body.classList.remove('print-report');
+});
+
+/* ================= 初始化 ================= */
+loadState();
+initFields();
+initDims();
+renderSongs();
+initChecks();
+initSummary();
+
+$('addSong').addEventListener('click', function(){
+  if(state.songs.length >= 30){ toast('最多30首，够用了'); return; }
+  state.songs.push(emptySong());
+  renderSongs(); save();
+  var box = $('songList');
+  var last = box.children[box.children.length-1];
+  if(last) last.querySelector('input').focus();
+});
+
+$('btnReport').addEventListener('click', openReport);
+$('btnCopy').addEventListener('click', copyReport);
+$('btnPrint').addEventListener('click', printReport);
+$('btnClose').addEventListener('click', function(){ $('reportModal').classList.remove('open'); });
+$('reportModal').addEventListener('click', function(e){
+  if(e.target === this) $('reportModal').classList.remove('open');
+});
+
+$('btnReset').addEventListener('click', function(){
+  if(confirm('确定清空所有填写内容，重新开始吗？\n（已生成的归档PDF不受影响，只是清掉这份草稿）')){
+    state = freshState();
+    try{ localStorage.removeItem(LS_KEY); }catch(e){}
+    initFields(); initDims(); renderSongs(); initChecks(); initSummary();
+    toast('已清空，重新开始');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+});
+</script>
 </body>
 </html>
