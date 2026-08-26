@@ -101,23 +101,6 @@ h2::before{content:"";width:16px;height:3px;background:var(--gold);border-radius
 
 .loop{background:var(--green-soft);border:1px solid #cfe3d5;border-radius:14px;padding:15px 18px;font-size:13px;color:#2c4a37;margin-top:24px}
 .loop b{color:var(--green)}
-
-/* 必要提醒清单 */
-.chk-wrap{background:var(--blue-soft);border:1px solid #cfe5d9;border-radius:12px;padding:13px 15px;margin-top:10px}
-.chk-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.chk-head .t{font-size:13px;font-weight:700;color:#1e3a52}
-.chk-head .hint{font-size:11.5px;color:#5a7a96}
-.chk-head button{font-size:11.5px;color:var(--blue);background:none;border:none;cursor:pointer;padding:2px 4px}
-.chk-grid{display:flex;flex-wrap:wrap;gap:7px}
-.chk{display:flex;align-items:center;gap:6px;border:1.5px solid #cfe0e8;background:#fff;border-radius:11px;padding:6px 11px;font-size:12.8px;cursor:pointer;user-select:none;transition:all .15s;color:#4a6275}
-.chk.on{border-color:var(--blue);background:var(--blue-soft);color:var(--blue);font-weight:600}
-.chk .box{width:14px;height:14px;border:1.5px solid #b8c8d8;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;flex-shrink:0}
-.chk.on .box{background:var(--blue);border-color:var(--blue);color:#fff}
-.chk.custom .x{margin-left:2px;color:#c0392b;font-weight:700;opacity:.6}
-.chk.custom .x:hover{opacity:1}
-.chk-add{display:inline-flex;align-items:center;gap:5px;border:1.5px dashed #b8c8d8;border-radius:11px;padding:6px 11px;font-size:12.5px;color:#5a7a96;cursor:pointer;background:transparent}
-.chk-add input{border:none;outline:none;background:transparent;font-size:12.5px;color:#4a6275;width:110px}
-.chk-add input::placeholder{color:#9ab}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#26241f;color:#fff;font-size:13.5px;border-radius:30px;padding:10px 22px;opacity:0;pointer-events:none;transition:all .3s;z-index:99;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -188,13 +171,6 @@ h2::before{content:"";width:16px;height:3px;background:var(--gold);border-radius
   </div>
 </div>
 <div class="sl-list" id="slList"></div>
-
-<h2>必要提醒清单 <span style="font-weight:400;color:var(--blue);font-size:12px">内置常用项·按本场勾选·可临时增删</span></h2>
-<div class="chk-wrap">
-  <div class="chk-head"><span class="t" id="chkTitle">排练提醒</span><button id="btnChkAll" type="button">全选</button></div>
-  <div class="chk-grid" id="chkGrid"></div>
-  <div class="chk-add" id="chkAddWrap"><span>＋</span><input id="chkAddInput" placeholder="加一条本场提醒"></div>
-</div>
 
 <h2>特别提示（选填）</h2>
 <div class="form">
@@ -940,28 +916,8 @@ var SONGS=DATA.songs, MEMBERS=DATA.members, SEQ=DATA.seq;
 
 var state={type:'practice',date:'',theme:'',venue:'',customVenue:'',
   tArrive:'',tRehearse:'',tStart:'',tEnd:'',
-  contact:'',settle:'',note:'',members:[],setlist:[],ts:0,
-  chkOn:{practice:[],show:[]},chkCustom:{practice:[],show:[]}};
-/* 内置必要提醒清单：排练版 / 演出版各一份（按类型自动切换；勾选状态按场保存） */
-var CHK_LIB={
-  practice:[
-    '耳返充满电','乐器线材/备用弦','调音器/节拍器','歌词谱/字卡','手机充满电',
-    '排练用谱打印','水杯','停车/交通确认'
-  ],
-  show:[
-    '耳返充满电+备用电池','乐器线材/备用弦/拨片','调音器','歌词谱打印备份',
-    '手机充满电+充电宝','音频备份U盘','演出服/换装','妆发用品',
-    '装台时间确认','到场时间确认','对接人电话确认','结算方式确认',
-    '返程交通/卸货安排'
-  ]
-};
-function loadState(){try{var s=JSON.parse(localStorage.getItem(LS_KEY)||'null');if(s&&s.type){for(var k in state){if(s[k]!==undefined)state[k]=s[k];}}
-  /* 兼容旧版 chkOn/chkCustom 为数组的数据 → 迁移为按类型分组 */
-  if(Array.isArray(state.chkOn)){state.chkOn={practice:state.chkOn,show:[]};}
-  if(Array.isArray(state.chkCustom)){state.chkCustom={practice:state.chkCustom,show:[]};}
-  if(!state.chkOn.practice)state.chkOn.practice=[];if(!state.chkOn.show)state.chkOn.show=[];
-  if(!state.chkCustom.practice)state.chkCustom.practice=[];if(!state.chkCustom.show)state.chkCustom.show=[];
-}catch(e){}
+  contact:'',settle:'',note:'',members:[],setlist:[],ts:0};
+function loadState(){try{var s=JSON.parse(localStorage.getItem(LS_KEY)||'null');if(s&&s.type){for(var k in state){if(s[k]!==undefined)state[k]=s[k];}}}catch(e){}
   try{var q=JSON.parse(localStorage.getItem(LS_KEY+'.seq')||'null');if(q){SEQ.PL=q.PL;SEQ.YC=q.YC;}}catch(e){}}
 function save(){state.ts=Date.now();try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}
   try{localStorage.setItem(LS_KEY+'.seq',JSON.stringify(SEQ));}catch(e){}}
@@ -976,32 +932,7 @@ function setType(t){
   document.getElementById('shTimes').style.display=t==='show'?'':'none';
   document.getElementById('shBiz').style.display=t==='show'?'':'none';
   document.getElementById('hSetTitle').textContent=t==='practice'?'本场曲目（选填，排练可只写主题）':'演出曲目（Setlist）';
-  renderChk();renderCode(); save();
-}
-/* ---- 必要提醒清单（勾选与自定义项按类型独立存储） ---- */
-function chkItems(){return CHK_LIB[state.type].concat(state.chkCustom[state.type]||[]);}
-function isChkOn(txt){return (state.chkOn[state.type]||[]).indexOf(txt)>=0;}
-function curOn(){if(!state.chkOn[state.type])state.chkOn[state.type]=[];return state.chkOn[state.type];}
-function curCust(){if(!state.chkCustom[state.type])state.chkCustom[state.type]=[];return state.chkCustom[state.type];}
-function toggleChk(txt){var a=curOn();var i=a.indexOf(txt);if(i>=0)a.splice(i,1);else a.push(txt);save();renderChk();}
-function renderChk(){
-  var box=document.getElementById('chkGrid');box.innerHTML='';
-  document.getElementById('chkTitle').textContent=state.type==='practice'?'排练提醒':'演出提醒';
-  chkItems().forEach(function(t){
-    var on=isChkOn(t);var custom=CHK_LIB[state.type].indexOf(t)<0;
-    var d=document.createElement('div');d.className='chk'+(on?' on':'')+(custom?' custom':'');
-    d.innerHTML='<span class="box">'+(on?'✓':'')+'</span><span>'+t+'</span>'+(custom?'<span class="x" title="删除">✕</span>':'');
-    d.onclick=function(e){
-      if(e.target.classList.contains('x')){var c=curCust();var idx=c.indexOf(t);if(idx>=0)c.splice(idx,1);if(isChkOn(t)){var a=curOn();var j=a.indexOf(t);if(j>=0)a.splice(j,1);}save();renderChk();return;}
-      toggleChk(t);
-    };
-    box.appendChild(d);
-  });
-}
-function addChkCustom(){
-  var inp=document.getElementById('chkAddInput');var v=inp.value.trim();if(!v){toast('提醒内容不能为空');return;}
-  var c=curCust();if(c.indexOf(v)>=0||CHK_LIB[state.type].indexOf(v)>=0){toast('已存在');inp.value='';return;}
-  c.push(v);inp.value='';save();renderChk();
+  renderCode(); save();
 }
 function ymd(){return state.date?state.date.replace(/-/g,'').slice(2):'';}
 function renderCode(){
@@ -1204,8 +1135,6 @@ function genText(){
     });
   }
   if(state.note){L.push(BAR);L.push('📝 特别提示：'+state.note);}
-  var chks=(state.chkOn[state.type]||[]);
-  if(chks.length){L.push(BAR);L.push('📋 必要提醒：');chks.forEach(function(c){L.push('  • '+c);});}
   L.push(BAR);
   L.push('—— 吾也乐队 · 通告中心');
   return L.join('\n');
@@ -1249,7 +1178,7 @@ function initAll(){
   document.getElementById('fContact').value=state.contact||'';
   document.getElementById('fNote').value=state.note;
   setType(state.type);
-  renderMembers();renderSetlist();renderCode();renderChk();
+  renderMembers();renderSetlist();renderCode();
   bindInputs();
   initVenue();
   document.getElementById('btnP').onclick=function(){setType('practice');};
@@ -1262,8 +1191,6 @@ function initAll(){
   document.getElementById('btnGen').onclick=renderOut;
   document.getElementById('btnCopy').onclick=copyText;
   document.getElementById('btnConfirm').onclick=confirmNotice;
-  document.getElementById('btnChkAll').onclick=function(){var all=chkItems();var allOn=all.every(isChkOn);state.chkOn[state.type]=allOn?[]:all.slice();save();renderChk();};
-  document.getElementById('chkAddInput').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addChkCustom();}});
   document.getElementById('mask').addEventListener('click',function(e){if(e.target===this)closePicker();});
 }
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show');},2400);}
