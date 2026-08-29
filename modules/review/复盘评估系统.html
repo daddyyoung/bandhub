@@ -168,6 +168,21 @@ details.guide td{padding:7px 10px;border-top:1px solid var(--line);vertical-alig
 .sum-field.key textarea{border-color:#e0c3ba;background:#fffdfb}
 .sum-field.key textarea:focus{border-color:var(--red)}
 
+/* 沉淀清单 */
+.lesson-add{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.lesson-add select,.lesson-add input{border:1.5px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13.5px;background:var(--panel);color:var(--text);font-family:inherit}
+.lesson-add select{width:84px;flex:0 0 auto}
+.lesson-add input{flex:1;min-width:140px}
+.lesson-add input:focus,.lesson-add select:focus{border-color:var(--gold);outline:none}
+.lesson-add button{flex:0 0 auto}
+.lesson-item{display:flex;gap:8px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:7px;font-size:13.5px}
+.lesson-item .ltype{flex:0 0 auto;font-size:11.5px;font-weight:700;border-radius:6px;padding:2px 8px;margin-top:1px;letter-spacing:.05em}
+.lesson-item .lbody{flex:1;line-height:1.55}
+.lesson-item .lbody b{color:#4a463d}
+.lesson-item .lbody .lfix{color:var(--muted);font-size:12.5px}
+.lesson-item .ldel{flex:0 0 auto;border:none;background:none;color:#c9c4b8;font-size:15px;cursor:pointer;padding:2px 5px}
+.lesson-item .ldel:hover{color:var(--red)}
+
 /* ---------- 操作区 ---------- */
 .actions{
   margin-top:36px;display:flex;gap:12px;flex-wrap:wrap;
@@ -260,6 +275,7 @@ details.guide td{padding:7px 10px;border-top:1px solid var(--line);vertical-alig
       <li>第3部分给每首歌打分（点数字就行，0=最差，5=最好）</li>
       <li>第4部分打勾自检——哪些做好了，哪些没做好</li>
       <li>第5部分写一句话总结和下次要改什么</li>
+      <li>第6部分把踩坑逐条登记成沉淀清单（类型+对策），点「复制沉淀清单」粘到教训库积累</li>
       <li>填完点"<b>生成复盘报告</b>"，可以复制发群、打印或存PDF归档</li>
     </ol>
     <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--gold-line)">
@@ -337,14 +353,26 @@ details.guide td{padding:7px 10px;border-top:1px solid var(--line);vertical-alig
     <div class="sum-field key"><label>★ 下次要改什么？（最重要，只写一条）</label><textarea id="s_next" rows="2"></textarea></div>
   </div>
 
+  <!-- ========== 6 沉淀清单 ========== -->
+  <h2>6. 沉淀清单 <span style="font-weight:400;color:var(--gold);font-size:12.5px">本场踩坑逐条登记 → 喂给教训库</span></h2>
+  <p class="hint">把这场的问题按类型逐条登记、写上对策。报告生成时自动带上；点「复制沉淀清单」粘到<b>教训库</b>页面积累成错题本。</p>
+  <div class="lesson-add">
+    <select id="lType"><option>曲目</option><option>设备</option><option>流程</option><option>人员</option><option>外部</option></select>
+    <input type="text" id="lWhat" placeholder="出了什么问题（如：solo 进错段）">
+    <input type="text" id="lFix" placeholder="对策（如：关键衔接点排练时单独过）">
+    <button class="btn btn-ghost" id="btnAddLesson" type="button">＋ 登记</button>
+  </div>
+  <div id="lessonList"></div>
+
   <!-- ========== 操作 ========== -->
   <div class="actions no-print">
     <button class="btn btn-primary" id="btnReport" type="button">生成复盘报告</button>
+    <button class="btn btn-ghost" id="btnCopyLessons" type="button">复制沉淀清单 → 教训库</button>
     <button class="btn btn-ghost" id="btnReset" type="button">清空重填</button>
   </div>
 
   <div class="loop">
-    <b>回路闭环：</b>复盘评分 → 曲库优化规则（≥20王牌 / 15-19灵活 / ≤14特定场景）→ 更新<a href="../songs/曲库.xlsx">曲库状态</a> → 下一场歌单更精准。<br>
+    <b>回路闭环：</b>复盘评分 → 曲库优化规则（≥20王牌 / 15-19灵活 / ≤14特定场景）→ 更新<a href="../songs/曲库.xlsx">曲库状态</a> → 下一场歌单更精准；踩坑 → <a href="教训库.html">教训库</a>（跨场错题本）→ 排练和清单持续加固。<br>
     <b>归档：</b>点「生成复盘报告」→「打印/存PDF」→ 文件名 <b>YYYY-MM-DD_场地_类型.pdf</b> → 上传到 <a href="index.html">复盘归档</a> 的 archive/ 文件夹并加一行索引。<br>
     <b>无网备用：</b>手机没信号时用 <a href="乐队工具箱_打印版.pdf">打印版工具箱</a>（纸笔填，回头补录）。
   </div>
@@ -425,7 +453,8 @@ function freshState(){
     dims:{kids:0,elders:0,young:0,family:0,interact:0,familiar:0},
     songs:[emptySong(),emptySong(),emptySong()],
     checks:{vocal:[],drum:[],player:[]},
-    summary:{best:'',worst:'',songbest:'',songworst:'',action:'',next:''}
+    summary:{best:'',worst:'',songbest:'',songworst:'',action:'',next:''},
+    lessons:[]
   };
 }
 function emptySong(){ return {name:'', s:[null,null,null,null,null]}; }
@@ -452,6 +481,10 @@ function loadState(){
       if(Array.isArray(s.checks[g.key])) base.checks[g.key] = s.checks[g.key].filter(function(v){return typeof v==='number';});
     });
     if(s.summary) SUM_FIELDS.forEach(function(k){ if(typeof s.summary[k]==='string') base.summary[k]=s.summary[k]; });
+    if(Array.isArray(s.lessons)){
+      base.lessons = s.lessons.filter(function(x){ return x && typeof x.type==='string' && typeof x.what==='string'; })
+        .map(function(x){ return {type:x.type, what:x.what, fix:(x.fix||'')}; });
+    }
     state = base;
   }catch(e){ /* 忽略坏数据 */ }
 }
@@ -485,6 +518,73 @@ function songGrade(total){
   if(total>=15) return {t:'灵活调换', cls:'flex'};
   return {t:'特定场景', cls:'scene'};
 }
+
+/* ================= 沉淀清单 ================= */
+var LESSON_COLORS = {'曲目':'#b8860b','设备':'#3a6fa3','流程':'#3f7d53','人员':'#c0392b','外部':'#7a766c'};
+function renderLessons(){
+  var box = $('lessonList');
+  box.innerHTML = '';
+  state.lessons.forEach(function(l, i){
+    var d = document.createElement('div');
+    d.className = 'lesson-item';
+    var c = LESSON_COLORS[l.type] || '#7a766c';
+    var html = '<span class="ltype" style="color:'+c+';border:1px solid '+c+'33;background:'+c+'12">'+l.type+'</span>';
+    html += '<span class="lbody"><b>'+escHtml(l.what)+'</b>';
+    if(l.fix) html += '<br><span class="lfix">对策：'+escHtml(l.fix)+'</span>';
+    html += '</span><button class="ldel" title="删除" data-i="'+i+'">✕</button>';
+    d.innerHTML = html;
+    d.querySelector('.ldel').onclick = function(){
+      state.lessons.splice(parseInt(this.getAttribute('data-i'),10),1);
+      save(); renderLessons();
+    };
+    box.appendChild(d);
+  });
+  if(!state.lessons.length){
+    var e = document.createElement('p');
+    e.style.cssText = 'color:var(--muted);font-size:13px;margin:4px 0 0';
+    e.textContent = '（还没登记。没踩坑就不用硬凑。）';
+    box.appendChild(e);
+  }
+}
+function addLesson(){
+  var t = $('lType').value, w = $('lWhat').value.trim(), f = $('lFix').value.trim();
+  if(!w){ toast('先写出了什么问题'); return; }
+  state.lessons.push({type:t, what:w, fix:f});
+  $('lWhat').value=''; $('lFix').value='';
+  save(); renderLessons();
+  $('lWhat').focus();
+}
+function lessonMetaLine(){
+  /* 教训库导入头：场次一行 */
+  var d = state.date || '未填日期';
+  var v = state.venue || state.name || '';
+  return '#场次:' + d + (v ? ' ' + v.trim() : '');
+}
+function exportLessonsText(){
+  if(!state.lessons.length){ toast('还没有沉淀条目'); return ''; }
+  var L = [lessonMetaLine()];
+  state.lessons.forEach(function(l){
+    L.push('['+l.type+'] '+l.what+(l.fix ? '|对策:'+l.fix : ''));
+  });
+  return L.join('\n');
+}
+function copyLessons(){
+  var text = exportLessonsText();
+  if(!text) return;
+  function ok(){ toast('✓ 已复制，去「教训库」页面粘贴导入'); }
+  function fb(){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); ok(); }catch(e){ toast('复制失败，手动复制报告里的沉淀段'); }
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(ok, fb); }
+  else{ fb(); }
+}
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function audTypeText(){
   var d = state.dims, filled = 0;
@@ -741,6 +841,13 @@ function buildReport(){
     if(state.summary[p[0]]) L.push(p[1] + '：' + state.summary[p[0]]);
   });
   L.push('');
+  if(state.lessons.length){
+    L.push('■ 沉淀清单（进教训库）');
+    state.lessons.forEach(function(l){
+      L.push('['+l.type+'] ' + l.what + (l.fix ? ' → 对策：' + l.fix : ''));
+    });
+    L.push('');
+  }
   L.push('—— 乐队工具箱 · 复盘评估系统 生成（归档：review/archive/）');
   return L.join('\n');
 }
@@ -801,6 +908,11 @@ initDims();
 renderSongs();
 initChecks();
 initSummary();
+renderLessons();
+$('btnAddLesson').addEventListener('click', addLesson);
+$('lWhat').addEventListener('keydown', function(e){ if(e.key==='Enter') $('lFix').focus(); });
+$('lFix').addEventListener('keydown', function(e){ if(e.key==='Enter') addLesson(); });
+$('btnCopyLessons').addEventListener('click', copyLessons);
 
 $('addSong').addEventListener('click', function(){
   if(state.songs.length >= 30){ toast('最多30首，够用了'); return; }

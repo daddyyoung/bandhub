@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<meta name="description" content="吾也乐队 · 跨场教训库（错题本）">
+<title>教训库 · 吾也乐队</title>
+<style>
+  :root{
+    --bg:#faf9f6; --panel:#ffffff; --line:#e7e3d8;
+    --text:#26241f; --muted:#7a766c;
+    --gold:#b8860b; --gold-soft:#f7efd9;
+    --red:#c0392b; --red-soft:#f9ece9;
+    --blue:#3a6fa3; --blue-soft:#e8f0f7;
+    --green:#3f7d53; --green-soft:#e9f4ec;
+    --gray:#7a766c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.7}
+  .wrap{max-width:720px;margin:0 auto;padding:0 18px 70px}
+  header{padding:34px 0 20px;text-align:center}
+  h1{font-size:23px;font-weight:700;letter-spacing:.02em}
+  .sub{color:var(--muted);font-size:13px;margin-top:6px}
+  h2{font-size:16px;font-weight:700;margin:30px 0 8px;color:#4a463d}
+  .hint{color:var(--muted);font-size:12.8px;margin-bottom:10px}
+
+  /* 统计条 */
+  .stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;justify-content:center}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px;text-align:center;min-width:74px}
+  .stat .n{font-size:20px;font-weight:800}
+  .stat .t{font-size:11.5px;font-weight:600}
+  .stat.warn .n{color:var(--red)}
+
+  /* 筛选 chips */
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0 4px}
+  .chip{border:1.5px solid var(--line);background:var(--panel);color:var(--muted);border-radius:20px;padding:5px 14px;font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
+  .chip.on{border-color:var(--gold);color:var(--gold);background:var(--gold-soft);font-weight:700}
+
+  /* 录入区 */
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;font-family:inherit;background:var(--panel);color:var(--text);resize:vertical;min-height:88px;line-height:1.6}
+  textarea:focus{border-color:var(--gold);outline:none}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .row input,.row select{border:1.5px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13.5px;background:var(--panel);color:var(--text);font-family:inherit}
+  .row select{width:84px;flex:0 0 auto}
+  .row input{flex:1;min-width:130px}
+  .row input:focus,.row select:focus{border-color:var(--gold);outline:none}
+  .btn{border:none;border-radius:10px;padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .btn-primary{background:var(--gold);color:#fff;box-shadow:0 4px 14px rgba(184,134,11,.28)}
+  .btn-primary:hover{background:#a3790a}
+  .btn-ghost{background:var(--panel);color:var(--muted);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+  .btn-danger:hover{border-color:var(--red);color:var(--red)}
+
+  /* 列表 */
+  .show-block{margin-bottom:22px}
+  .show-head{font-size:13.5px;font-weight:700;color:var(--gold);border-bottom:1px solid var(--gold-soft);padding-bottom:5px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+  .show-head .cnt{font-weight:400;color:var(--muted);font-size:12px}
+  .item{display:flex;gap:9px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px 13px;margin-bottom:7px;font-size:13.5px}
+  .itype{flex:0 0 auto;font-size:11.5px;font-weight:700;border-radius:6px;padding:2px 8px;margin-top:2px;letter-spacing:.05em}
+  .ibody{flex:1;line-height:1.6}
+  .ibody b{color:#4a463d}
+  .ibody .ifix{color:var(--muted);font-size:12.5px}
+  .idel{flex:0 0 auto;border:none;background:none;color:#c9c4b8;font-size:15px;cursor:pointer;padding:2px 5px}
+  .idel:hover{color:var(--red)}
+  .empty{text-align:center;color:var(--muted);font-size:13.5px;padding:36px 0 20px}
+  .empty b{display:block;font-size:34px;margin-bottom:8px}
+
+  .loop{background:var(--green-soft);border:1px solid #cfe3d5;border-radius:14px;padding:15px 18px;font-size:13px;color:#2c4a37;margin-top:28px}
+  .loop b{color:var(--green)}
+  .loop a{color:var(--green);font-weight:700}
+
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#26241f;color:#fff;font-size:13.5px;border-radius:30px;padding:10px 22px;opacity:0;pointer-events:none;transition:all .3s;z-index:99;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media (max-width:560px){
+    h1{font-size:20px}
+    .stats{gap:6px}
+    .stat{min-width:64px;padding:7px 10px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>📚 乐队教训库</h1>
+  <p class="sub">跨场错题本 · 同一个坑不踩第二次 · 数据只存本机</p>
+</header>
+
+<div class="stats" id="stats"></div>
+<div class="chips" id="chips"></div>
+
+<h2>从复盘导入</h2>
+<p class="hint">复盘评估系统里点「复制沉淀清单」→ 回来粘到下面 → 点导入。重复条目自动跳过。</p>
+<div class="box">
+  <textarea id="importBox" placeholder="把复盘系统「复制沉淀清单」的内容粘到这里……&#10;&#10;格式长这样（粘进来就行，不用改）：&#10;#场次:2026-08-28 莆田万象汇&#10;[曲目] 歌曲结构配合出错|对策:关键衔接点单过&#10;[设备] 没试麦|对策:提前到场试麦"></textarea>
+  <div class="row">
+    <button class="btn btn-primary" id="btnImport" type="button">⇩ 导入</button>
+    <button class="btn btn-ghost" id="btnExport" type="button">⇧ 导出全部</button>
+    <button class="btn btn-ghost btn-danger" id="btnClear" type="button">清空全部</button>
+  </div>
+</div>
+
+<h2>手动记一条</h2>
+<div class="box">
+  <div class="row" style="margin-top:0">
+    <select id="mType"><option>曲目</option><option>设备</option><option>流程</option><option>人员</option><option>外部</option></select>
+    <input type="text" id="mShow" placeholder="场次（如 2026-08-28 莆田万象汇）">
+  </div>
+  <div class="row">
+    <input type="text" id="mWhat" placeholder="出了什么问题">
+    <input type="text" id="mFix" placeholder="对策（选填）">
+    <button class="btn btn-ghost" id="btnAdd" type="button">＋ 记入</button>
+  </div>
+</div>
+
+<h2 id="listTitle">全部教训</h2>
+<div id="list"></div>
+
+<div class="loop">
+  <b>怎么用出价值：</b>每场复盘后在<a href="复盘评估系统.html">复盘评估系统</a>登记沉淀清单 → 复制粘到这里。攒几场后看统计条——<b>哪个类型数字最大，哪块就是乐队的系统性短板</b>（比如"曲目"连着涨 = 排练合格线该收紧；"设备"涨 = 提醒清单该补项）。<br>
+  <b>纠偏去向：</b>曲目型 → 排练合格线（演出手册）；设备/流程型 → <a href="../notice/通告速填器.html">必要提醒清单</a>；观众相关 → 歌单编排。<br>
+  <b>换手机/换电脑：</b>点「导出全部」复制文本存好，新设备粘进导入框即可恢复。
+</div>
+
+<div class="toast" id="toast"></div>
+
+</div>
+<script>
+var LS_KEY='bandToolbox.lessons.v1';
+var TYPES=['曲目','设备','流程','人员','外部'];
+var COLORS={'曲目':'#b8860b','设备':'#3a6fa3','流程':'#3f7d53','人员':'#c0392b','外部':'#7a766c'};
+var SOFT={'曲目':'#f7efd9','设备':'#e8f0f7','流程':'#e9f4ec','人员':'#f9ece9','外部':'#f0eee8'};
+
+var state={items:[],filter:'全部'};
+load();
+
+function load(){
+  try{
+    var raw=JSON.parse(localStorage.getItem(LS_KEY)||'null');
+    if(raw&&Array.isArray(raw.items))state.items=raw.items.filter(valid);
+  }catch(e){}
+}
+function valid(x){return x&&typeof x.type==='string'&&typeof x.what==='string'&&x.type in COLORS;}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}}
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show');},2200);}
+
+/* ---- 导入解析 ---- */
+function parseImport(text){
+  var added=0,skipped=0,show='';
+  var lines=text.split(/\n+/).map(function(l){return l.trim();}).filter(Boolean);
+  lines.forEach(function(line){
+    if(line.charAt(0)==='#'){
+      var m=line.match(/^#场次[:：]\s*(.+)$/);
+      if(m)show=m[1].trim();
+      return;
+    }
+    var mm=line.match(/^\[([^\]]+)\]\s*(.+)$/);
+    if(!mm)return;
+    var type=mm[1].trim(),rest=mm[2],what=rest,fix='';
+    var bar=rest.split('|');
+    if(bar.length>1){
+      what=bar[0].trim();
+      var fm=bar.slice(1).join('|').match(/^(?:对策[:：])?\s*(.*)$/);
+      fix=fm?fm[1].trim():'';
+    }
+    if(TYPES.indexOf(type)<0)type='外部';
+    /* 去重：同场次+同问题 */
+    var dup=state.items.some(function(x){return x.show===show&&x.what===what;});
+    if(dup){skipped++;return;}
+    state.items.push({id:Date.now()+''+state.items.length+Math.floor(Math.random()*999),show:show||'未标场次',type:type,what:what,fix:fix,ts:Date.now()});
+    added++;
+  });
+  return {added:added,skipped:skipped};
+}
+
+/* ---- 渲染 ---- */
+function renderStats(){
+  var box=$('stats');box.innerHTML='';
+  var total=document.createElement('div');
+  total.className='stat';
+  total.innerHTML='<div class="n">'+state.items.length+'</div><div class="t">总条数</div>';
+  box.appendChild(total);
+  TYPES.forEach(function(t){
+    var n=state.items.filter(function(x){return x.type===t;}).length;
+    var d=document.createElement('div');
+    d.className='stat'+(n>=5?' warn':'');
+    d.innerHTML='<div class="n" style="color:'+COLORS[t]+'">'+n+'</div><div class="t">'+t+'</div>';
+    box.appendChild(d);
+  });
+}
+function renderChips(){
+  var box=$('chips');box.innerHTML='';
+  ['全部'].concat(TYPES).forEach(function(t){
+    var b=document.createElement('button');
+    b.className='chip'+(state.filter===t?' on':'');
+    var n=t==='全部'?state.items.length:state.items.filter(function(x){return x.type===t;}).length;
+    b.textContent=t+'（'+n+'）';
+    b.onclick=function(){state.filter=t;renderChips();renderList();};
+    box.appendChild(b);
+  });
+}
+function renderList(){
+  var box=$('list');box.innerHTML='';
+  var items=state.items.filter(function(x){return state.filter==='全部'||x.type===state.filter;});
+  $('listTitle').textContent=(state.filter==='全部'?'全部教训':state.filter+'型教训')+'（'+items.length+'）';
+  if(!items.length){
+    var e=document.createElement('div');
+    e.className='empty';
+    e.innerHTML='<b>🗒️</b>'+(state.items.length?'这个类型还没有条目':'还没有任何教训。<br>这要么说明你们还没踩坑，要么说明还没开始复盘。');
+    box.appendChild(e);
+    return;
+  }
+  /* 按场次分组，同场次内按导入顺序 */
+  var groups={};
+  items.forEach(function(x){(groups[x.show]=groups[x.show]||[]).push(x);});
+  Object.keys(groups).forEach(function(show){
+    var blk=document.createElement('div');
+    blk.className='show-block';
+    blk.innerHTML='<div class="show-head"><span>'+esc(show||'未标场次')+'</span><span class="cnt">'+groups[show].length+' 条</span></div>';
+    groups[show].forEach(function(x){
+      var d=document.createElement('div');
+      d.className='item';
+      d.innerHTML='<span class="itype" style="color:'+COLORS[x.type]+';border:1px solid '+COLORS[x.type]+'33;background:'+SOFT[x.type]+'">'+x.type+'</span>'
+        +'<span class="ibody"><b>'+esc(x.what)+'</b>'+(x.fix?'<br><span class="ifix">对策：'+esc(x.fix)+'</span>':'')+'</span>'
+        +'<button class="idel" data-id="'+x.id+'" title="删除">✕</button>';
+      d.querySelector('.idel').onclick=function(){
+        if(!confirm('删除这条：'+x.what+'？'))return;
+        state.items=state.items.filter(function(y){return y.id!==x.id;});
+        save();renderAll();
+      };
+      blk.appendChild(d);
+    });
+    box.appendChild(blk);
+  });
+}
+function renderAll(){renderStats();renderChips();renderList();}
+
+/* ---- 导出 ---- */
+function exportAll(){
+  if(!state.items.length){toast('还没有条目可导出');return '';}
+  var groups={};
+  state.items.forEach(function(x){(groups[x.show]=groups[x.show]||[]).push(x);});
+  var L=[];
+  Object.keys(groups).forEach(function(show){
+    L.push('#场次:'+show);
+    groups[show].forEach(function(x){L.push('['+x.type+'] '+x.what+(x.fix?'|对策:'+x.fix:''));});
+  });
+  return L.join('\n');
+}
+function copyText(text,okMsg){
+  function ok(){toast(okMsg);}
+  function fb(){
+    var ta=document.createElement('textarea');ta.value=text;
+    ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');ok();}catch(e){toast('复制失败');}
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,fb);}
+  else{fb();}
+}
+
+/* ---- 事件 ---- */
+$('btnImport').onclick=function(){
+  var text=$('importBox').value;
+  if(!text.trim()){toast('先粘贴复盘系统的沉淀清单');return;}
+  var r=parseImport(text);
+  if(r.added===0&&r.skipped===0){toast('没解析出条目，检查格式');return;}
+  save();renderAll();
+  $('importBox').value='';
+  toast('✓ 导入 '+r.added+' 条'+(r.skipped?'，跳过重复 '+r.skipped+' 条':''));
+};
+$('btnAdd').onclick=function(){
+  var t=$('mType').value,show=$('mShow').value.trim()||'手动记录',what=$('mWhat').value.trim(),fix=$('mFix').value.trim();
+  if(!what){toast('先写出什么问题');return;}
+  state.items.push({id:Date.now()+''+state.items.length,show:show,type:t,what:what,fix:fix,ts:Date.now()});
+  save();renderAll();
+  $('mWhat').value='';$('mFix').value='';
+  toast('✓ 已记入');
+};
+$('mWhat').addEventListener('keydown',function(e){if(e.key==='Enter')$('mFix').focus();});
+$('mFix').addEventListener('keydown',function(e){if(e.key==='Enter')$('btnAdd').click();});
+$('btnExport').onclick=function(){
+  var t=exportAll();
+  if(t)copyText(t,'✓ 已复制全部条目，可存备忘录或发新设备导入');
+};
+$('btnClear').onclick=function(){
+  if(!state.items.length){toast('已经是空的');return;}
+  if(confirm('确定清空全部 '+state.items.length+' 条教训？\n（建议先「导出全部」备份）')){
+    state.items=[];save();renderAll();toast('已清空');
+  }
+};
+
+renderAll();
+</script>
+</body>
+</html>
