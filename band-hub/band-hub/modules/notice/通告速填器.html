@@ -134,11 +134,11 @@ h2::before{content:"";width:16px;height:3px;background:var(--gold);border-radius
 
 <header>
   <h1>📣 通告速填器</h1>
-  <p class="sub">排练/演出通告 · 勾选填写 · 一键生成微信文本 · 自动编号</p>
+  <p class="sub">排练/演出通告 · 勾选填写 · 一键生成微信文本 · 自动编号 · <a href="通告记录.html" style="color:var(--gold);font-weight:600">查看通告记录 →</a></p>
 </header>
 
 <div class="howto">
-  <b>怎么用（4步）：</b>① 选<b>排练/演出</b> → ② 填基本信息、<b>点到场人员</b> → ③ 从曲库<b>勾选曲目</b>（自动带调号BPM）或加急新歌 → ④ 点「生成通告」→ 复制发微信群。编号自动生成，确认发布后序号+1。
+  <b>怎么用（4步）：</b>① 选<b>排练/演出</b> → ② 填基本信息、<b>点到场人员</b> → ③ 从曲库<b>勾选曲目</b>（自动带调号BPM）或加急新歌 → ④ 点「生成通告」→ 复制发微信群。编号自动生成，确认发布后序号+1、本场自动存入<a href="通告记录.html" style="color:var(--gold)">通告记录</a>。
 </div>
 
 <div class="seg">
@@ -952,10 +952,21 @@ var CHK_LIB={
     '耳返充满电+备用电池','乐器线材/备用弦/拨片','调音器','歌词谱打印备份',
     '手机充满电+充电宝','音频备份U盘','演出服/换装','妆发用品',
     '装台时间确认','到场时间确认','对接人电话确认','结算方式确认',
-    '返程交通/卸货安排'
+    '返程交通/卸货安排',
+    '提前到场试麦','彩排走台（无彩排不上台）','户外场天气预案'
   ]
 };
 function loadState(){try{var s=JSON.parse(localStorage.getItem(LS_KEY)||'null');if(s&&s.type){for(var k in state){if(s[k]!==undefined)state[k]=s[k];}}
+  /* 兼容旧版 members 按 pos 存储 → 迁移为按 name 存储（同名职位如两位歌手需逐人勾选） */
+  if(Array.isArray(state.members)){
+    var names=MEMBERS.map(function(m){return m.name;});
+    var migrated=[];
+    state.members.forEach(function(v){
+      if(names.indexOf(v)>=0){if(migrated.indexOf(v)<0)migrated.push(v);}
+      else{MEMBERS.forEach(function(m){if(m.pos===v&&migrated.indexOf(m.name)<0)migrated.push(m.name);});}
+    });
+    state.members=migrated;
+  }
   /* 兼容旧版 chkOn/chkCustom 为数组的数据 → 迁移为按类型分组 */
   if(Array.isArray(state.chkOn)){state.chkOn={practice:state.chkOn,show:[]};}
   if(Array.isArray(state.chkCustom)){state.chkCustom={practice:state.chkCustom,show:[]};}
@@ -1055,10 +1066,10 @@ function venueText(){return state.venue==='其他（手输）'||!state.venue&&st
 function renderMembers(){
   var box=document.getElementById('memRow');box.innerHTML='';
   MEMBERS.forEach(function(m){
-    var on=state.members.indexOf(m.pos)>=0;
+    var on=state.members.indexOf(m.name)>=0;
     var d=document.createElement('div');d.className='pill'+(on?' on':'');
     d.innerHTML='<span class="dot"></span>'+m.pos+'·<small>'+m.name+'</small>';
-    d.onclick=function(){var i=state.members.indexOf(m.pos);if(i>=0)state.members.splice(i,1);else state.members.push(m.pos);renderMembers();save();};
+    d.onclick=function(){var i=state.members.indexOf(m.name);if(i>=0)state.members.splice(i,1);else state.members.push(m.name);renderMembers();save();};
     box.appendChild(d);
   });
 }
@@ -1185,7 +1196,7 @@ function genText(){
   L.push(BAR);
   L.push('👥 人员到场（收到请回复）');
   MEMBERS.forEach(function(m){
-    var on=state.members.indexOf(m.pos)>=0;
+    var on=state.members.indexOf(m.name)>=0;
     if(on)L.push(m.pos+' '+m.name+'：□');
   });
   if(state.setlist.length){
@@ -1221,12 +1232,37 @@ function copyText(){
   function fb(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){toast('复制失败，长按文本手动复制');}document.body.removeChild(ta);}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,fb);}else{fb();}
 }
+var LOG_KEY='bandToolbox.noticeLog.v1';
+function loadLog(){try{var a=JSON.parse(localStorage.getItem(LOG_KEY)||'null');return Array.isArray(a)?a:[];}catch(e){return [];}}
 function confirmNotice(){
   var pre=state.type==='practice'?'PL':'YC';
   SEQ[pre]++;
   DATA.seq=SEQ;
+  var code=pre+'-'+ymd()+'-'+String(SEQ[pre]).padStart(2,'0');
+  /* 本场快照存入通告记录（跨场累积） */
+  var isPr=state.type==='practice';
+  var times='';
+  if(isPr){times=state.tStart+(state.tEnd?' - '+state.tEnd:'');}
+  else{
+    var tl=[];
+    if(state.tArrive)tl.push('到场 '+state.tArrive);
+    if(state.tRehearse)tl.push('彩排 '+state.tRehearse);
+    if(state.tStart)tl.push('开演 '+state.tStart);
+    if(state.tEnd)tl.push('结束 '+state.tEnd);
+    times=tl.join(' / ');
+  }
+  var log=loadLog();
+  log.push({
+    id:code,ts:Date.now(),type:state.type,date:state.date,theme:state.theme||'（未填主题）',
+    venue:venueText()||'（未填地点）',times:times,
+    members:MEMBERS.filter(function(m){return state.members.indexOf(m.name)>=0;}).map(function(m){return m.pos+' '+m.name;}),
+    songs:state.setlist.map(function(s){return {t:s.t,who:s.who,note:s.note||''};}),
+    chks:(state.chkOn[state.type]||[]).slice(),
+    note:state.note||''
+  });
+  try{localStorage.setItem(LOG_KEY,JSON.stringify(log));}catch(e){}
   save(); renderCode();
-  toast('已确认发布（编号占用），可复制文本发群');
+  toast('✓ 已发布（编号占用），本场已存入通告记录');
 }
 
 /* ---- init ---- */

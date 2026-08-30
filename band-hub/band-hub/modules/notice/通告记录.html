@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<meta name="description" content="吾也乐队 · 通告记录（跨场汇总）">
+<title>通告记录 · 吾也乐队</title>
+<style>
+  :root{
+    --bg:#faf9f6; --panel:#ffffff; --line:#e7e3d8;
+    --text:#26241f; --muted:#7a766c;
+    --gold:#b8860b; --gold-soft:#f7efd9;
+    --blue:#3a6fa3; --blue-soft:#e8f0f7;
+    --green:#3f7d53; --green-soft:#e9f4ec;
+    --red:#c0392b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.7}
+  .wrap{max-width:720px;margin:0 auto;padding:0 18px 70px}
+  header{padding:34px 0 18px;text-align:center}
+  h1{font-size:23px;font-weight:700;letter-spacing:.02em}
+  .sub{color:var(--muted);font-size:13px;margin-top:6px}
+  .sub a{color:var(--gold);font-weight:600}
+  h2{font-size:16px;font-weight:700;margin:30px 0 8px;color:#4a463d}
+  .hint{color:var(--muted);font-size:12.8px;margin-bottom:10px}
+
+  .stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;justify-content:center}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 16px;text-align:center;min-width:78px}
+  .stat .n{font-size:20px;font-weight:800}
+  .stat .t{font-size:11.5px;font-weight:600;color:var(--muted)}
+
+  .btn{border:none;border-radius:10px;padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .btn-primary{background:var(--gold);color:#fff;box-shadow:0 4px 14px rgba(184,134,11,.28)}
+  .btn-primary:hover{background:#a3790a}
+  .btn-ghost{background:var(--panel);color:var(--muted);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+  .btn-danger:hover{border-color:var(--red);color:var(--red)}
+
+  /* 场次卡片 */
+  .log{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden}
+  .log-head{display:flex;gap:10px;align-items:center;padding:13px 16px;cursor:pointer;user-select:none}
+  .log-head:hover{background:#fdfcf9}
+  .badge{flex:0 0 auto;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;letter-spacing:.05em}
+  .badge.pr{color:var(--green);border:1px solid #cfe3d5;background:var(--green-soft)}
+  .badge.sh{color:var(--gold);border:1px solid #e8d9b0;background:var(--gold-soft)}
+  .log-code{font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:700;color:#4a463d}
+  .log-title{flex:1;min-width:0;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .log-title small{color:var(--muted);font-weight:400}
+  .log-meta{padding:0 16px 12px;font-size:12.5px;color:var(--muted)}
+  .log-meta .m{display:inline-block;margin-right:14px}
+  .log-body{display:none;border-top:1px dashed var(--line);padding:12px 16px 14px;font-size:13px}
+  .log.open .log-body{display:block}
+  .log.open .caret{transform:rotate(90deg)}
+  .caret{flex:0 0 auto;color:#c9c4b8;transition:transform .18s;font-size:11px}
+  .lb-t{font-size:12px;font-weight:700;color:var(--gold);margin:10px 0 4px;letter-spacing:.05em}
+  .lb-t:first-child{margin-top:0}
+  .lb-people{display:flex;flex-wrap:wrap;gap:6px}
+  .lb-people span{background:var(--blue-soft);color:var(--blue);border-radius:8px;padding:2px 10px;font-size:12px;font-weight:600}
+  .lb-song{padding:3px 0 3px 0;display:flex;gap:8px}
+  .lb-song .no{color:var(--muted);font-size:12px;width:18px;text-align:right;flex:0 0 auto}
+  .lb-song .who{font-size:11.5px;font-weight:700;color:var(--blue);flex:0 0 auto;margin-top:2px}
+  .lb-song .nm{flex:1}
+  .lb-song .nt{color:var(--muted);font-size:12px}
+  .lb-chk{display:flex;flex-wrap:wrap;gap:5px}
+  .lb-chk span{background:#f0eee8;color:#6b675c;border-radius:7px;padding:2px 9px;font-size:11.8px}
+  .lb-note{background:var(--gold-soft);border-radius:8px;padding:6px 10px;font-size:12.5px;color:#6b5410}
+  .ldel{margin-top:12px;font-size:12px;color:#c9c4b8;background:none;border:none;cursor:pointer;padding:2px 4px;font-family:inherit}
+  .ldel:hover{color:var(--red)}
+
+  .empty{text-align:center;color:var(--muted);font-size:13.5px;padding:36px 0 20px}
+  .empty b{display:block;font-size:34px;margin-bottom:8px}
+
+  /* 导入导出 */
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:8px}
+  textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;font-family:ui-monospace,Menlo,monospace;background:var(--panel);color:var(--text);resize:vertical;min-height:80px}
+  textarea:focus{border-color:var(--gold);outline:none}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+  .loop{background:var(--green-soft);border:1px solid #cfe3d5;border-radius:14px;padding:15px 18px;font-size:13px;color:#2c4a37;margin-top:28px}
+  .loop b{color:var(--green)}
+  .loop a{color:var(--green);font-weight:700}
+
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#26241f;color:#fff;font-size:13.5px;border-radius:30px;padding:10px 22px;opacity:0;pointer-events:none;transition:all .3s;z-index:99;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media (max-width:560px){h1{font-size:20px}.stat{min-width:66px;padding:7px 10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>🗂️ 通告记录</h1>
+  <p class="sub">速填器每次「确认发布」自动存档于此 · 跨场汇总 · <a href="通告速填器.html">去发新通告 →</a></p>
+</header>
+
+<div class="stats" id="stats"></div>
+
+<h2>全部场次 <span style="font-weight:400;color:var(--muted);font-size:12px">点卡片展开详情</span></h2>
+<div id="list"></div>
+
+<h2>迁移 / 备份</h2>
+<p class="hint">换手机或换电脑时：旧设备点「导出全部」复制 → 新设备粘到下面点导入。记录存在本机浏览器里，清浏览器缓存会丢，重要场次可定期导出备份。</p>
+<div class="box">
+  <textarea id="importBox" placeholder="把旧设备「导出全部」的内容粘到这里……"></textarea>
+  <div class="row">
+    <button class="btn btn-primary" id="btnImport" type="button">⇩ 导入</button>
+    <button class="btn btn-ghost" id="btnExport" type="button">⇧ 导出全部</button>
+    <button class="btn btn-ghost btn-danger" id="btnClear" type="button">清空全部</button>
+  </div>
+</div>
+
+<div class="loop">
+  <b>这一页和 Excel 台账的分工：</b>速填器发布自动存档 = <b>线上日常记录</b>（永远最新，随时翻）；<a href="../schedule/通告.xlsx">通告.xlsx</a> = 可选的深度归档（想打印整场通告单或存云盘备份时再补）。<br>
+  <b>数据只在发布设备上：</b>谁发通告谁本机有记录；想全队共享，用「导出全部」发群里存档。
+</div>
+
+<div class="toast" id="toast"></div>
+
+</div>
+<script>
+var LOG_KEY='bandToolbox.noticeLog.v1';
+var state={logs:[]};
+load();
+
+function load(){
+  try{
+    var a=JSON.parse(localStorage.getItem(LOG_KEY)||'null');
+    if(Array.isArray(a))state.logs=a.filter(function(x){return x&&x.id&&x.type;});
+  }catch(e){}
+}
+function save(){try{localStorage.setItem(LOG_KEY,JSON.stringify(state.logs));}catch(e){}}
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show');},2200);}
+function fmtDate(d){
+  if(!d)return '未填日期';
+  var m=d.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m?(m[1]+'/'+m[2]+'/'+m[3]):d;
+}
+
+/* ---- 统计 ---- */
+function renderStats(){
+  var box=$('stats');box.innerHTML='';
+  var pr=state.logs.filter(function(x){return x.type==='practice';}).length;
+  var sh=state.logs.filter(function(x){return x.type==='show';}).length;
+  [['总场次',state.logs.length,'#4a463d'],['排练',pr,'#3f7d53'],['演出',sh,'#b8860b']].forEach(function(p){
+    var d=document.createElement('div');
+    d.className='stat';
+    d.innerHTML='<div class="n" style="color:'+p[2]+'">'+p[1]+'</div><div class="t">'+p[0]+'</div>';
+    box.appendChild(d);
+  });
+}
+
+/* ---- 列表 ---- */
+function renderList(){
+  var box=$('list');box.innerHTML='';
+  if(!state.logs.length){
+    var e=document.createElement('div');
+    e.className='empty';
+    e.innerHTML='<b>📭</b>还没有记录。<br>去<a href="通告速填器.html" style="color:var(--gold);font-weight:700">通告速填器</a>发一场通告，点「确认发布」就会自动存到这里。';
+    box.appendChild(e);
+    return;
+  }
+  /* 新场次在前 */
+  var logs=state.logs.slice().reverse();
+  logs.forEach(function(log,idx){
+    var isPr=log.type==='practice';
+    var d=document.createElement('div');
+    d.className='log';
+    /* 头部 */
+    var head=document.createElement('div');
+    head.className='log-head';
+    var title=esc(log.theme)+(log.venue?' <small>@ '+esc(log.venue)+'</small>':'');
+    head.innerHTML='<span class="badge '+(isPr?'pr':'sh')+'">'+(isPr?'排练':'演出')+'</span>'
+      +'<span class="log-code">'+esc(log.id)+'</span>'
+      +'<span class="log-title">'+title+'</span>'
+      +'<span class="caret">▶</span>';
+    head.onclick=function(){d.classList.toggle('open');};
+    d.appendChild(head);
+    /* 摘要行 */
+    var meta=document.createElement('div');
+    meta.className='log-meta';
+    var ms=[];
+    ms.push('<span class="m">📅 '+fmtDate(log.date)+'</span>');
+    if(log.times)ms.push('<span class="m">🕐 '+esc(log.times)+'</span>');
+    if(log.members.length)ms.push('<span class="m">👥 '+log.members.length+'人</span>');
+    if(log.songs.length)ms.push('<span class="m">🎼 '+log.songs.length+'首</span>');
+    meta.innerHTML=ms.join('');
+    d.appendChild(meta);
+    /* 详情 */
+    var body=document.createElement('div');
+    body.className='log-body';
+    var html='';
+    if(log.members.length){
+      html+='<div class="lb-t">人员到场</div><div class="lb-people">'
+        +log.members.map(function(m){return '<span>'+esc(m)+'</span>';}).join('')+'</div>';
+    }
+    if(log.songs.length){
+      html+='<div class="lb-t">曲目安排（'+log.songs.length+'首）</div>';
+      var groups={};
+      log.songs.forEach(function(s){(groups[s.who||'未定']=groups[s.who||'未定']||[]).push(s);});
+      Object.keys(groups).forEach(function(who){
+        html+='<div style="margin:4px 0 2px;font-size:12px;font-weight:700;color:var(--blue)">【'+esc(who)+'】</div>';
+        groups[who].forEach(function(s){
+          html+='<div class="lb-song"><span class="no"></span><span class="who"></span><span class="nm">'+esc(s.t)
+            +(s.note?' <span class="nt">· '+esc(s.note)+'</span>':'')+'</span></div>';
+        });
+      });
+    }
+    if(log.chks.length){
+      html+='<div class="lb-t">必要提醒</div><div class="lb-chk">'
+        +log.chks.map(function(c){return '<span>'+esc(c)+'</span>';}).join('')+'</div>';
+    }
+    if(log.note){html+='<div class="lb-t">特别提示</div><div class="lb-note">'+esc(log.note)+'</div>';}
+    body.innerHTML=html;
+    /* 删除 */
+    var del=document.createElement('button');
+    del.className='ldel';
+    del.textContent='删除本场记录（不影响编号）';
+    del.onclick=function(ev){
+      ev.stopPropagation();
+      if(!confirm('删除记录 '+log.id+'？\n（通告文本已经发出去的不受影响，只删这条存档）'))return;
+      state.logs=state.logs.filter(function(x){return x.id!==log.id;});
+      save();renderAll();
+      toast('已删除');
+    };
+    body.appendChild(del);
+    d.appendChild(body);
+    box.appendChild(d);
+  });
+}
+function renderAll(){renderStats();renderList();}
+
+/* ---- 导入导出 ---- */
+function exportAll(){
+  if(!state.logs.length){toast('还没有记录可导出');return '';}
+  return JSON.stringify(state.logs);
+}
+function copyText(text,okMsg){
+  function ok(){toast(okMsg);}
+  function fb(){
+    var ta=document.createElement('textarea');ta.value=text;
+    ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');ok();}catch(e){toast('复制失败');}
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,fb);}
+  else{fb();}
+}
+$('btnImport').onclick=function(){
+  var v=$('importBox').value.trim();
+  if(!v){toast('先粘贴导出的内容');return;}
+  var arr;
+  try{arr=JSON.parse(v);}catch(e){toast('格式不对：请粘贴「导出全部」生成的完整内容');return;}
+  if(!Array.isArray(arr)){toast('格式不对：内容应为记录数组');return;}
+  var has=state.logs.map(function(x){return x.id;});
+  var added=0;
+  arr.forEach(function(x){
+    if(x&&x.id&&x.type&&has.indexOf(x.id)<0){state.logs.push(x);has.push(x.id);added++;}
+  });
+  save();renderAll();
+  $('importBox').value='';
+  toast(added?('✓ 导入 '+added+' 场'+((arr.length-added)?'，跳过重复 '+(arr.length-added)+' 场':'')):'没有新记录（都重复了）');
+};
+$('btnExport').onclick=function(){
+  var t=exportAll();
+  if(t)copyText(t,'✓ 已复制全部记录，可发群或粘到新设备导入');
+};
+$('btnClear').onclick=function(){
+  if(!state.logs.length){toast('已经是空的');return;}
+  if(confirm('确定清空全部 '+state.logs.length+' 场记录？\n（建议先「导出全部」备份）')){
+    state.logs=[];save();renderAll();toast('已清空');
+  }
+};
+
+renderAll();
+</script>
+</body>
+</html>
